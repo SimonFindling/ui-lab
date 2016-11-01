@@ -1,4 +1,4 @@
-package de.hska.login.microservice;
+package de.hska.uilab.mefiro.login;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

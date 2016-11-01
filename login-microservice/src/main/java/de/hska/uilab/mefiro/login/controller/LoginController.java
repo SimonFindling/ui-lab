@@ -1,4 +1,4 @@
-package de.hska.login.microservice.controller;
+package de.hska.uilab.mefiro.login.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

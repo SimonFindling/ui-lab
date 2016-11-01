@@ -1,4 +1,4 @@
-package de.hska.login.microservice;
+package de.hska.uilab.mefiro.login;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
