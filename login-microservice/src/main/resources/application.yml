@@ -1,0 +1,15 @@
+server:
+  port: 9005
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://212.227.198.46:8761/eureka/
+  instance:
+    ip-address: 212.227.198.46
+    preferIpAddress: true
+    instanceId: "login-microservice"
+
+spring:
+  application:
+    name: login-microservice
