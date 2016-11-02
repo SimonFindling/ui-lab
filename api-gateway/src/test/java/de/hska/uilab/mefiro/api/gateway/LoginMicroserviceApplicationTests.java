@@ -1,4 +1,4 @@
-package de.hska.uilab.mefiro.api;
+package de.hska.uilab.mefiro.api.gateway;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
