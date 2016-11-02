@@ -118,13 +118,8 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
 				<executions>
-					<execution><!-- Run our version calculation script -->
-						<id>pushImage</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
+					<!-- <id>pushImage</id> <execution> <phase>install</phase> <goals> <goal>exec</goal> 
+						</goals> </execution> -->
 				</executions>
 				<configuration>
 					<executable>${basedir}/push/push${script.extension}</executable>
