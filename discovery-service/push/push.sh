@@ -1,1 +1,0 @@
-docker push fisi1017/discovery-service
