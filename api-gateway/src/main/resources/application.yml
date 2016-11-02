@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+eureka:
+  instance:
+        leaseRenewalIntervalInSeconds: 10
+        statusPageUrlPath: /info
+        healthCheckUrlPath: /health   
+
+zuul:
+    ignoredServices: '*'
+    routes:
+#        user-proxy: /user-api/**
+#        user-api:
+#            path: /user-api/**
+#            serviceId: user-proxy
+        login-api:
+            path: /login-api/**
+            serviceId: login-microservice
+            url: http://212.227.198.46:9005/

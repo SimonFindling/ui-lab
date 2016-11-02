@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.hska.uilab.mefiro</groupId>
-	<artifactId>login-microservice</artifactId>
+	<artifactId>api-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>LoginMicroservice</name>
+	<name>ApiGateway</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -54,9 +54,9 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
-		</dependency>
+   	 		<groupId>org.springframework.cloud</groupId>
+    		<artifactId>spring-cloud-starter-zuul</artifactId>
+  		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -127,5 +127,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<description>A Login Microservice</description>
+	<description>API</description>
 </project>
