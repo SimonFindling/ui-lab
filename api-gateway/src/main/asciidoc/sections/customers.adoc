@@ -1,0 +1,84 @@
+[customers]
+== Customer-Service
+The client is identified by its `clientId`
+
+=== GET
+
+==== List all customers of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/customers/{clientId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "firstName":"",
+  "lastName":""
+ }
+]
+----
+
+==== List a single customer of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/customers/{clientId}/{customerId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+ {
+  "id":"{customerId}",
+  "clientId": "{clientId}",
+  "firstName":"",
+  "lastName":""
+ }
+----
+
+=== POST
+
+==== Create a new customer for a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/customers/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstName":"", "lastName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+----
+
+=== PUT
+
+==== Delete a customer of a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/customers/{clientId}/{customerId}' -i -X PUT -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 204 No Content
+
+----

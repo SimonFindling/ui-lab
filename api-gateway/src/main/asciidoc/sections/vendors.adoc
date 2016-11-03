@@ -1,0 +1,106 @@
+[vendors]
+== Vendor-Service
+
+The client is identified by its `clientId`
+
+=== GET
+
+==== List all vendors of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/vendors/{clientId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "vendorName":""
+ }
+]
+----
+
+==== List a single vendor of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/vendors/{clientId}/{vendorId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"",
+ "clientId": "{clientId}",
+ "vendorName":""
+}
+----
+
+=== POST
+
+==== Create a new vendor for a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/vendors/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+----
+
+==== Modify a new product for a client
+===== Example Request
+The images have to be base64 encoded!
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/vendors/{clientId}/{productId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"",
+ "clientId": "{clientId}",
+ "vendorName":""
+}
+
+----
+
+=== PUT
+
+==== Deletes a vendor of a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/vendors/{clientId}/{vendorId}' -i -X PUT -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 204 No Content
+
+----

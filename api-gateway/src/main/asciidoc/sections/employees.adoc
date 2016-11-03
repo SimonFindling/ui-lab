@@ -1,0 +1,124 @@
+[employees]
+== Employee-Service
+Handles the employees a each tenant aka client.
+
+=== GET
+
+==== List all employees with its rights of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/employees/{clientId}' -i -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "",
+  "firstName":"",
+  "lastName":""
+  "rights":
+  [
+    "ADD_PRODUCT":"YES",
+    "MODIFY_PRODUCT":"YES",
+    "DELETE_PRODUCT":"NO"
+  ]
+ }
+]
+----
+
+==== List a single employee of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+ {
+  "id":"",
+  "clientId": "",
+  "firstName":"",
+  "lastName":""
+  "rights":
+  [
+    "ADD_PRODUCT":"YES",
+    "MODIFY_PRODUCT":"YES",
+    "DELETE_PRODUCT":"NO"
+  ]
+ }
+----
+
+=== POST
+
+==== Create a new employee for a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/employees/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+----
+
+==== Modify an existing employee for a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+ {
+  "id":"",
+  "clientId": "",
+  "firstName":"",
+  "lastName":""
+  "rights":
+  [
+    "ADD_PRODUCT":"YES",
+    "MODIFY_PRODUCT":"YES",
+    "DELETE_PRODUCT":"NO"
+  ]
+ }
+
+----
+
+=== PUT
+
+==== Delete an employee of a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -X PUT -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 204 No Content
+
+----

@@ -1,0 +1,120 @@
+[account]
+== Account-Service
+
+Handles the accounts of the tenants aka clients.
+
+=== GET
+
+==== Get account by name
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/{name}' -i -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+  "clientId": "",
+  "loginId":"",
+  "firstName":"",
+  "lastName":"",
+  "status":"PROSPECT",
+}
+
+----
+
+=== POST
+
+==== Create a new account for a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/' -i -X POST -H 'Content-Type: application/json' -d '{"loginId": "", "firstName":"", "lastName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+  "clientId": "",
+  "loginId":"",
+  "firstName":"",
+  "lastName":"",
+  "status":"PROSPECT"
+}
+----
+
+==== Update an existing account for a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/' -i -X POST -H 'Content-Type: application/json' -d '{"loginId": "", "firstName":"", "lastName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+  "clientId": "",
+  "loginId":"",
+  "firstName":"",
+  "lastName":"",
+  "status":"PROSPECT"
+}
+----
+
+==== Upgrade client to customer
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/{clientId}/upgrade' -i -X POST -H 'Content-Type: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 0
+
+{
+  "clientId": "",
+  "loginId":"",
+  "firstName":"",
+  "lastName":"",
+  "status":"CUSTOMER"
+}
+----
+
+=== PUT
+
+==== Delete client account
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/{clientId}' -i -X PUT -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 204 No Content
+
+----

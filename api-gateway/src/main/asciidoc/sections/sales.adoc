@@ -1,0 +1,88 @@
+[sales]
+== Sales-Service
+
+The client is identified by its `clientId`
+
+=== GET
+
+==== List all sales of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/sales/{clientId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "vendorId":"",
+  "productId":"",
+  "productName":"",
+  "amount":""
+  "currency":""
+ }
+]
+----
+
+==== List all sales of a client for a vendor
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/sales/{clientId}/{vendorId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "vendorId":"",
+  "productId":"",
+  "productName":"",
+  "amount":""
+  "currency":""
+ }
+]
+----
+
+==== List all sales of a client of specific product
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/sales/{clientId}/product/{productId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "vendorId":"",
+  "productId":"",
+  "productName":"",
+  "amount":""
+  "currency":""
+ }
+----
