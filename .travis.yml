@@ -21,6 +21,7 @@ after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
   #PREFIX per group
+  # TODO read from env
   - export GROUP=hskanoname
 
   #TAG
@@ -28,6 +29,6 @@ after_success:
 
   # GATEWAY SERVICE
   - export GATEWAY=$GROUP/api-gateway
-  - docker build -t $GATEWAY:$COMMIT ./api-gateway/src/main/docker
+  - docker build -t $GATEWAY:$COMMIT ./api-gateway
   - docker tag $GATEWAY:$COMMIT $GATEWAY:$TAG
   - docker push $GATEWAY

@@ -5,47 +5,19 @@
 
     <artifactId>api-gateway</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
     <name>api-gateway</name>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>de.hska.uilab.mefiro</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <!--TODO read from env -->
-        <docker.image.prefix>hskanoname</docker.image.prefix>
-        <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <!--<properties>-->
+        <!--<docker.port>8081</docker.port>-->
+    <!--</properties>-->
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -108,26 +80,23 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.11</version>
-                <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>./</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+            <!--<groupId>io.fabric8</groupId>-->
+            <!--<artifactId>docker-maven-plugin</artifactId>-->
+            <!--<version>${fabric8io.docker.maven.plugin.version}</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>build</id>-->
+            <!--<phase>install</phase>-->
+            <!--<goals>-->
+            <!--<goal>build-nofork</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--&lt;!&ndash; comment in to push locally &ndash;&gt;-->
+            <!--&lt;!&ndash; <execution> <id>push</id> <phase>install</phase> <goals> <goal>push</goal>-->
+            <!--</goals> </execution> &ndash;&gt;-->
+            <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>
