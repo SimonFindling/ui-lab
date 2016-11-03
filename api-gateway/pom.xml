@@ -13,9 +13,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <docker.port>8081</docker.port>
-    </properties>
+    <!--<properties>-->
+        <!--<docker.port>8081</docker.port>-->
+    <!--</properties>-->
 
     <dependencies>
         <dependency>

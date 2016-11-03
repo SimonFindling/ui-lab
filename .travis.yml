@@ -1,0 +1,33 @@
+sudo: required
+
+services:
+  - docker
+
+# travis runs implicitly 'mvn test' and 'mvn install'
+# see https://docs.travis-ci.com/user/languages/java/
+language: java
+jdk: oraclejdk8
+
+# see https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables
+# they are tied to the repository in travis!
+env:
+  global:
+    - secure: "hF3x+zbTZVOY5QmrxlsbaKhJbYBgTj0L0qqBm2NHt/sH9nu7Ii9TB1H7OIoB495BW9SsN80r/qsJbzEz20JvOeAnmHZM+31Yhsntu+vfsbdMSoAQbn2q8R1S8DAGJBvgR8BXRJo2z7LRNu8enI2BgdIvUtzOtUI6fYybL2mwH63xgKIs/xyk1sH2zRiGsn683zfow2wNd7EdMuk3B4dqSHl602jPX6i8W0vwytmy0QI6GiE8GpYTQMuKJm2csO1NQxJ5fds0Y95kA3O828xiLghpqXTNRtmJVhNVjzHcCEyFfdpTKh3dWdCiF4l50U3VRTTn4TvFTkEz+LqWZw9sktgTI7VaFvBwp6VuayIySlu0qNkEl0qMR7mwZ8wZZ2ZkP3s1o/xYE9iPS1QZotmO7I1RqaXbJ2gWUh34dHIRfIUhH9F+SjMSLUDhy5VNnkzuFYQ6WknSuw3LuEdeSrdc1o3CtispRabBV4UOu76lpIgvFmmgwbXzPRMUcKp0IbOLFUi8GKgm082Y5lTBNZ2ur4Xa1ezhYcQYGOgsyUrfqDYeKGTMJLGxVvAyZNpDj66gwKyrwz2UE727kk1zkB1mwLIIqug0dHn9IZG/YCvEj5s85lwrX1GmSGy9OjXNJunP2pd38dTCZNL7HCsrnz6+YeeyELuEEkLaSQGXldE62R8=" # DOCKER_EMAIL
+    - secure: "w4NxJM6tiC0vnULKn/nUT2pEy9g+q1o3ZUxM9ArNbiQDcNyE4V7Wox+pQdnu+3+/O7pKNTO4q2bKoRkSOQJgFSBvmE70KajqFHxc0sgOz+riLszSv8QGUkpo5HI0NzUnJh7vmKB+ti0YM6nC04qKZcB18qGh8HBxXE1x3r59U2P75V9jFjA9Pj9TZLS4YsOSRgE5PQhwKF9PvaG7+NY0Ca8o7iAiv4gZSEkb9rwMAY86LEHOmPzmRRk23auREp6M5YdzvFilmn9mMx8LSBsmnzytUs3WHF5G91evwHQYwhLqOi8AEDBYuSOPH0pvojEUpaD6+LdmuL6bKRFFHbI7ZA8ZssT2DYkFBBc2d0zPwNEjdi29GiP2kzB/xNZQ2WgK9qMxXCRsu7xpug/1tkYAzZeQD+7ElH/2xmmsTXsBPdrydPSZNoirPgpHdkcFvo0FVSNxWMEmVgYsE4V61Jur/5cklTQwfYUZJEba7uDH7z4+aj72B0V/0D/zY5WkegZtoj9uQF4pMzYLX0CJHKJzYl40qOn+XrIloQQpW2BjfMXmP9v9mNoUnOmaPxMyJGec36dq5GuUBlvT449XN/1kGNebtyq3q0jTql1mBeQtc+W+pcTM6TDKk7hAQcFxC/RS6ADX/NB8fe7r/XTiZ0RBSWINdGmOSQ/Y4NjbAUSZrUs=" # DOCKER_USER
+    - secure: "XXQa5oAkAMTIjtiUGJITwKKIdSwqreeI4UWNV3v4Pzy0PJuri/XczkxDzweRUt1HPWNIq9jE7lumvMU51xBnR64oGmbcWGOaeSlS8Y4lgCv979FhgWp4ZLJsDs8kD699s9t2O0lmD9v3U4aVto/fxbPGrhhOKTKtc3S9tOjM53fy5IoudUJ+EMKU9BYhTZFf+RBB2kp/FqdXgNQgJMjC6ZRxJk5F1v4XLOf4btp61C8AcWFp8kghbtbKCuXqPQq0IOKEA0OZ6KDw06+RCN/Hi2M6i9fLyoQRA4cpH8z2LIviDnApJYufs6lYCppJdpPgks/Fo/a/8ZYRcWPdfZtrhMghCHZBRgceVOu2TJKM+CYc2sSka0Ih1FVG9cA+sKwo7UjJQMTFsCgHbs/SwHI7vYS/STg6ylmFX8/n53Xs3pPS53GuKGFjiX2eNxUs+VsRkcp/SiHpPscv/RWcZPYUGo3PrYja39hrPiazchEtKtH4w3PMsn2TlNw7kOwLMVEiuciN3m3vKxcUu3cHGa2lagz7cMockQ+mKsGozry344JaX8Pao+5VY5C76EGzzMjwd93NSrUNp9IEf7AKbCF8Rh/jOo/n+UvEzE/4nBq8FgtrqQulMrvcBSnBn6/Mv9oojCr6EAGWfzlSqzov8xYB9XPeKv3G9LHOexYhcwSeXaU=" # DOCKER_PASS
+    - COMMIT=${TRAVIS_COMMIT::7}
+
+after_success:
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+
+  #PREFIX per group
+  - export GROUP=hskanoname
+
+  #TAG
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+
+  # GATEWAY SERVICE
+  - export GATEWAY=$GROUP/api-gateway
+  - docker build -t $GATEWAY:$COMMIT ./api-gateway/src/main/docker
+  - docker tag $GATEWAY:$COMMIT $GATEWAY:$TAG
+  - docker push $GATEWAY
