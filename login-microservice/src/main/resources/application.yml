@@ -4,9 +4,9 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://212.227.198.46:8761/eureka/
+      defaultZone: http://${SERVER_URL}:8761/eureka/
   instance:
-    ip-address: 212.227.198.46
+    ip-address: ${SERVER_URL}
     preferIpAddress: true
     instanceId: "login-microservice"
 
