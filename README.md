@@ -13,18 +13,22 @@ docker-compose -f docker-compose.yml up -d
 ```
 
 ### Setup for [Travis](https://travis-ci.org)
-- Fork this repository
-- Create a branch from master for changes you want to Push back to the template (e.g. OAuth)
-- Set up a [Docker Hub](https://hub.docker.com/) account
-- Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
-- Activate the repository in `travis`
-- Edit `.travis.yml` file and replace `GROUP` env with the name of your group
-- Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. 
+1. Fork this repository
+2. Create a branch from master for changes you want to Push back to the template (e.g. OAuth)
+3. Set up a [Docker Hub](https://hub.docker.com/) account
+4. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
+5. Activate the repository in `travis`
+6. Edit `.travis.yml` file and replace `GROUP` env with the name of your group
+7. Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. 
  See [here](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables) for details.
-- Make change, commit, push and see if `travis` builds
-- If successfully build, check your dockerhub account of the images appears
-- Pull if from docker hub.
-- TODO push to dev stage immediately + fill docker-compose.yml file
+8. Make change, commit, push and see if `travis` builds
+9. If successfully build, check your dockerhub account of the images appears
+10. Pull if from docker hub.
+11. TODO push to dev stage immediately + fill docker-compose.yml file
+
+## Steps for adding a new service
+1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
+2. Add docker build config in `.travis.yml`
 
 
 ## Documentation of API Gateway
