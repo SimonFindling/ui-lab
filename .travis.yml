@@ -3,7 +3,7 @@ sudo: required
 services:
   - docker
 
-# travis runs implicitly 'mvn test' and 'mvn install'
+# travis runs implicitly 'mvn test' and 'mvn install' if it finds a 'pom.xml' in the root.
 # see https://docs.travis-ci.com/user/languages/java/
 language: java
 jdk: oraclejdk8
@@ -21,7 +21,6 @@ after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
   #PREFIX per group
-  # TODO read from env
   - export GROUP=hskanoname
 
   #TAG
@@ -32,3 +31,5 @@ after_success:
   - docker build -t $GATEWAY:$COMMIT ./api-gateway
   - docker tag $GATEWAY:$COMMIT $GATEWAY:$TAG
   - docker push $GATEWAY
+
+  # add more builds of services here...
