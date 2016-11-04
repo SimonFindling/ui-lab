@@ -32,4 +32,16 @@ after_success:
   - docker tag $GATEWAY:$COMMIT $GATEWAY:$TAG
   - docker push $GATEWAY
 
+  # DISCOVERY SERVICE
+  - export DISCOVERY=$GROUP/discovery-service
+  - docker build -t $DISCOVERY:$COMMIT ./discovery-service
+  - docker tag $DISCOVERY:$COMMIT $DISCOVERY:$TAG
+  - docker push $DISCOVERY
+
+  # LOGIN SERVICE
+  - export LOGIN=$GROUP/login-microservice
+  - docker build -t $LOGIN:$COMMIT ./login-microservice
+  - docker tag $LOGIN:$COMMIT $LOGIN:$TAG
+  - docker push $LOGIN
+
   # add more builds of services here...
