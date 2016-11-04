@@ -8,7 +8,7 @@ If you want to build and set up the dockers containers locally:
 ```bash
 # build all local docker images
 export GROUP=<your group name>
-export SERVER_URL=localhost
+# export SERVER_URL=localhost
 ./build_locally.sh
 # but set $GROUP and $SERVER_URL before!
 docker-compose up -d
@@ -30,7 +30,7 @@ until everything is set up.
 10. Pull if from docker hub.
 11. TODO push to dev stage immediately
 
-TODO check eureka server. services not registered!
+TODO check eureka server. services not registered! Really need a serverip?
 
 ### Setup for server
 1. Set up ENV Vars

@@ -23,7 +23,7 @@ after_success:
   #PREFIX per group
   - export GROUP=hskanoname
   # just a dummy for the build. The env will be inserted via docker-compose on startup
-  - export SERVER_URL=localhost
+  #  - export SERVER_URL=localhost
 
   #TAG
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`

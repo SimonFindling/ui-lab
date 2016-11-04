@@ -4,9 +4,10 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${SERVER_URL}:8761/eureka/
+#      defaultZone: http://${SERVER_URL}:8761/eureka/
+      defaultZone: http://discovery:8761/eureka/
   instance:
-    ip-address: ${SERVER_URL}
+#    ip-address: ${SERVER_URL}
     preferIpAddress: true
     instanceId: "login-microservice"
 
