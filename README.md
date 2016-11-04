@@ -6,11 +6,15 @@ This project is part of the masters course Graphical user interfaces.
 ### Local setup
 If you want to build and set up the dockers containers locally:
 ```bash
-export GROUP="<your group name>"
+# build all local docker images
+export GROUP=<your group name>
+export SERVER_URL=localhost
 ./build_locally.sh
-# set it up locally
-docker-compose -f docker-compose.yml up -d
+# but set $GROUP and $SERVER_URL before!
+docker-compose up -d
 ```
+Check `curl localhost:8081/docs/api-guide.html`, which can take some time
+until everything is set up.
 
 ### Setup for [Travis](https://travis-ci.org)
 1. Fork this repository
@@ -24,7 +28,18 @@ docker-compose -f docker-compose.yml up -d
 8. Make change, commit, push and see if `travis` builds
 9. If successfully build, check your dockerhub account of the images appears
 10. Pull if from docker hub.
-11. TODO push to dev stage immediately + fill docker-compose.yml file
+11. TODO push to dev stage immediately
+
+TODO check eureka server. services not registered!
+
+### Setup for server
+1. Set up ENV Vars
+```bash
+export GROUP="<your group name>"
+export SERVER_URL="<server ip>"
+```
+2. Use the `docker-compose.yml` file from root and copy it onto the remote server
+3. Run `docker compose up -d` there
 
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
