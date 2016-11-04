@@ -32,10 +32,8 @@ echo "-> Fine √"
 
 ###################
 info "Check if ENV variables were set"
-if [ -z $GROUP ]; then
-  echo "'GROUP' ENV var are not set";
-  exit 1;
-fi
+[ -z "$GROUP" ] && echo "Need to set GROUP" && exit 1;
+[ -z "$SERVER_URL" ] && echo "Need to set SERVER_URL" && exit 1;
 
 ###################
 info "Bulding microservices"
