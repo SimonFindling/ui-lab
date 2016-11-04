@@ -31,7 +31,7 @@ docker-compose -f docker-compose.yml up -d
 2. Add docker build config in `.travis.yml` for the new service
 3. Add service to `build_locally.sh`
 4. Add service to `docker-compose.yml`
-5. Add a new route in `application.yaml` of the api-gateway
+5. Add a new route in `application.yml` of the api-gateway
 
 
 ## Documentation of API Gateway
