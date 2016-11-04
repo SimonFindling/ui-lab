@@ -28,7 +28,10 @@ docker-compose -f docker-compose.yml up -d
 
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
-2. Add docker build config in `.travis.yml`
+2. Add docker build config in `.travis.yml` for the new service
+3. Add service to `build_locally.sh`
+4. Add service to `docker-compose.yml`
+5. Add a new route in `application.yaml` of the api-gateway
 
 
 ## Documentation of API Gateway
