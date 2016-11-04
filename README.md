@@ -10,7 +10,6 @@ export GROUP="<your group name>"
 ./build_locally.sh
 # set it up locally
 docker-compose -f docker-compose.yml up -d
-#docker run -p8081:8081 mefiroofficial/api-gateway
 ```
 
 ### Setup for [Travis](https://travis-ci.org)
@@ -29,6 +28,7 @@ docker-compose -f docker-compose.yml up -d
 
 
 ## Documentation of API Gateway
-Once the API Gateway is set up via `cd api-gateway && mvn spring-boot:run` 
-or `docker run -p8081:8081 <your group name>/api-gateway` the documentation
-can be accessed through `http://localhost:8081/docs/api-guide.html`
+Once the API Gateway is set up via 
+- `cd api-gateway && mvn spring-boot:run` or 
+- `docker run -p8081:8081 <your group name>/api-gateway` 
+the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`

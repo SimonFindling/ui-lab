@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-oraclejdk8:slim
-EXPOSE 9005
-COPY maven /
+VOLUME /tmp
+ADD ./target/login-microservice-0.0.1-SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
-VOLUME ["/tmp"]
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+EXPOSE 9005

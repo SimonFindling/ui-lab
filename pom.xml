@@ -11,6 +11,8 @@
 
     <modules>
         <module>api-gateway</module>
+        <module>discovery-service</module>
+        <module>login-microservice</module>
     </modules>
 
 </project>

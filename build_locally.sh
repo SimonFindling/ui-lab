@@ -39,7 +39,7 @@ fi
 
 ###################
 info "Bulding microservices"
-MICROSERVICES=( api-gateway )
+MICROSERVICES=( api-gateway discovery-service login-microservice  )
 for MICROSERVICE in ${MICROSERVICES[@]}; do
   info "Bulding '$MICROSERVICE'"
   cd $MICROSERVICE && mvn clean package docker:build && cd ..
