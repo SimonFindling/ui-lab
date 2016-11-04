@@ -3,18 +3,23 @@ server:
 
 eureka:
   instance:
-        leaseRenewalIntervalInSeconds: 10
-        statusPageUrlPath: /info
-        healthCheckUrlPath: /health   
+    leaseRenewalIntervalInSeconds: 10
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health
 
 zuul:
     ignoredServices: '*'
     routes:
-#        user-proxy: /user-api/**
-#        user-api:
-#            path: /user-api/**
-#            serviceId: user-proxy
-        login-api:
-            path: /login-api/**
-            serviceId: login-microservice
+      login-api:
+          path: /login-api/**
+          serviceId: login-microservice
+          stripPrefix: false
 #            url: http://${SERVER_URL}:9005/
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+  maxAutoRetries: 1
+  MaxAutoRetriesNextServer: 2
+  eureka:
+  enabled: true
