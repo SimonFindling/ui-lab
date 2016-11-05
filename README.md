@@ -47,6 +47,7 @@ I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each t
 a new version of the image is pushed by travis to docker hub the webhook is
 trigged. Read all steps first please!
 1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
+2. Maybe a `sudo apt-get install python python-pip` and `sudo pip install requests` will be necessary.
 <!--2. TODO remove: -->
 <!--Add a hook for each docker image `$ docker-hook -t <auth-token> -c <command>` where `<command>`-->
 <!--could be `sh ./deploy.sh` with the script-->
@@ -60,7 +61,7 @@ trigged. Read all steps first please!
 <!--# or-->
 <!--docker compose up -d-->
 <!--```-->
-2. Copy the `deploy_hook.sh` script and register it via `$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh`
+3. Copy the `deploy_hook.sh` script and register it via `$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &`
 
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
@@ -68,9 +69,7 @@ trigged. Read all steps first please!
 3. Add service to `build_locally.sh`
 4. Add service to `docker-compose.yml`
 5. Add a new route in `application.yml` of the api-gateway
-<!--TODO-->
-<!--6. Add a new script in `hook scripts`, transfer it to the server, add it with the `docker-hook` script -->
-<!--and add the hook in docker hub.-->
+6. Add the hook url to the new images on docker hub when it's available there.
 
 
 ## Documentation of API Gateway
@@ -81,6 +80,9 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 
 # TODOS
 - Get `zuul` running with `serviceId` instead of `urls`.
+- FIX `curl -D- ${SERVER_URL}:8081/login-api/login/admin/admin` which causes atm 
+`Caused by: com.netflix.client.ClientException: Load balancer does not have available server for client: login-microservice`
+- Start the docker-hook command so that it's still running although the terminal is closed.
 
 # Inspiration / Props
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)

@@ -14,7 +14,7 @@ zuul:
           path: /login-api/**
           serviceId: login-microservice
           stripPrefix: false
-#            url: http://${SERVER_URL}:9005/
+          url: http://${SERVER_URL}:9005/
 
 ribbon:
   ConnectTimeout: 3000
