@@ -28,11 +28,12 @@ until everything is set up.
 8. Make change, commit, push and see if `travis` builds
 9. If successfully build, check your dockerhub account of the images appears
 10. Pull if from docker hub.
-11. TODO push to dev stage immediately
+11. Push to dev/prod stage immediately
 
 TODO check eureka server. services not registered! Really need a serverip?
 
 ### Setup for server
+#### Intial setup
 1. Set up ENV Vars
 ```bash
 export GROUP="<your group name>"
@@ -41,12 +42,35 @@ export SERVER_URL="<server ip>"
 2. Use the `docker-compose.yml` file from root and copy it onto the remote server
 3. Run `docker compose up -d` there
 
+#### Add Webhooks
+I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each time
+a new version of the image is pushed by travis to docker hub the webhook is
+trigged. Read all steps first please!
+1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
+<!--2. TODO remove: -->
+<!--Add a hook for each docker image `$ docker-hook -t <auth-token> -c <command>` where `<command>`-->
+<!--could be `sh ./deploy.sh` with the script-->
+<!--```bash-->
+<!--#! /bin/bash-->
+
+<!--IMAGE="yourname/app"-->
+<!--docker ps | grep $IMAGE | awk '{print $1}' | xargs docker stop-->
+<!--docker pull $IMAGE-->
+<!--#docker run -p<PORT>:<PORT> -d $IMAGE-->
+<!--# or-->
+<!--docker compose up -d-->
+<!--```-->
+2. Copy the `deploy_hook.sh` script and register it via `$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh`
+
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
 2. Add docker build config in `.travis.yml` for the new service
 3. Add service to `build_locally.sh`
 4. Add service to `docker-compose.yml`
 5. Add a new route in `application.yml` of the api-gateway
+<!--TODO-->
+<!--6. Add a new script in `hook scripts`, transfer it to the server, add it with the `docker-hook` script -->
+<!--and add the hook in docker hub.-->
 
 
 ## Documentation of API Gateway
@@ -54,3 +78,11 @@ Once the API Gateway is set up via
 - `cd api-gateway && mvn spring-boot:run` or 
 - `docker run -p8081:8081 <your group name>/api-gateway` 
 the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`
+
+# TODOS
+- Get `zuul` running with `serviceId` instead of `urls`.
+
+# Inspiration / Props
+- [piggymetrics](https://github.com/sqshq/PiggyMetrics)
+- [spring-cloud-example](https://github.com/kbastani/spring-cloud-microservice-example)
+- [docker-hook](https://github.com/schickling/docker-hook)
