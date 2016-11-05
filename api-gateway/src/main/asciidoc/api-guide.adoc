@@ -9,7 +9,7 @@
 
 [introduction]
 = Introduction
-This document provides a proposal for the API Gateway of the ERP Cloud system
+This document provides a proposal for the API Gateway of the HSKA ERP Cloud system
 developed in the master course **Graphical User Interfaces**.
 
 include::sections/introduction.adoc[]
