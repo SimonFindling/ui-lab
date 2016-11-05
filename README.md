@@ -8,13 +8,13 @@ If you want to build and set up the dockers containers locally:
 ```bash
 # build all local docker images
 export GROUP=<your group name>
-# export SERVER_URL=localhost
+export SERVER_URL=localhost
 ./build_locally.sh
-# but set $GROUP and $SERVER_URL before!
+# Note the docker-compose.yml also need the ENV vars
 docker-compose up -d
 ```
 Check `curl localhost:8081/docs/api-guide.html`, which can take some time
-until everything is set up.
+until everything is set up. Consider `docker logs -tf <container-hash>` for the logs.
 
 ### Setup for [Travis](https://travis-ci.org)
 1. Fork this repository
@@ -28,48 +28,45 @@ until everything is set up.
 8. Make change, commit, push and see if `travis` builds
 9. If successfully build, check your dockerhub account of the images appears
 10. Pull if from docker hub.
-11. Push to dev/prod stage immediately
-
-TODO check eureka server. services not registered! Really need a serverip?
+11. The Push to your server will be explained in the **Add webhooks** section.
 
 ### Setup for server
 #### Intial setup
 1. Set up ENV Vars
 ```bash
-export GROUP="<your group name>"
-export SERVER_URL="<server ip>"
+$ export GROUP="<your group name>"
+$ export SERVER_URL="<server ip>"
 ```
 2. Use the `docker-compose.yml` file from root and copy it onto the remote server
-3. Run `docker compose up -d` there
+3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag
+of the container. Specify another version if you're working on a branch. 
 
 #### Add Webhooks
 I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each time
 a new version of the image is pushed by travis to docker hub the webhook is
 trigged. Read all steps first please!
-1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
-2. Maybe a `sudo apt-get install python python-pip` and `sudo pip install requests` will be necessary.
-<!--2. TODO remove: -->
-<!--Add a hook for each docker image `$ docker-hook -t <auth-token> -c <command>` where `<command>`-->
-<!--could be `sh ./deploy.sh` with the script-->
-<!--```bash-->
-<!--#! /bin/bash-->
 
-<!--IMAGE="yourname/app"-->
-<!--docker ps | grep $IMAGE | awk '{print $1}' | xargs docker stop-->
-<!--docker pull $IMAGE-->
-<!--#docker run -p<PORT>:<PORT> -d $IMAGE-->
-<!--# or-->
-<!--docker compose up -d-->
-<!--```-->
-3. Copy the `deploy_hook.sh` script and register it via `$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &`
+1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
+2. Maybe the following command will be necessary
+```bash
+$ sudo apt-get install python python-pip
+$ sudo pip install requests
+```
+3. Copy the `deploy_hook.sh` script and register it via 
+```bash
+$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &
+```
+4. Add the webhook url described in the instruction link above to the new image in docker hub. Maybe you
+have to run the `deploy_hook.sh` manually once or trigger the travis build again after the
+webhook url has been added.
 
 ## Steps for adding a new service
-1. Add new service as `module` in root `pom.xml`. It has to have a `Dockerfile` in the module root.
+1. Add new service as `module` in root `pom.xml` so the travis build will still work. It has to have a `Dockerfile` in the module root.
 2. Add docker build config in `.travis.yml` for the new service
 3. Add service to `build_locally.sh`
 4. Add service to `docker-compose.yml`
 5. Add a new route in `application.yml` of the api-gateway
-6. Add the hook url to the new images on docker hub when it's available there.
+6. Add the hook url to the image at docker hub. 
 
 
 ## Documentation of API Gateway
@@ -79,9 +76,7 @@ Once the API Gateway is set up via
 the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`
 
 # TODOS
-- Get `zuul` running with `serviceId` instead of `urls`.
-- FIX `curl -D- ${SERVER_URL}:8081/login-api/login/admin/admin` which causes atm 
-`Caused by: com.netflix.client.ClientException: Load balancer does not have available server for client: login-microservice`
+- Get `zuul` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
 - Start the docker-hook command so that it's still running although the terminal is closed.
 
 # Inspiration / Props
