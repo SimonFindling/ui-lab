@@ -18,15 +18,16 @@ until everything is set up. Consider `docker logs -tf <container-hash>` for the 
 
 ### Setup for [Travis](https://travis-ci.org)
 1. Fork this repository
-2. Create a branch from master for changes you want to Push back to the template (e.g. OAuth)
+2. Create a branch from master for changes you want to push back to the template (e.g. OAuth)
 3. Set up a [Docker Hub](https://hub.docker.com/) account
 4. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
 5. Activate the repository in `travis`
-6. Edit `.travis.yml` file and replace `GROUP` env with the name of your group
+6. Edit `.travis.yml` file and replace `GROUP` env with the name of your group, which should be the same like
+your docker hub account.
 7. Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. 
  See [here](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables) for details.
-8. Make change, commit, push and see if `travis` builds
-9. If successfully build, check your dockerhub account of the images appears
+8. Make a change, commit, push and see if `travis` builds
+9. If the build was successful, check your dockerhub account if the images appears
 10. Pull if from docker hub.
 11. The Push to your server will be explained in the **Add webhooks** section.
 
@@ -44,15 +45,15 @@ of the container. Specify another version if you're working on a branch.
 #### Add Webhooks
 I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each time
 a new version of the image is pushed by travis to docker hub the webhook is
-trigged. Read all steps first please!
+triggered. Read all steps first please!
 
 1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
-2. Maybe the following command will be necessary
+2. Maybe the following commands will be necessary
 ```bash
 $ sudo apt-get install python python-pip
 $ sudo pip install requests
 ```
-3. Copy the `deploy_hook.sh` script and register it via 
+3. Copy the `deploy_hook.sh` script in the HOME dir and register it via 
 ```bash
 $ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &
 ```
@@ -61,7 +62,8 @@ have to run the `deploy_hook.sh` manually once or trigger the travis build again
 webhook url has been added.
 
 ## Steps for adding a new service
-1. Add new service as `module` in root `pom.xml` so the travis build will still work. It has to have a `Dockerfile` in the module root.
+1. Add new service as `module` in root `pom.xml` so the travis build will still work. 
+It has to have a `Dockerfile` in the module root.
 2. Add docker build config in `.travis.yml` for the new service
 3. Add service to `build_locally.sh`
 4. Add service to `docker-compose.yml`
