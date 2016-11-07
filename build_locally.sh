@@ -33,7 +33,7 @@ echo "-> Fine √"
 ###################
 info "Check if ENV variables were set"
 [ -z "$GROUP" ] && echo "Need to set GROUP" && exit 1;
-#[ -z "$SERVER_URL" ] && echo "Need to set SERVER_URL" && exit 1;
+[ -z "$SERVER_URL" ] && echo "Need to set SERVER_URL" && exit 1;
 
 ###################
 info "Bulding microservices"
