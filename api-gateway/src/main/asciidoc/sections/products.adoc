@@ -1,0 +1,121 @@
+[products]
+== Product-Service
+
+The client is identified by its `clientId`
+
+=== GET
+
+==== List all products of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/products/{clientId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+The images are base64 encoded!
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+[
+ {
+  "id":"",
+  "clientId": "{clientId}",
+  "vendorId": "",
+  "productName":"",
+  "productImage": "",
+  "productInformation": "",
+  "price":""
+ }
+]
+----
+
+==== List a single product of a client
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -H 'Accept: application/json'
+----
+
+===== Example Response
+The images are base64 encoded!
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"",
+ "clientId": "{clientId}",
+ "vendorId": "",
+ "productName":"",
+ "productImage": "",
+ "productInformation": "",
+ "price":""
+}
+----
+
+=== POST
+
+==== Create a new product for a client
+===== Example Request
+The images have to be base64 encoded!
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/products/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+----
+
+==== Modify a new product for a client
+===== Example Request
+The images have to be base64 encoded!
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"",
+ "clientId": "{clientId}",
+ "vendorId": "",
+ "productName":"",
+ "productImage": "",
+ "productInformation": "",
+ "price":""
+}
+
+----
+
+=== PUT
+
+==== Deletes a product of a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -X PUT -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 204 No Content
+
+----

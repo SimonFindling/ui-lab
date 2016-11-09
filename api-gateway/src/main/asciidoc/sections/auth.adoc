@@ -1,0 +1,45 @@
+[auth]
+== Authorization-Service
+
+Handles the authorization of the tenants aka client.
+
+TODO: need to understand how the Oauth works...
+
+=== GET
+
+==== Gets the user
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/uaa/users/current' -i -H 'Accept: application/json'
+----
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+  TODO
+}
+
+----
+
+=== POST
+
+==== Create a new account for a vendor
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/uaa/users' -i -X POST -H 'Content-Type: application/json' -d '{"loginId": "", "firstName":"", "lastName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+----

@@ -3,6 +3,7 @@ target/
 .mvn/
 tmp/
 work/
+.idea
 
 ### STS ###
 .apt_generated

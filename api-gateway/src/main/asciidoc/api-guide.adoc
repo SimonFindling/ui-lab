@@ -1,0 +1,23 @@
+= API Gateway proposal
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+:homepage: www.hs-karlsruhe.de
+
+[introduction]
+= Introduction
+This document provides a proposal for the API Gateway of the HSKA ERP Cloud system
+developed in the master course **Graphical User Interfaces**.
+
+include::sections/introduction.adoc[]
+include::sections/customers.adoc[]
+include::sections/products.adoc[]
+include::sections/vendors.adoc[]
+include::sections/sales.adoc[]
+include::sections/employees.adoc[]
+include::sections/search.adoc[]
+include::sections/account.adoc[]
+include::sections/auth.adoc[]
