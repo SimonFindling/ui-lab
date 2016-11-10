@@ -1,6 +1,7 @@
 [employees]
 == Employee-Service
-Handles the employees a each tenant aka client.
+Handles the employees a each tenant.
+The tenant is identified by the 'Bearer Header Token'.
 
 === GET
 
@@ -9,7 +10,7 @@ Handles the employees a each tenant aka client.
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/employees/{clientId}' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/employees' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
@@ -21,7 +22,6 @@ Content-Length:
 [
  {
   "id":"",
-  "clientId": "",
   "firstName":"",
   "lastName":""
   "rights":
@@ -39,7 +39,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/employees/{employeeId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -51,7 +51,6 @@ Content-Length:
 
  {
   "id":"",
-  "clientId": "",
   "firstName":"",
   "lastName":""
   "rights":
@@ -69,7 +68,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/employees/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
+$ curl 'http://DOCKER-HOST:8080/employees' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
 ----
 
 ===== Example Response
@@ -79,11 +78,13 @@ HTTP/1.1 201 Created
 
 ----
 
+=== PUT
+
 ==== Modify an existing employee for a client
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
+$ curl 'http://DOCKER-HOST:8080/employees/{employeeId}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"", "rights": ["ADD_PRODUCT": "","MODIFY_PRODUCT": "","DELETE_PRODUCT": "",]}'
 ----
 
 ===== Example Response
@@ -95,7 +96,6 @@ Content-Length:
 
  {
   "id":"",
-  "clientId": "",
   "firstName":"",
   "lastName":""
   "rights":
@@ -108,13 +108,13 @@ Content-Length:
 
 ----
 
-=== PUT
+=== DELETE
 
 ==== Delete an employee of a client
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/employees/{clientId}/{employeeId}' -i -X PUT -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/employees/{employeeId}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]

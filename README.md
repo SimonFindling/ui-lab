@@ -72,10 +72,13 @@ It has to have a `Dockerfile` in the module root.
 
 
 ## Documentation of API Gateway
+### With running Spring container
 Once the API Gateway is set up via 
 - `cd api-gateway && mvn spring-boot:run` or 
 - `docker run -p8081:8081 <your group name>/api-gateway` 
 the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`
+
+### Statically
 
 # TODOS
 - Get `zuul` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
