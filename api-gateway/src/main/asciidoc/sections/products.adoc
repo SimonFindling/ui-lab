@@ -1,7 +1,7 @@
 [products]
 == Product-Service
 
-The client is identified by its `clientId`
+The tenant is identified by the 'Bearer Header Token'.
 
 === GET
 
@@ -10,7 +10,7 @@ The client is identified by its `clientId`
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/products/{clientId}' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/products' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -24,7 +24,6 @@ Content-Length:
 [
  {
   "id":"",
-  "clientId": "{clientId}",
   "vendorId": "",
   "productName":"",
   "productImage": "",
@@ -39,7 +38,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/products/{productId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -52,7 +51,6 @@ Content-Length:
 
 {
  "id":"",
- "clientId": "{clientId}",
  "vendorId": "",
  "productName":"",
  "productImage": "",
@@ -68,7 +66,7 @@ Content-Length:
 The images have to be base64 encoded!
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/products/{clientId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
+$ curl 'http://DOCKER-HOST:8080/products' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
 ----
 
 ===== Example Response
@@ -78,12 +76,14 @@ HTTP/1.1 201 Created
 
 ----
 
+=== PUT
+
 ==== Modify a new product for a client
 ===== Example Request
 The images have to be base64 encoded!
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -X POST -H 'Content-Type: application/json' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
+$ curl 'http://DOCKER-HOST:8080/products/{productId}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorId": "","productName":"","productImage": "","productInformation": "","price":""}'
 ----
 
 ===== Example Response
@@ -95,7 +95,6 @@ Content-Length:
 
 {
  "id":"",
- "clientId": "{clientId}",
  "vendorId": "",
  "productName":"",
  "productImage": "",
@@ -105,13 +104,13 @@ Content-Length:
 
 ----
 
-=== PUT
+=== DELETE
 
 ==== Deletes a product of a client
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/products/{clientId}/{productId}' -i -X PUT -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/products/{productId}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]

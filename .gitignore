@@ -4,6 +4,7 @@ target/
 tmp/
 work/
 .idea
+*.html
 
 ### STS ###
 .apt_generated

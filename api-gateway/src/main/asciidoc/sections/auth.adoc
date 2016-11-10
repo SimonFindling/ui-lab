@@ -3,7 +3,7 @@
 
 Handles the authorization of the tenants aka client.
 
-TODO: need to understand how the Oauth works...
+**TODO:** need to understand how the Oauth works...
 
 === GET
 
@@ -12,7 +12,7 @@ TODO: need to understand how the Oauth works...
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/uaa/users/current' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/uaa/users/current' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
@@ -34,7 +34,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/uaa/users' -i -X POST -H 'Content-Type: application/json' -d '{"loginId": "", "firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/uaa/users' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
 ----
 
 ===== Example Response
