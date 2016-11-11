@@ -1,4 +1,4 @@
-package de.hska.uilab.mefiro.discovery;
+package de.hska.uilab.discovery;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

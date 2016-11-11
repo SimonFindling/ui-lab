@@ -1,18 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.hska.uilab.mefiro</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>ui-lab-template</name>
+	<groupId>de.hska.uilab</groupId>
+	<artifactId>ui-lab</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>ui-lab</name>
 
-    <modules>
-        <module>api-gateway</module>
-        <module>discovery-service</module>
-        <module>login-microservice</module>
-    </modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<!-- a default port for the docker vm. pls overwritte in your project pom -->
+		<docker.port>80</docker.port>
+	</properties>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.1.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<modules>
+		<module>template-project</module>
+		<module>api-gateway</module>
+		<module>discovery-service</module>
+		<module>login-microservice</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.SR1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin><groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.17.1</version>
+					<configuration>
+						<authConfig>
+							<username>${env.DOCKER_USER}</username>
+							<password>${env.DOCKER_PASS}</password>
+						</authConfig>
+						<images>
+							<image>
+								<alias>${project.name}</alias>
+								<name>${env.DOCKER_USER}/${project.artifactId}</name>
+								<build>
+									<from>frolvlad/alpine-oraclejdk8:slim</from>
+									<tags>
+										<tag>${env.TAG}</tag>
+									</tags>
+									<ports>
+										<port>${docker.port}</port>
+									</ports>
+									<volumes>
+										<volume>/tmp</volume>
+									</volumes>
+									<entryPoint>
+										<exec>
+											<arg>java</arg>
+											<arg>-Djava.security.egd=file:/dev/./urandom</arg>
+											<arg>-jar</arg>
+											<arg>/app.jar</arg>
+										</exec>
+									</entryPoint>
+									<assembly>
+										<basedir>/</basedir>
+										<inline>
+											<dependencySets>
+												<dependencySet>
+													<useProjectArtifact>true</useProjectArtifact>
+													<includes>
+														<include>${project.groupId}:${project.artifactId}</include>
+													</includes>
+													<outputDirectory>.</outputDirectory>
+													<outputFileNameMapping>app.jar</outputFileNameMapping>
+												</dependencySet>
+											</dependencySets>
+										</inline>
+									</assembly>
+									<runCmds>
+										<runCmd>sh -c 'touch /app.jar'</runCmd>
+									</runCmds>
+								</build>
+							</image>
+						</images>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

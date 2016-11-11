@@ -16,32 +16,31 @@ env:
     - secure: "jFlfJewKkTTwWHlILiYWsGiii6TWQeBma/bpOWfGmVXMIE4Y3AYyqQQ3KaXgGgAnvj7o9e/qQ4OfxtnepoQHgBuZb6/oAQI7IjQ8wVEzNiBLwzi+oI+3/yhbp7zcp+scswRo9TFwHKdxape6JTuKiYingNeWwUXrqZACiaQ4FAzD2UZKpYN8kX0SJPapku3g6Uxn6czpeXlO9vkxGB+h09MdSwAGz1sIgEUhPa0EcmEbbxxdne5oWxPyH0TJw+eIcGhqAfltASqFgQLlFr8SpdoPzCF3aCYRvFGboQRyKp4HfEcTUOFk+lMRO2UsDJeOGVEaU3mC0rs4RXS8wvPNF5g2PsRN+JKsZ8yEJtgqXp7D7cGEAJqEbTwKPibvKSAyeFJdpBRNaCOg3vWNoE+pTHxlJu7Zgko1Jt4jsr8SdC/zLi14Mikf1bOwp/nJh053ArS/f1bS0D2ZzuIe/b4NThsCrJaKTyiprOrKF7JZFCScIlRVGSGH3+HC+Vnoch5ilSFf/UiD3u+5JD+SIHnvv1RYEzXMGAnTudmuZxE2utBqkIFWXf6e+vF6ZErqkSUmSQZx2Eqlz7HBvpNZddnmJn3R7A0BmjCqdYcnxrvd1I4eXgcytVIXcg2HLTmCcxfxB7ZFfB712BLXnjTYqylKpJcdh61gkYM6Kk9Y+tGGWyk=" # DOCKER_USER
     - secure: "Jow7esp4Qad03jyXg5Wzemt2mjhEY/u2fsvwGMbxy31OOoKcdt4a5OdiXrS4uB4vtdoVaUOfH+xxuezbFSXCekx/xqfmclEnl0rLOZQpVZvFvH8xWeiUsO0GvoFxgqB57W0dO95KspzsEko/r9ASmGEle2OyaDUKJcSZIMWvDgZdMQvk9O8z/ywfeIsXC8iPBgsgn6ZRcUqbtyUERilY2/5kEgwVkZrJPqIwwYCNF3DSy89LgE5qitUEveaDIVbTqHpCUAciAEmggtBngvXAC2FWKbH7IlDxfyfV+GiDyVBABUlX9xT+G4LaDJqc7jZO6SbZEJl/gCz50JWniUEViZ6tD8e/B/GdFcogJcDtNeydIqqPfAld5XFRwO02MA2VvpNdgPkY5EG5C49XoQSVt1jWqoRXHlF0rGz/iVE+By7TeRgyaYnF6vyHp6y96ZruDlH7myuk70uFwh+QFU2GoF2fA3gMkls8UWFMk3Dh5CiDWs03oOARJOBzsorjwYK0roFF7RdM0rkunkUOnvZ+sfzJAH/7G4q6AgxwuLAmcwD/XwINDVykY8SOSJnDxTsgybMaqt4ZViR+7seEIUK0zM8RWBSJhtWECCTyLBS5ZYiXGFo4p+EJolYu2L6jlrt/geqOUoT5bu2vCkw5lWYtlA2jCP19hOKSuIBVNx5cSzc=" # DOCKER_PASS
     - COMMIT=${TRAVIS_COMMIT::7}
+     #TAG
+    - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 
 after_success:
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  #- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
   #PREFIX per group
-  - export GROUP=mefiroofficial
-
-  #TAG
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  #- export GROUP=mefiroofficial
 
   # GATEWAY SERVICE
-  - export GATEWAY=$GROUP/api-gateway
-  - docker build -t $GATEWAY:$COMMIT ./api-gateway
-  - docker tag $GATEWAY:$COMMIT $GATEWAY:$TAG
-  - docker push $GATEWAY
+  #- export GATEWAY=$GROUP/api-gateway
+  #-cd ./api-gateway
+  #- mvn deploy
+  #- cd ..
 
   # DISCOVERY SERVICE
-  - export DISCOVERY=$GROUP/discovery-service
-  - docker build -t $DISCOVERY:$COMMIT ./discovery-service
-  - docker tag $DISCOVERY:$COMMIT $DISCOVERY:$TAG
-  - docker push $DISCOVERY
+  #- export DISCOVERY=$GROUP/discovery-service
+  #- cd ./discovery-service
+  #- mvn deploy
+  #- cd ..
 
   # LOGIN SERVICE
-  - export LOGIN=$GROUP/login-microservice
-  - docker build -t $LOGIN:$COMMIT ./login-microservice
-  - docker tag $LOGIN:$COMMIT $LOGIN:$TAG
-  - docker push $LOGIN
+  #- export LOGIN=$GROUP/login-microservice
+  #- cd ./login-microservice
+  #- mvn deploy
+  #- cd ..
 
   # add more builds of services here...

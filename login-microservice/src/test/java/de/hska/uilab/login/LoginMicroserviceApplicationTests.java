@@ -1,4 +1,4 @@
-package de.hska.uilab.mefiro.login;
+package de.hska.uilab.login;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
