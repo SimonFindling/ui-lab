@@ -93,7 +93,7 @@
 				<executions>
 					<execution>
 						<id>build</id>
-						<phase>deploy</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>build-nofork</goal>
 						</goals>
@@ -101,7 +101,7 @@
 					<!-- comment out to not push locally -->
 					<execution>
 						<id>push</id>
-						<phase>deploy</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>push</goal>
 						</goals>
