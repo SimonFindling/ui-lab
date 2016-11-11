@@ -43,7 +43,7 @@
 				<executions>
 					<execution>
 						<id>build</id>
-						<phase>install</phase>
+						<phase>post-integration-test</phase>
 						<goals>
 							<goal>build-nofork</goal>
 						</goals>
@@ -51,7 +51,7 @@
 					<!-- comment out to not push locally -->
 					<execution>
 						<id>push</id>
-						<phase>install</phase>
+						<phase>post-integration-test</phase>
 						<goals>
 							<goal>push</goal>
 						</goals>

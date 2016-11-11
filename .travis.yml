@@ -17,7 +17,7 @@ env:
     - secure: "Jow7esp4Qad03jyXg5Wzemt2mjhEY/u2fsvwGMbxy31OOoKcdt4a5OdiXrS4uB4vtdoVaUOfH+xxuezbFSXCekx/xqfmclEnl0rLOZQpVZvFvH8xWeiUsO0GvoFxgqB57W0dO95KspzsEko/r9ASmGEle2OyaDUKJcSZIMWvDgZdMQvk9O8z/ywfeIsXC8iPBgsgn6ZRcUqbtyUERilY2/5kEgwVkZrJPqIwwYCNF3DSy89LgE5qitUEveaDIVbTqHpCUAciAEmggtBngvXAC2FWKbH7IlDxfyfV+GiDyVBABUlX9xT+G4LaDJqc7jZO6SbZEJl/gCz50JWniUEViZ6tD8e/B/GdFcogJcDtNeydIqqPfAld5XFRwO02MA2VvpNdgPkY5EG5C49XoQSVt1jWqoRXHlF0rGz/iVE+By7TeRgyaYnF6vyHp6y96ZruDlH7myuk70uFwh+QFU2GoF2fA3gMkls8UWFMk3Dh5CiDWs03oOARJOBzsorjwYK0roFF7RdM0rkunkUOnvZ+sfzJAH/7G4q6AgxwuLAmcwD/XwINDVykY8SOSJnDxTsgybMaqt4ZViR+7seEIUK0zM8RWBSJhtWECCTyLBS5ZYiXGFo4p+EJolYu2L6jlrt/geqOUoT5bu2vCkw5lWYtlA2jCP19hOKSuIBVNx5cSzc=" # DOCKER_PASS
     - COMMIT=${TRAVIS_COMMIT::7}
      #TAG
-    - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+    - TAG=$TRAVIS_BUILD_NUMBER
 
 after_success:
   #- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
