@@ -2,6 +2,7 @@ sudo: required
 
 services:
   - docker
+  - mvn
 
 # travis runs implicitly 'mvn test' and 'mvn install' if it finds a 'pom.xml' in the root.
 # see https://docs.travis-ci.com/user/languages/java/
@@ -20,6 +21,8 @@ env:
     - TAG=$TRAVIS_BUILD_NUMBER
 
 after_success:
+    - mvn docker:build
+    - mvn docker:push
   #- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
   #PREFIX per group

@@ -37,27 +37,6 @@
 
 	<build>
 		<plugins>
-		<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>build</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>build-nofork</goal>
-						</goals>
-					</execution>
-					<!-- comment out to not push locally -->
-					<execution>
-						<id>push</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>push</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>
