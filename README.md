@@ -61,6 +61,8 @@ $ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &
 have to run the `deploy_hook.sh` manually once or trigger the travis build again after the
 webhook url has been added.
 
+Another alternative is [watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. Then watchtower automatically pulls the new version of the image and restarts it.
+
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml` so the travis build will still work. 
 It has to have a `Dockerfile` in the module root.
