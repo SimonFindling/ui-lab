@@ -45,7 +45,6 @@
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.17.1</version>
 						<executions>
-
 							<execution>
 								<id>buildImage</id>
 								<goals>
