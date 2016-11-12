@@ -61,16 +61,29 @@ $ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &
 have to run the `deploy_hook.sh` manually once or trigger the travis build again after the
 webhook url has been added.
 
-Another alternative is [watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. Then watchtower automatically pulls the new version of the image and restarts it.
+#### Update Images via Watchtower
+Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
+
+To start Watchtower use:
+```bash
+$ docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock centurylink/watchtower nginx redis
+```
+Watchtower only updates running containers, therefore make sure the containers you want to update are already running.
 
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml` so the travis build will still work. 
-It has to have a `Dockerfile` in the module root.
-2. Add docker build config in `.travis.yml` for the new service
-3. Add service to `build_locally.sh`
+2. In the POM of your new service add the following:
+```
+	<parent>
+		<groupId>de.hska.uilab</groupId>
+		<artifactId>ui-lab</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+```
+3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
 4. Add service to `docker-compose.yml`
 5. Add a new route in `application.yml` of the api-gateway
-6. Add the hook url to the image at docker hub. 
+6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
 
 
 ## Documentation of API Gateway
@@ -90,3 +103,4 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)
 - [spring-cloud-example](https://github.com/kbastani/spring-cloud-microservice-example)
 - [docker-hook](https://github.com/schickling/docker-hook)
+- [Watchtower](https://github.com/CenturyLinkLabs/watchtower)
