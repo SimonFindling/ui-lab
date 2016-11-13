@@ -1,23 +1,24 @@
 version: '2'
 services:
-  api-gateway:
-    image: ${GROUP}/api-gateway
-    restart: always
-    environment:
-      SERVER_URL: ${SERVER_URL}
-    ports:
-      - "8081:8081"
-
   discovery:
     image: ${GROUP}/discovery-service
     restart: always
     ports:
       - "8761:8761"
 
-  login-microservice:
+  api-gateway:
+    image: ${GROUP}/api-gateway
+    restart: always
+    ports:
+      - "8081:8081"
+    links:
+      - discovery
+      - login
+
+  login:
     image: ${GROUP}/login-microservice
     restart: always
-    environment:
-      SERVER_URL: ${SERVER_URL}
     ports:
       - "9005:9005"
+    links:
+      - discovery
