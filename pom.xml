@@ -26,8 +26,9 @@
 
 	<modules>
 		<module>template-project</module>
-		<module>api-gateway</module>
+		<module>configuration-service</module>
 		<module>discovery-service</module>
+		<module>api-gateway</module>
 		<module>login-microservice</module>
 	</modules>
 
@@ -54,55 +55,55 @@
 							</execution>
 						</executions>
 						<configuration>
-					<authConfig>
-						<username>${env.DOCKER_USER}</username>
-						<password>${env.DOCKER_PASS}</password>
-					</authConfig>
-					<images>
-						<image>
-							<alias>${project.name}</alias>
-							<name>${env.DOCKER_USER}/${project.artifactId}</name>
-							<build>
-								<from>frolvlad/alpine-oraclejdk8:slim</from>
-								<tags>
-									<tag>${env.TAG}</tag>
-								</tags>
-								<ports>
-									<port>${docker.port}</port>
-								</ports>
-								<volumes>
-									<volume>/tmp</volume>
-								</volumes>
-								<entryPoint>
-									<exec>
-										<arg>java</arg>
-										<arg>-Djava.security.egd=file:/dev/./urandom</arg>
-										<arg>-jar</arg>
-										<arg>/app.jar</arg>
-									</exec>
-								</entryPoint>
-								<assembly>
-									<basedir>/</basedir>
-									<inline>
-										<dependencySets>
-											<dependencySet>
-												<useProjectArtifact>true</useProjectArtifact>
-												<includes>
-													<include>${project.groupId}:${project.artifactId}</include>
-												</includes>
-												<outputDirectory>.</outputDirectory>
-												<outputFileNameMapping>app.jar</outputFileNameMapping>
-											</dependencySet>
-										</dependencySets>
-									</inline>
-								</assembly>
-								<runCmds>
-									<runCmd>sh -c 'touch /app.jar'</runCmd>
-								</runCmds>
-							</build>
-						</image>
-					</images>
-				</configuration>
+							<authConfig>
+								<username>${env.DOCKER_USER}</username>
+								<password>${env.DOCKER_PASS}</password>
+							</authConfig>
+							<images>
+								<image>
+									<alias>${project.name}</alias>
+									<name>${env.DOCKER_USER}/${project.artifactId}</name>
+									<build>
+										<from>frolvlad/alpine-oraclejdk8:slim</from>
+										<tags>
+											<tag>${env.TAG}</tag>
+										</tags>
+										<ports>
+											<port>${docker.port}</port>
+										</ports>
+										<volumes>
+											<volume>/tmp</volume>
+										</volumes>
+										<entryPoint>
+											<exec>
+												<arg>java</arg>
+												<arg>-Djava.security.egd=file:/dev/./urandom</arg>
+												<arg>-jar</arg>
+												<arg>/app.jar</arg>
+											</exec>
+										</entryPoint>
+										<assembly>
+											<basedir>/</basedir>
+											<inline>
+												<dependencySets>
+													<dependencySet>
+														<useProjectArtifact>true</useProjectArtifact>
+														<includes>
+															<include>${project.groupId}:${project.artifactId}</include>
+														</includes>
+														<outputDirectory>.</outputDirectory>
+														<outputFileNameMapping>app.jar</outputFileNameMapping>
+													</dependencySet>
+												</dependencySets>
+											</inline>
+										</assembly>
+										<runCmds>
+											<runCmd>sh -c 'touch /app.jar'</runCmd>
+										</runCmds>
+									</build>
+								</image>
+							</images>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -145,7 +146,7 @@
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.17.1</version>
-				
+
 			</plugin>
 		</plugins>
 	</build>
