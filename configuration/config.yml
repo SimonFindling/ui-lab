@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/kbastani/spring-boot-microservice-config
+          uri: https://github.com/mefiroofficial/ui-lab/tree/master/configuration
         health:
           repositories:
 server:
