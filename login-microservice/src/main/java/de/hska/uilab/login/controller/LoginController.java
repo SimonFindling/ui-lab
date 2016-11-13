@@ -19,4 +19,9 @@ public class LoginController {
 		
 		return new ResponseEntity<String>(res, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public ResponseEntity<String> info() {
+		return new ResponseEntity<String>("Hello! This is login-microservice", HttpStatus.OK);
+	}
 }
