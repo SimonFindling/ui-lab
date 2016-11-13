@@ -26,7 +26,6 @@
 
 	<modules>
 		<module>template-project</module>
-		<module>configuration-service</module>
 		<module>discovery-service</module>
 		<module>api-gateway</module>
 		<module>login-microservice</module>
