@@ -1,8 +1,5 @@
 spring:
   application:
     name: login
-  cloud:
-    config:
-      uri: http://config:8888
 encrypt:
   failOnError: false

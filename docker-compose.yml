@@ -5,7 +5,7 @@ services:
     restart: always
     ports:
       - "8761:8761"
-  api-gateway:
+  gateway:
     image: ${GROUP}/api-gateway
     restart: always
     ports:
