@@ -3,18 +3,21 @@ server:
 
 eureka:
   instance:
-    leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: /info
-    healthCheckUrlPath: /health
+    hostname: gateway
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
 
 zuul:
     ignoredServices: '*'
     routes:
       login-api:
           path: /login-api/**
-          serviceId: login-microservice
+          serviceId: login
           stripPrefix: false
-          url: http://${SERVER_URL}:9005/
+          url: http://login:9005/
 
 ribbon:
   ConnectTimeout: 3000
@@ -22,4 +25,4 @@ ribbon:
   maxAutoRetries: 1
   MaxAutoRetriesNextServer: 2
   eureka:
-  enabled: true
+    enabled: true

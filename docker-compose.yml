@@ -5,7 +5,6 @@ services:
     restart: always
     ports:
       - "8761:8761"
-
   api-gateway:
     image: ${GROUP}/api-gateway
     restart: always
@@ -14,7 +13,6 @@ services:
     links:
       - discovery
       - login
-
   login:
     image: ${GROUP}/login-microservice
     restart: always
