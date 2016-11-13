@@ -1,15 +1,5 @@
 server:
   port: 8081
-
-eureka:
-  instance:
-    hostname: gateway
-  client:
-    registerWithEureka: true
-    fetchRegistry: true
-    serviceUrl:
-      defaultZone: http://discovery:8761/eureka/
-
 zuul:
     ignoredServices: '*'
     routes:
@@ -18,11 +8,11 @@ zuul:
           serviceId: login
           stripPrefix: false
           url: http://login:9005/
-
-ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
-  maxAutoRetries: 1
-  MaxAutoRetriesNextServer: 2
-  eureka:
-    enabled: true
+eureka:
+  instance:
+    hostname: gateway
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
