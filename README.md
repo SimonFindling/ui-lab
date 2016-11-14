@@ -79,7 +79,14 @@ Once the API Gateway is set up via
 the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`
 
 ### Statically
-Just open `api-gateway/src/main/asciidoc/api-guide.html`
+## How to compile the api gateway proposal
+ You need to install [asciidoctor](http://asciidoctor.org) first. Then run
+ ```bash
+ # compile
+ asciidoctor api-gateway/src/main/asciidoc/api-guide.adoc
+ # open it
+ open api-gateway/src/main/asciidoc/api-guide.html
+ ```
 
 # TODOS
 - Get `zuul` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
