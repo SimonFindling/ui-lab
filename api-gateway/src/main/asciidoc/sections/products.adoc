@@ -1,7 +1,7 @@
 [products]
 == Product-Service
 
-The tenant is identified by the 'Bearer Header Token'.
+The tenant aka client is identified by the 'Bearer Header Token'.
 
 === GET
 
@@ -14,7 +14,6 @@ $ curl 'http://DOCKER-HOST:8080/products' -i -H 'Accept: application/json' -H 'A
 ----
 
 ===== Example Response
-The images are base64 encoded!
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 200 OK

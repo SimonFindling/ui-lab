@@ -1,6 +1,6 @@
 [customers]
 == Customer-Service
-The tenant is identified by the 'Bearer Header Token'
+The tenant aka client is identified by the 'Bearer Header Token'
 
 === GET
 
@@ -65,6 +65,31 @@ $ curl 'http://DOCKER-HOST:8080/customers' -i -X POST -H 'Content-Type: applicat
 HTTP/1.1 201 Created
 
 ----
+
+=== PUT
+
+==== Modify an existing customer for a client
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/customers/{customerId}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"customerId":"","firstName":"", "lastName":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+ {
+  "id":"{customerId}",
+  "firstName":"",
+  "lastName":""
+ }
+
+----
+
 
 === DELETE
 
