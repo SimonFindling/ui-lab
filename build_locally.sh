@@ -32,13 +32,9 @@ echo "-> Fine √"
 
 ###################
 info "Check if ENV variables were set"
-[ -z "$GROUP" ] && echo "Need to set GROUP" && exit 1;
-[ -z "$SERVER_URL" ] && echo "Need to set SERVER_URL" && exit 1;
+[ -z "$DOCKER_USER" ] && echo "Need to set GROUP" && exit 1;
+[ -z "$TAG" ] && echo "Need to set SERVER_URL" && exit 1;
 
 ###################
 info "Bulding microservices"
-MICROSERVICES=( api-gateway discovery-service login-microservice  )
-for MICROSERVICE in ${MICROSERVICES[@]}; do
-  info "Bulding '$MICROSERVICE'"
-  cd $MICROSERVICE && mvn clean package docker:build && cd ..
-done
+mvn clean package docker:build

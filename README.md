@@ -7,10 +7,10 @@ This project is part of the masters course Graphical user interfaces.
 If you want to build and set up the dockers containers locally:
 ```bash
 # build all local docker images
-export GROUP=<your group name>
-export SERVER_URL=localhost
+export DOCKER_USER=<your group name>
+export TAG=latest
 ./build_locally.sh
-# Note the docker-compose.yml also need the ENV vars
+# Note the docker-compose.yml also needs the ENV vars
 docker-compose up -d
 ```
 Check `curl localhost:8081/docs/api-guide.html`, which can take some time
@@ -35,31 +35,31 @@ your docker hub account.
 #### Intial setup
 1. Set up ENV Vars
 ```bash
-$ export GROUP="<your group name>"
-$ export SERVER_URL="<server ip>"
+$ export DOCKER_USER="<your group name>"
+$ export TAG=latest
 ```
 2. Use the `docker-compose.yml` file from root and copy it onto the remote server
 3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag
 of the container. Specify another version if you're working on a branch. 
 
-#### Add Webhooks
-I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each time
-a new version of the image is pushed by travis to docker hub the webhook is
-triggered. Read all steps first please!
+<!--#### Add Webhooks-->
+<!--I suggest using [docker-hook](https://github.com/schickling/docker-hook). Each time-->
+<!--a new version of the image is pushed by travis to docker hub the webhook is-->
+<!--triggered. Read all steps first please!-->
 
-1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)
-2. Maybe the following commands will be necessary
-```bash
-$ sudo apt-get install python python-pip
-$ sudo pip install requests
-```
-3. Copy the `deploy_hook.sh` script in the HOME dir and register it via 
-```bash
-$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &
-```
-4. Add the webhook url described in the instruction link above to the new image in docker hub. Maybe you
-have to run the `deploy_hook.sh` manually once or trigger the travis build again after the
-webhook url has been added.
+<!--1. Prepare the server using the following [instructions](https://github.com/schickling/docker-hook#1-prepare-your-server)-->
+<!--2. Maybe the following commands will be necessary-->
+<!--```bash-->
+<!--$ sudo apt-get install python python-pip-->
+<!--$ sudo pip install requests-->
+<!--```-->
+<!--3. Copy the `deploy_hook.sh` script in the HOME dir and register it via -->
+<!--```bash-->
+<!--$ docker-hook -t <auth-token> -c sh ${HOME}/deploy_hooks.sh &-->
+<!--```-->
+<!--4. Add the webhook url described in the instruction link above to the new image in docker hub. Maybe you-->
+<!--have to run the `deploy_hook.sh` manually once or trigger the travis build again after the-->
+<!--webhook url has been added.-->
 
 #### Update Images via Watchtower
 Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
@@ -97,6 +97,12 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 
 # TODOS
 - Get `zuul` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
+```bash
+#works
+curl -D- -X GET localhost:9005/login/admin/admin
+# but want it via the gateway
+curl -D- -X GET localhost:8081/login/admin/admin
+```
 - Start the docker-hook command so that it's still running although the terminal is closed.
 
 # Inspiration / Props

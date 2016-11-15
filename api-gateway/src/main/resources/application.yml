@@ -6,6 +6,8 @@ eureka:
       defaultZone: http://discovery:8761/eureka/
   instance:
     preferIpAddress: true
+sidecar:
+  port: 8000
 ribbon:
   eureka:
     enabled: true
