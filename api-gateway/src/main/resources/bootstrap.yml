@@ -1,13 +1,6 @@
 spring:
     application:
-        name: zuul
-    cloud:
-        config:
-            enabled: false
-eureka:
-    client:
-        serviceUrl:
-            defaultZone: http://discovery:8761/eureka/
+        name: gateway
 security:
   basic:
     enabled: false
