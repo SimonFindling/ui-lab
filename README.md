@@ -84,13 +84,11 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
  open api-gateway/src/main/asciidoc/api-guide.html
  ```
 
-# TODOS
-- Get `zuul` or `sidecar` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
+## Routing
+- With `sidecar` the route to a service is defined by its `spring.application.name` in the `bootstrap.properties` or `yml`.
+Then the defined resources in the controllers can be accessed. Here is an example. 
 ```bash
-# works
-curl -D- -X GET localhost:9005/login/admin/admin
-# but want it via the gateway
-curl -D- -X GET localhost:8081/login/admin/admin
+curl -D- -X GET localhost:8081/login/login/admin/admin
 ```
 
 # Inspiration / Props
