@@ -45,9 +45,9 @@ of the container. Specify another version if you're working on a branch.
 #### Update Images via Watchtower
 Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
 
-To start Watchtower use:
+To start Watchtower for watching all running containers use (without arguments):
 ```bash
-$ docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock centurylink/watchtower nginx redis
+$ docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock centurylink/watchtower
 ```
 Watchtower only updates running containers, therefore make sure the containers you want to update are already running.
 
@@ -77,14 +77,13 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 ### Statically
 
 # TODOS
-- Get `zuul` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
+- Get `zuul` or `sidecar` running with `serviceId` instead of `urls`. Read [here](https://github.com/sqshq/PiggyMetrics#api-gateway)
 ```bash
 # works
 curl -D- -X GET localhost:9005/login/admin/admin
 # but want it via the gateway
 curl -D- -X GET localhost:8081/login/admin/admin
 ```
-- Start the docker-hook command so that it's still running although the terminal is closed.
 
 # Inspiration / Props
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)
