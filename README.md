@@ -9,7 +9,7 @@ If you want to build and set up the dockers containers locally:
 # build all local docker images
 export DOCKER_USER=<your group name>
 export TAG=latest
-./build_locally.sh
+./build_locally.sh (or mvn install in the main project)
 # Note the docker-compose.yml also needs the ENV vars
 docker-compose up -d
 ```
@@ -90,7 +90,7 @@ Then the defined resources in the controllers can be accessed. Here is an exampl
 ```bash
 curl -D- -X GET localhost:8081/login/login/admin/admin
 ```
-
+- It is possible to see all current routings under `<gateway-url>/routes`. See [here](http://212.227.198.46:8081/routes) for a working gateway server.
 # Inspiration / Props
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)
 - [spring-cloud-example](https://github.com/kbastani/spring-cloud-microservice-example)
