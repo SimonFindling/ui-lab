@@ -19,5 +19,5 @@ env:
     - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 
 after_success:
-    - mvn clean package docker:build
+    - mvn docker:build
     - mvn docker:push
