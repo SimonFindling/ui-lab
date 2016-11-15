@@ -5,6 +5,7 @@ tmp/
 work/
 .idea
 *.html
+*.iml
 
 ### STS ###
 .apt_generated

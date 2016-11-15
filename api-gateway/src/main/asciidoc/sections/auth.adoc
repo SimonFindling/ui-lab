@@ -1,7 +1,7 @@
 [auth]
 == Authorization-Service
 
-Handles the authorization of the tenants aka client.
+Handles the authorization of the tenants aka clients.
 
 **TODO:** need to understand how the Oauth works...
 

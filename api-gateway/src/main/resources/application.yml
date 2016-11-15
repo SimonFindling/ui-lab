@@ -1,25 +1,13 @@
 server:
   port: 8081
-
 eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
   instance:
-    leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: /info
-    healthCheckUrlPath: /health
-
-zuul:
-    ignoredServices: '*'
-    routes:
-      login-api:
-          path: /login-api/**
-          serviceId: login-microservice
-          stripPrefix: false
-          url: http://${SERVER_URL}:9005/
-
+    preferIpAddress: true
+sidecar:
+  port: 8000
 ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
-  maxAutoRetries: 1
-  MaxAutoRetriesNextServer: 2
   eureka:
-  enabled: true
+    enabled: true

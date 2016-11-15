@@ -1,6 +1,6 @@
 [employees]
 == Employee-Service
-Handles the employees a each tenant.
+Handles the employees of each tenant.
 The tenant is identified by the 'Bearer Header Token'.
 
 === GET
