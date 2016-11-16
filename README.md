@@ -20,16 +20,31 @@ until everything is set up. Consider `docker logs -tf <container-hash>` for the 
 1. Fork this repository
 2. Create a branch from master for changes you want to push back to the template (e.g. OAuth)
 3. Set up a [Docker Hub](https://hub.docker.com/) account
-4. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
-5. Activate the repository in `travis`
-6. Edit `.travis.yml` file and replace `GROUP` env with the name of your group, which should be the same like
-your docker hub account.
-7. Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. 
- See [here](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables) for details.
-8. Make a change, commit, push and see if `travis` builds
-9. If the build was successful, check your dockerhub account if the images appears
-10. Pull if from docker hub.
-11. The Push to your server will be explained in the **Add webhooks** section.
+  1. Create new repositories on Docker Hub for each mircoservice. Currently api-gateway, login-microservice, discovery-service and template-project. 
+5. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
+6. Activate the repository in `travis`
+7. Edit `.travis.yml` file and replace `GROUP` env with the name of your group, which should be the same like
+your docker hub account. (this wasn't necessary)
+8. Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. See [here](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables) for details.
+9. Make a change, commit, push and see if `travis` builds
+10. If the build was successful, check your dockerhub account if the images appears
+11. Pull if from docker hub.
+12. The Push to your server will be explained in the **Add webhooks** section.
+
+or
+
+1. Fork this repository
+2. Create a branch from master for changes you want to push back to the template (e.g. OAuth)
+3. Set up a [Docker Hub](https://hub.docker.com/) account
+  1. Create new repositories on Docker Hub for each mircoservice. Currently api-gateway, login-microservice, discovery-service and template-project. 
+5. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
+6. Activate the repository in `travis`
+7. Go to the settings of your travis repository.
+8. Under `Environment Variables` set `DOCKER_EMAIL`, `DOCKER_USER` and `DOCKER_PASS` with your information. See [here](https://cinhtau.net/wp/use-travis-ci-in-github-to-build-and-deploy-to-dockerhub/#Deploy_to_Dockerhub) for details but **use names as specified here**.
+9. Make a change, commit, push and see if `travis` builds
+10. If the build was successful, check your dockerhub account if the images appears
+11. Pull if from docker hub.
+12. The Push to your server will be explained in the **Add webhooks** section.
 
 ### Setup for server
 #### Intial setup
@@ -38,9 +53,8 @@ your docker hub account.
 $ export DOCKER_USER="<your group name>"
 $ export TAG=latest
 ```
-2. Use the `docker-compose.yml` file from root and copy it onto the remote server
-3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag
-of the container. Specify another version if you're working on a branch. 
+    2. Use the `docker-compose.yml` file from root and copy it onto the remote server
+    3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag of the container. Specify another version if you're working on a branch. 
 
 #### Update Images via Watchtower
 Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
@@ -61,10 +75,10 @@ Watchtower only updates running containers, therefore make sure the containers y
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 ```
-3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
-4. Add service to `docker-compose.yml`
-5. Add a new route in `application.yml` of the api-gateway
-6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
+    3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
+    4. Add service to `docker-compose.yml`
+    5. Add a new route in `application.yml` of the api-gateway
+    6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
 
 
 ## Documentation of API Gateway
