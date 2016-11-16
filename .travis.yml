@@ -12,4 +12,4 @@ after_success:
     # - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - mvn docker:build
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASS"
-  - docker push wd40/ui-lab
+  - mvn docker:push
