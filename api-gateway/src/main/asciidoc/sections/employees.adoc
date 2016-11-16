@@ -23,13 +23,13 @@ Content-Length:
  {
   "id":"",
   "firstName":"",
-  "lastName":""
+  "lastName":"",
   "rights":
-  [
+  {
     "ADD_PRODUCT":"YES",
     "MODIFY_PRODUCT":"YES",
     "DELETE_PRODUCT":"NO"
-  ]
+  }
  }
 ]
 ----
@@ -52,13 +52,13 @@ Content-Length:
  {
   "id":"",
   "firstName":"",
-  "lastName":""
+  "lastName":"",
   "rights":
-  [
+  {
     "ADD_PRODUCT":"YES",
     "MODIFY_PRODUCT":"YES",
     "DELETE_PRODUCT":"NO"
-  ]
+  }
  }
 ----
 
@@ -97,13 +97,13 @@ Content-Length:
  {
   "id":"",
   "firstName":"",
-  "lastName":""
+  "lastName":"",
   "rights":
-  [
+  {
     "ADD_PRODUCT":"YES",
     "MODIFY_PRODUCT":"YES",
     "DELETE_PRODUCT":"NO"
-  ]
+  }
  }
 
 ----
