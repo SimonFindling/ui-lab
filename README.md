@@ -49,12 +49,13 @@ or
 ### Setup for server
 #### Intial setup
 1. Set up ENV Vars
-```bash
-$ export DOCKER_USER="<your group name>"
-$ export TAG=latest
-```
-    2. Use the `docker-compose.yml` file from root and copy it onto the remote server
-    3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag of the container. Specify another version if you're working on a branch. 
+
+    ```bash
+    $ export DOCKER_USER="<your group name>"
+    $ export TAG=latest
+    ```
+2. Use the `docker-compose.yml` file from root and copy it onto the remote server
+3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag of the container. Specify another version if you're working on a branch. 
 
 #### Update Images via Watchtower
 Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
@@ -68,17 +69,18 @@ Watchtower only updates running containers, therefore make sure the containers y
 ## Steps for adding a new service
 1. Add new service as `module` in root `pom.xml` so the travis build will still work. 
 2. In the POM of your new service add the following:
-```
+
+    ```
 	<parent>
 		<groupId>de.hska.uilab</groupId>
 		<artifactId>ui-lab</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-```
-    3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
-    4. Add service to `docker-compose.yml`
-    5. Add a new route in `application.yml` of the api-gateway
-    6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
+    ```
+3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
+4. Add service to `docker-compose.yml`
+5. Add a new route in `application.yml` of the api-gateway
+6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
 
 
 ## Documentation of API Gateway
