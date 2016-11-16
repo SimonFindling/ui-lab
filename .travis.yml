@@ -17,6 +17,8 @@ env:
     - secure: "G1fbGzzdSVU8shW4McUZV/f3r+rOZLV3s+OtwJzYkQjEs3utsFb2DgAlAr7UZU6fm0fCZACWEC6RdZd2sW02ce266qFAn4VcNivawufOujYy7IPexQ++KJdqt7hlwV11TukidMjwUHfi7ymFk0/ThGUowXdiamE5BrTiNdKBqYhaKq/H7ikb6rhYPr13MK+vlSy5e5iDCOFeBEWbWEAHB4w/Eb8oVyAZtywgePiEBlnWc/gAJ11IFGvIuRC0t+zoxvdz5cWqhQ7qwEXroimPhzrJET5ybJlOvjlcnYUdjoOSyde7Y/PkoHtI2Ji2r6rm+aUw2liEjvx2obJs9pTWQZou7jvzp1TjMgAvzHUjgaqqB+Wm58a+Xz+Feugk18D8r5cPwmsd4frQiXf6vMcvhUt/K8eKlSfw9VFwyieiuxJjqBWyCCa51g2YWM5HwI5GOqZ2jlpVRf8YOLZ0/ptQKN092szNIEQDPmPEnEcF1LDhmI9EtvN+br3+7KqGUr66YzZw3rcz1CpJ30e0epPyYz+qw4BwueoIOrk+yYX9xNmuOLKL0ha9ozmhtk4okoJoAeuwFo2zKmKslgFjyB5uzffwcFQWaHDQTo8oGG7aAXjFxq+NhzMhUSfwd5RIaEae/WPmvLvCDSUOKfJdqhroM6EZyD7TtHVQ84byU51hVRc=" # DOCKER_PASS
 
 after_success:
-    - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+    - export DOCKER_USER="wd40"
+    # - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+    - export TAG="latest"
     - mvn docker:build
     - mvn docker:push
