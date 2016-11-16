@@ -8,16 +8,13 @@ services:
 language: java
 jdk: oraclejdk8
 
-# see https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables
-# they are tied to the repository in travis!
-env:
-  global:
-    - secure: "XOtyneidvApO93xQRP7q0mBKIJ1XksCBgPIRZyeqD+M8iI+Wz0uGzMWTMdMBT7gUngQxCA+4CgiZ9NZxD0DKjH/WrXbLi7NnUXbZ8TCyIPgNtcGLeYppFXLwEIw9GlxjGrNrYaCYW0NPkqY5BXZ8zfdZWyJXPA6ZrjWsjPvaEV0NEF/VUdLVHcokf+8nk2CuIYWaKfb9UW99VesPy1fDnv3wHthXgU/FOqQbhGxd7LuTNGZouPPacTBmzwlBJkg1jz4AdMbpCHa1it8p8wggEu05j+KsdmhsBfN1E8AbLj+eUPPtkkNTNIqgcGTyrH1zjE+w3xRiA4fI2vH7Kb/Q07QaEFytygbjPXTDBdijwv8gRsrjGwzcUY9XHFJddnyDMR/ARy3uVUhYJPeQeLZdRYV/wt0TvJkxG6HLS9AI1mIaRNXKxB3nY5jFCn0k6Vhl3rm9jpkcAZ0PBHLzbj4EwK72Hk70otJ/Ays9GjwAYqJzSN8DKYOVstlyVDx6PSXt3eHpoIqZsQAAk73LX+/IVUNWyYv4SZSUJl++xJCDKOHBcZpwvN61NCYHjKX03oOEasU/ZlYZ2TJCbT7t7bdzjLIAwccXteWwCc0CSIF1ktCwzaIsFkUhR3regqnWQa5A60WUHmxe6NyKRp+YOL3d8Z6GDyeaVCL0zdL202kyDNg=" # DOCKER_EMAIL
-    - secure: "eyHYo0TvduN9H5kLxt72ynPyRmJ106TTVblwNv6Q+Ns1WSqgSrn5d2AeAUR38zJesCsbPPlAk1hJdoVqOiCUg+yGNy70p8CEr+z/aC3H9TZtXOCB0HBHhyctki3Q6xqdcBAUs0mRZwL17gKCUoCiRwJ5ujRlQnnsKHGie/Vf6gPG8sEQtcK4MckGUYtVjkR5WJZKB5NEJibkyBy/O6aAHb1sG99D5+uJUA0igwT0Z+RP3T0ldh1v7FQvUGeSsBMEYgJ0Jnsn9yS5A9vQPtuUqE3FgX3RlEr9L6z++S+nEdo2mS+lobnJTOb5DVZFYfK+guvj62RXiJBe1kbHraHwwQRrwZWHKvK2mwB2/fUQybQuGzdBr0QMCWMJYTlvDuzkTnAlvGMP7h3apCk2odV8n+87DHLJDLAsVQoVACq4q8gtQ30vcaeJeW+7tmyjaSXlPqS1lgMtRGGSV3aEMqYvFsW19liEgt8BqT75Y4n3PttJP91nkyKtph88W93LsZaet8zxFnR83h+4lJ8eyn0XI0RTyUcON/c89YR8LOvkT8u7fOXcgO/bWD7FELuIQqdf3El31rFyAnoNtP8KM9YiKdhS/m1/NI1ewNtJbxCm7CpAyjaE6nA+rzoe5rQ8CNkMoVO2ekZC96zm2oWE2fN6YD1tsSUOBBdifIzH+0DlD1Q=" # DOCKER_USER
-    - secure: "G1fbGzzdSVU8shW4McUZV/f3r+rOZLV3s+OtwJzYkQjEs3utsFb2DgAlAr7UZU6fm0fCZACWEC6RdZd2sW02ce266qFAn4VcNivawufOujYy7IPexQ++KJdqt7hlwV11TukidMjwUHfi7ymFk0/ThGUowXdiamE5BrTiNdKBqYhaKq/H7ikb6rhYPr13MK+vlSy5e5iDCOFeBEWbWEAHB4w/Eb8oVyAZtywgePiEBlnWc/gAJ11IFGvIuRC0t+zoxvdz5cWqhQ7qwEXroimPhzrJET5ybJlOvjlcnYUdjoOSyde7Y/PkoHtI2Ji2r6rm+aUw2liEjvx2obJs9pTWQZou7jvzp1TjMgAvzHUjgaqqB+Wm58a+Xz+Feugk18D8r5cPwmsd4frQiXf6vMcvhUt/K8eKlSfw9VFwyieiuxJjqBWyCCa51g2YWM5HwI5GOqZ2jlpVRf8YOLZ0/ptQKN092szNIEQDPmPEnEcF1LDhmI9EtvN+br3+7KqGUr66YzZw3rcz1CpJ30e0epPyYz+qw4BwueoIOrk+yYX9xNmuOLKL0ha9ozmhtk4okoJoAeuwFo2zKmKslgFjyB5uzffwcFQWaHDQTo8oGG7aAXjFxq+NhzMhUSfwd5RIaEae/WPmvLvCDSUOKfJdqhroM6EZyD7TtHVQ84byU51hVRc=" # DOCKER_PASS
+before_install:
+  - docker build -t wd40/ui-lab
+  
+script:
+  - docker images wd40/ui-lab
 
 after_success:
     # - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-    - export TAG="latest"
-    - mvn docker:build
-    - mvn docker:push wd40/ui-lab
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASS"
+  - docker push wd40/ui-lab
