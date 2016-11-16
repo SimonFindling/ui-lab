@@ -61,7 +61,7 @@
 							<images>
 								<image>
 									<alias>${project.name}</alias>
-									<name>${env.DOCKER_USER}/${project.artifactId}</name>
+									<name>wd40/${project.artifactId}</name>
 									<build>
 										<from>frolvlad/alpine-oraclejdk8:slim</from>
 										<tags>
