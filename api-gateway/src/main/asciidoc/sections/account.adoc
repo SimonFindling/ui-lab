@@ -11,7 +11,7 @@ The tenant is identified by the 'Bearer Header Token'.
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -H 'Accept: application/json'
 ----
 
 ===== Example Response
@@ -33,12 +33,12 @@ Content-Length:
 
 ----
 
-==== Get account by name
+==== Get account by id
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/{name}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/{accountId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
@@ -63,7 +63,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
 ----
 
 ===== Example Response
@@ -88,7 +88,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
 ----
 
 ===== Example Response

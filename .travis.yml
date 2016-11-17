@@ -8,14 +8,8 @@ services:
 language: java
 jdk: oraclejdk8
 
-# see https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables
-# they are tied to the repository in travis!
-env:
-  global:
-    - secure: "IriwuFL5oIX0tYPSHNILcOn3KdTZogSUYwb0yk9QbH0gMtgoTQ86Ttoct3bMj72OhVTm4BAgxNYnGpLooQVHyzUUYOyJf6auqoUCldnNye1qC5KGhM+q0FvLdU991vNkD47vJUXNd/SBZq1sMRJwLXlKTXd4penO7KTlOLE1UbglK0LoLRuSsyt9VUydWGG595RCOMII1QLpBwkUdNAslSj3eiUP9Vl8ixBmty9kqWtx1icq9v0xq2pZNWjIFaigzstkASQWBRDvxHGBSzyLZ77BTUk+eKvUcxZranEdyw/0kqfewlDq/AEXY3tnmGHi5/qCwAjpWdMWzPz2gIztIYaK5yRgeOFYsxojFJ8MW94NQqBJ5GlZ1NQ730ao9VKFBSAZtFLfi8euwnrPR4rnmdCoRhAQhktkF/iXsW0tkl3uDeghzZq2zU1NADQFUNNipzFQ8z9OogvH4Ga4Iyj2exla+GMlPFl9bS5sT7XXzvMrUsb+6bCvPKWRU9XKt/saLY0QaEt1n3QRxQpkhs6p7fOuW//u7jtfdCDmiLkGuQqazVQ/F9dsN/awo7XS8ZS698R+T7JHOzSldA0Hr0DTJONGErM/YTky1hvAze7kofh5ehB/HW6Hq39JMr0s9Oye+ys7EoJcEun3MESK+aEZUB63YZNm39z1+gdOvjj/Cu8=" # DOCKER_USER
-    - secure: "HktPIC2RIuZDZSKAQa66m9+1WGkseXhnBeIdQXp3MCXW3FRHM++XDGsjT1R2cpa+l6fIHS9vWduUDch6t51LOACDvQbe0qlTFjpp0C1dcMyyZmPSVep4bjliP1scjCuAzAAaPXdDjVVgnSuAN8BFlu5TfBozOEjcAUKncXaKFv7OlUmXZq3G23b8Papve/Ao06xJUwNKXrXRrxwzWTtoamJ9ZZBQU97iVR79zf9KacHX5RtIi3CBkKHrC9DfLoa1tZubWYqgkAMARg2zZ8MzpOGjgK5TrNEVKqXgu49eC4WKOH56mg8/6xTK9IiZHPQnlXrM6Tp6Bp/EDDFx7CgEkHnionNNF2yH2qOBSidL+tkb7iaBHRQVCcQ7VGE8jNu9buWgL+hLCskwC4zOxO3e5qOzDMrYeDndsqGVoMHKbq1Lq2Hjx2aJL14qUWf3yPCwmc7V9pZ2IWci0LjNAbAlkF84MQCQj2HFA1ILjzDQaW068QqXEJEtjNQxUn0L+yhlwk1veGMZNVXOkxLGlBFetQvZIQFTI0uz+H2dClr+gyJR0Ft+npA7yx427pyNGM+7Jm1Eklj5RUZzYII/kyrccGUDHvY/CmvEubDMBli1KTaTs4mLuATjuCh1gIOGyJSCib4agpoFb4MvCQC7ceC1SPDAV2TAxKHFcFGEUzjmV3g=" # DOCKER_PASS
-
 after_success:
-    - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-    - mvn docker:build
-    - mvn docker:push
+    # - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - mvn docker:build
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASS"
+  - mvn docker:push
