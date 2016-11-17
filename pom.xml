@@ -13,6 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<docker-maven-plugin.version>0.17.1</docker-maven-plugin.version>
 		<!-- a default port for the docker vm. pls overwritte in your project pom -->
 		<docker.port>80</docker.port>
 	</properties>
@@ -43,7 +44,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.17.1</version>
+						<version>${docker-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>buildImage</id>
@@ -144,8 +145,7 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.17.1</version>
-
+				<version>${docker-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
