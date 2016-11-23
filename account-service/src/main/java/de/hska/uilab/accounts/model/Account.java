@@ -30,36 +30,37 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 /**
  * Created by mavogel on 11/23/16.
  */
-@Entity
+@Entity(name = "account")
 public class Account implements Serializable {
 
     @Id
-    @NotBlank
-    private final String username;
+    private String username;
 
     @Email @NotBlank
     private String email;
 
-    @Length(min = 6, max = 64) private String password;
-    @NotEmpty private Status status;
+    @Length(min = 6, max = 64)
+    private String password;
 
+    private Status status;
     private String firstname;
     private String lastname;
     private String company;
 
-    @OneToMany
-    private List<Service> services;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "username"))
+    private List<Service> services = new ArrayList<>();
 
     /**
      * Creates a new account for a PROSPECT
@@ -71,6 +72,15 @@ public class Account implements Serializable {
         return new Account(email);
     }
 
+    /**
+     * JPA needs it
+     */
+    private Account() {
+    }
+
+    /**
+     * C'tor
+     */
     private Account(final String email) {
         this.email = email;
         this.username = email.substring(0, email.indexOf('@'));
@@ -138,5 +148,13 @@ public class Account implements Serializable {
 
     public void setServices(final List<Service> services) {
         this.services = services;
+    }
+
+    public void addService(final Service service) {
+        this.services.add(service);
+    }
+
+    public void addServices(final Service... service) {
+        this.services.addAll(Arrays.asList(service));
     }
 }

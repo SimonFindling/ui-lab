@@ -30,9 +30,9 @@ Content-Length:
   "company":"",
   "status":"PROSPECT",
   "services": [
-    'PRODUCT',
-    'CUSTOMER',
-    'SALES'
+    "name":"PRODUCT",
+    "name":"CUSTOMER",
+    '"name":"SALES",'
   ]
  }
 ]
@@ -61,9 +61,9 @@ Content-Length:
   "company":"",
   "status":"PROSPECT",
   "services": [
-    'PRODUCT',
-    'CUSTOMER',
-    'SALES'
+    "name":"PRODUCT",
+    "name":"CUSTOMER",
+    '"name":"SALES",'
   ]
 }
 
@@ -116,9 +116,9 @@ Content-Length:
   "email":"",
   "status":"PROSPECT",
   "services": [
-    'PRODUCT',
-    'CUSTOMER',
-    'SALES'
+    "name":"PRODUCT",
+    "name":"CUSTOMER",
+    '"name":"SALES",'
   ]
 }
 ----
@@ -145,9 +145,9 @@ Content-Length: 0
   "email":"",
   "status":"CUSTOMER",
   "services": [
-    'PRODUCT',
-    'CUSTOMER',
-    'SALES'
+    "name":"PRODUCT",
+    "name":"CUSTOMER",
+    '"name":"SALES",'
   ]
 }
 ----
@@ -157,7 +157,7 @@ Content-Length: 0
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/addservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "STATISTICS" ]'
+$ curl 'http://DOCKER-HOST:8080/accounts/addservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"STATISTICS" ]'
 ----
 
 ===== Example Response
@@ -174,10 +174,10 @@ Content-Length: 0
   "email":"",
   "status":"CUSTOMER",
   "services": [
-    'PRODUCT',
-    'CUSTOMER',
-    'SALES',
-    'STATISTICS'
+    "name":"PRODUCT",
+    "name":"CUSTOMER",
+    "name":"SALES",
+    "name":"STATISTICS"
   ]
 }
 ----
@@ -204,7 +204,7 @@ Content-Length: 0
   "email":"",
   "status":"CUSTOMER",
   "services": [
-    'PRODUCT',
+    "name":"PRODUCT",
     'CUSTOMER'
   ]
 }

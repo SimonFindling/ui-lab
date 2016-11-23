@@ -1,4 +1,4 @@
-package de.hska.uilab.accounts.model;/*
+package de.hska.uilab.accounts.controller;/*
  *  The MIT License (MIT)
  *
  *  Copyright (c) 2016 Manuel Vogel
@@ -24,49 +24,32 @@ package de.hska.uilab.accounts.model;/*
  *  https://opensource.org/licenses/MIT
  */
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
+import de.hska.uilab.accounts.model.Account;
+import de.hska.uilab.accounts.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by mavogel on 11/23/16.
  */
-@Entity(name = "service")
-public class Service implements Serializable {
+@RestController
+@RequestMapping("/accounts")
+public class AccountController {
 
-    /**
-     * The names of the implemented services
-     */
-    public enum ServiceName {
-        PRODUCT,
-        CUSTOMER,
-        SALES
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @RequestMapping(value = "", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Account> allAccounts() {
+        return accountRepository.findAll();
     }
 
-    @Id
-    private ServiceName name;
-
-    /**
-     * JPA needs it
-     */
-    private Service() {
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account getAccount(@PathVariable String username) {
+        return accountRepository.findOne(username);
     }
 
-    /**
-     * Creates a new service.
-     *
-     * @param name    the name of the service
-     */
-    public Service(final ServiceName name) {
-        this.name = name;
-    }
-
-    public ServiceName getName() {
-        return name;
-    }
-
-    public static List<ServiceName> getProspectStandartServices() {
-        return Arrays.asList(ServiceName.values());
-    }
 }

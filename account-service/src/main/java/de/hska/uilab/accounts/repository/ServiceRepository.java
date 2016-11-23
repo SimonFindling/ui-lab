@@ -1,4 +1,4 @@
-package de.hska.uilab.accounts.model;/*
+package de.hska.uilab.accounts.repository;/*
  *  The MIT License (MIT)
  *
  *  Copyright (c) 2016 Manuel Vogel
@@ -24,49 +24,11 @@ package de.hska.uilab.accounts.model;/*
  *  https://opensource.org/licenses/MIT
  */
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
+import de.hska.uilab.accounts.model.Service;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  * Created by mavogel on 11/23/16.
  */
-@Entity(name = "service")
-public class Service implements Serializable {
-
-    /**
-     * The names of the implemented services
-     */
-    public enum ServiceName {
-        PRODUCT,
-        CUSTOMER,
-        SALES
-    }
-
-    @Id
-    private ServiceName name;
-
-    /**
-     * JPA needs it
-     */
-    private Service() {
-    }
-
-    /**
-     * Creates a new service.
-     *
-     * @param name    the name of the service
-     */
-    public Service(final ServiceName name) {
-        this.name = name;
-    }
-
-    public ServiceName getName() {
-        return name;
-    }
-
-    public static List<ServiceName> getProspectStandartServices() {
-        return Arrays.asList(ServiceName.values());
-    }
+public interface ServiceRepository extends CrudRepository<Service, Service.ServiceName> {
 }
