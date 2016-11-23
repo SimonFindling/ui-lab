@@ -1,29 +1,51 @@
 package de.hska.uilab.product.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.hska.uilab.product.schema.Product;
+import de.hska.uilab.product.schema.ProductsMock;
 
 @RestController
+@SuppressWarnings("rawtypes")
 public class ProductController {
+	private ProductsMock pm = new ProductsMock();
 
-	@RequestMapping(value="/products", method=RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/products", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Product>> getAllProducts() {
-		List<Product> products = new ArrayList<>();
-		products.add(new Product(1, 1, "name", "image", "info", 2000));
-		products.add(new Product(2, 1, "name", "image", "info", 5000));
-		
-		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+		return new ResponseEntity<List<Product>>(pm.getAllProducts(), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="", method=RequestMethod.GET)
+
+	@RequestMapping(value = "/products", method = RequestMethod.POST)
+	public ResponseEntity createProduct(@RequestBody Map<String, String> body) {
+		ObjectMapper mapper = new ObjectMapper();
+		Product retrievedProduct = mapper.convertValue(body, Product.class);
+		if (pm.createProduct(retrievedProduct)) {
+			return new ResponseEntity(HttpStatus.OK);
+		}
+		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+	}
+
+	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Product> getSingleProduct(@PathVariable int productId) {
+		Product productById = pm.getProductById(productId);
+		if (productById != null) {
+			return new ResponseEntity<Product>(productById, HttpStatus.CREATED);
+		}
+		return new ResponseEntity<Product>(productById, HttpStatus.NOT_FOUND);
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<String> info() {
 		return new ResponseEntity<String>("Hello! This is product-microservice", HttpStatus.OK);
 	}

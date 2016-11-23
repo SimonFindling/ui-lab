@@ -1,5 +1,7 @@
 package de.hska.uilab.product.schema;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Product {
 	private int id;
 	private int vendorId;
@@ -7,9 +9,10 @@ public class Product {
 	private String productImage;
 	private String productInformation;
 	private int price;
-	
-	public Product(int id, int vendorId, String productName, String productImage, String productInformation,
-			int price) {
+
+	public Product(@JsonProperty("id") int id, @JsonProperty("vendorId") int vendorId, @JsonProperty("productName") String productName,
+			@JsonProperty("productImage") String productImage, @JsonProperty("productInformation") String productInformation,
+			@JsonProperty("price") int price) {
 		super();
 		this.id = id;
 		this.vendorId = vendorId;
