@@ -30,6 +30,7 @@
 		<module>discovery-service</module>
 		<module>api-gateway</module>
 		<module>login-microservice</module>
+		<module>product-microservice</module>
 	</modules>
 
 	<profiles>
