@@ -30,12 +30,29 @@ public class ProductsMock {
 	}
 
 	public boolean createProduct(Product product) {
-		for (Product p : all) {
-			if (p.getId() == product.getId()) {
-				return false;
-			}
+		Product productById = getProductById(product.getId());
+		if (productById != null) {
+			return false;
 		}
-		all.add(product);
-		return true;
+		return all.add(product);
 	}
+
+	public boolean changeProduct(Product product) {
+		Product productById = getProductById(product.getId());
+		if (productById != null) {
+			all.remove(productById);
+			all.add(product);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean deleteProductById(int productId) {
+		Product productById = getProductById(productId);
+		if (productById != null) {
+			return all.remove(productById);
+		}
+		return false;
+	}
+
 }

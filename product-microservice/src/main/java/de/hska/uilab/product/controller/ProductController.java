@@ -31,18 +31,41 @@ public class ProductController {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);
 		if (pm.createProduct(retrievedProduct)) {
-			return new ResponseEntity(HttpStatus.OK);
+			return new ResponseEntity(HttpStatus.CREATED);
 		}
 		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
 	}
 
+	/**
+	 * Returns a product for the given product id. Returns null if non is found.
+	 * @param productId id for product
+	 * @return
+	 */
 	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Product> getSingleProduct(@PathVariable int productId) {
 		Product productById = pm.getProductById(productId);
 		if (productById != null) {
-			return new ResponseEntity<Product>(productById, HttpStatus.CREATED);
+			return new ResponseEntity<Product>(productById, HttpStatus.OK);
 		}
 		return new ResponseEntity<Product>(productById, HttpStatus.NOT_FOUND);
+	}
+	
+	@RequestMapping(value = "/products", method = RequestMethod.PUT)
+	public ResponseEntity changeProduct(@RequestBody Map<String, String> body) {
+		ObjectMapper mapper = new ObjectMapper();
+		Product retrievedProduct = mapper.convertValue(body, Product.class);
+		if (pm.changeProduct(retrievedProduct)) {
+			return new ResponseEntity(HttpStatus.OK);
+		}
+		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	@RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
+	public ResponseEntity deleteProduct(@PathVariable int productId) {
+		if (pm.deleteProductById(productId)) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
