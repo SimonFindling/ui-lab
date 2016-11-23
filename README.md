@@ -6,8 +6,8 @@ This project is part of the masters course Graphical user interfaces.
 ### Local setup
 If you want to build and set up the dockers containers locally:
 ```bash
-# build all local docker images
-export DOCKER_USER=<your group name>
+# we all use the uilab user now
+export DOCKER_USER=uilab
 export TAG=latest
 ./build_locally.sh (or mvn install in the main project)
 # Note the docker-compose.yml also needs the ENV vars
@@ -23,28 +23,12 @@ until everything is set up. Consider `docker logs -tf <container-hash>` for the 
   1. Create new repositories on Docker Hub for each mircoservice. Currently api-gateway, login-microservice, discovery-service and template-project. 
 5. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
 6. Activate the repository in `travis`
-7. Edit `.travis.yml` file and replace `GROUP` env with the name of your group, which should be the same like
-your docker hub account. (this wasn't necessary)
-8. Create secrets: e.g `travis encrypt DOCKER_EMAIL=mail@example.com` and replace them in `.travis.yml`. See [here](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables) for details.
-9. Make a change, commit, push and see if `travis` builds
-10. If the build was successful, check your dockerhub account if the images appears
-11. Pull if from docker hub.
-12. The Push to your server will be explained in the **Add webhooks** section.
-
-or
-
-1. Fork this repository
-2. Create a branch from master for changes you want to push back to the template (e.g. OAuth)
-3. Set up a [Docker Hub](https://hub.docker.com/) account
-  1. Create new repositories on Docker Hub for each mircoservice. Currently api-gateway, login-microservice, discovery-service and template-project. 
-5. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
-6. Activate the repository in `travis`
 7. Go to the settings of your travis repository.
 8. Under `Environment Variables` set `DOCKER_EMAIL`, `DOCKER_USER` and `DOCKER_PASS` with your information. See [here](https://cinhtau.net/wp/use-travis-ci-in-github-to-build-and-deploy-to-dockerhub/#Deploy_to_Dockerhub) for details but **use names as specified here**.
 9. Make a change, commit, push and see if `travis` builds
 10. If the build was successful, check your dockerhub account if the images appears
 11. Pull if from docker hub.
-12. The Push to your server will be explained in the **Add webhooks** section.
+12. The automatic pull to your server will be explained in the **Update Images via Watchtower** section.
 
 ### Setup for server
 #### Intial setup
@@ -94,19 +78,18 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 ## How to compile the api gateway proposal
  You need to install [asciidoctor](http://asciidoctor.org) first. Then run
  ```bash
- # compile
- asciidoctor api-gateway/src/main/asciidoc/api-guide.adoc
- # open it
- open api-gateway/src/main/asciidoc/api-guide.html
+ $ asciidoctor api-gateway/src/main/asciidoc/api-guide.adoc
+ $ open api-gateway/src/main/asciidoc/api-guide.html
  ```
 
 ## Routing
 - With `sidecar` the route to a service is defined by its `spring.application.name` in the `bootstrap.properties` or `yml`.
 Then the defined resources in the controllers can be accessed. Here is an example. 
 ```bash
-curl -D- -X GET localhost:8081/login/login/admin/admin
+$ curl -D- -X GET localhost:8081/login/login/admin/admin
 ```
 - It is possible to see all current routings under `<gateway-url>/routes`. See [here](http://212.227.198.46:8081/routes) for a working gateway server.
+
 # Inspiration / Props
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)
 - [spring-cloud-example](https://github.com/kbastani/spring-cloud-microservice-example)

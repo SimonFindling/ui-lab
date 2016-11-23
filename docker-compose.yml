@@ -1,12 +1,12 @@
 version: '2'
 services:
   discovery:
-    image: ${DOCKER_USER}/discovery-service
+    image: ${DOCKER_USER}/discovery-service:${TAG}
     restart: always
     ports:
       - "8761:8761"
   gateway:
-    image: ${DOCKER_USER}/api-gateway
+    image: ${DOCKER_USER}/api-gateway:${TAG}
     restart: always
     ports:
       - "8081:8081"
@@ -14,7 +14,7 @@ services:
       - discovery
       - login
   login:
-    image: ${DOCKER_USER}/login-microservice
+    image: ${DOCKER_USER}/login-microservice:${TAG}
     restart: always
     ports:
       - "9005:9005"

@@ -11,7 +11,7 @@ The tenant is identified by the 'Bearer Header Token'.
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -H 'Accept: application/json'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -23,22 +23,28 @@ Content-Length:
 
 [
  {
-  "id":"",
-  "loginId":"",
+  "username": "",
   "firstName":"",
   "lastName":"",
+  "email":"",
+  "company":"",
   "status":"PROSPECT",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER',
+    'SALES'
+  ]
  }
 ]
 
 ----
 
-==== Get account by id
+==== Get account by its unique username
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/{accountId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/{username}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
@@ -48,10 +54,17 @@ Content-Type: application/json;charset=UTF-8
 Content-Length:
 
 {
-  "id":"",
+  "username": "",
   "firstName":"",
   "lastName":"",
+  "email":"",
+  "company":"",
   "status":"PROSPECT",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER',
+    'SALES'
+  ]
 }
 
 ----
@@ -59,36 +72,34 @@ Content-Length:
 === POST
 
 ==== Create a new account for a client
+Only the e-Mail address is required for creating an account. The generated password is returned.
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X POST -H 'Content-Type: application/json' -d '{"email":""}'
 ----
 
 ===== Example Response
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 201 Created
-Content-Type: application/json;charset=UTF-8
+Content-Type: text/plain;charset=UTF-8
 Content-Length:
 
-{
-  "id":"",
-  "firstName":"",
-  "lastName":"",
-  "status":"PROSPECT"
-}
+84eeeb5fb09da9e2ed197cb3c1f1f0575f3bef33
 ----
 
 === PUT
 
 ==== Update an existing account for a client
+Anything but the `username` can be updated. For Upgrading the `status` use `/upgrade` and for
+adding new services use the `addservice` resource.
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"", "company":"", "email":""}'
 ----
 
 ===== Example Response
@@ -99,10 +110,16 @@ Content-Type: application/json;charset=UTF-8
 Content-Length:
 
 {
-  "id":"",
+  "username": "",
   "firstName":"",
   "lastName":"",
-  "status":"PROSPECT"
+  "email":"",
+  "status":"PROSPECT",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER',
+    'SALES'
+  ]
 }
 ----
 
@@ -122,16 +139,81 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 0
 
 {
-  "id":"",
+  "username": "",
   "firstName":"",
   "lastName":"",
-  "status":"CUSTOMER"
+  "email":"",
+  "status":"CUSTOMER",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER',
+    'SALES'
+  ]
+}
+----
+
+==== Add new services for a customer
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/addservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "STATISTICS" ]'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 0
+
+{
+  "username": "",
+  "firstName":"",
+  "lastName":"",
+  "email":"",
+  "status":"CUSTOMER",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER',
+    'SALES',
+    'STATISTICS'
+  ]
+}
+----
+
+==== Remove services for a customer
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/removeservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "STATISTICS" ]'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 0
+
+{
+  "username": "",
+  "firstName":"",
+  "lastName":"",
+  "email":"",
+  "status":"CUSTOMER",
+  "services": [
+    'PRODUCT',
+    'CUSTOMER'
+  ]
 }
 ----
 
 === DELETE
 
 ==== Delete client account
+You can only delete you own account which is identified by the auth token.
 
 ===== Example Request
 [source,bash,options="nowrap"]
