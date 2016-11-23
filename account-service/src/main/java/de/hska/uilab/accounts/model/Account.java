@@ -157,4 +157,8 @@ public class Account implements Serializable {
     public void addServices(final Service... service) {
         this.services.addAll(Arrays.asList(service));
     }
+
+    public void removeService(final Service service) {
+        this.services.remove(service);
+    }
 }

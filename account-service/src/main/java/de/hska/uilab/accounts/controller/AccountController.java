@@ -24,11 +24,19 @@ package de.hska.uilab.accounts.controller;/*
  *  https://opensource.org/licenses/MIT
  */
 
+import de.hska.uilab.accounts.dto.ModifyServiceBody;
+import de.hska.uilab.accounts.dto.CreateAccountBody;
+import de.hska.uilab.accounts.dto.UpdateAccountBody;
 import de.hska.uilab.accounts.model.Account;
+import de.hska.uilab.accounts.model.Service;
+import de.hska.uilab.accounts.model.Status;
 import de.hska.uilab.accounts.repository.AccountRepository;
+import de.hska.uilab.accounts.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by mavogel on 11/23/16.
@@ -40,6 +48,9 @@ public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private ServiceRepository serviceRepository;
+
     @RequestMapping(value = "", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Account> allAccounts() {
@@ -50,6 +61,66 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public Account getAccount(@PathVariable String username) {
         return accountRepository.findOne(username);
+    }
+
+    @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAccount(@RequestBody CreateAccountBody createAccountBody) {
+        Account createdAccount = Account.asProspect(createAccountBody.getEmail());
+        accountRepository.save(createdAccount);
+        return createdAccount.getPassword();
+    }
+
+    @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
+        Account account = accountRepository.findOne(updateAccountBody.getUsername());
+        account.setFirstname(updateAccountBody.getFirstname());
+        account.setLastname(updateAccountBody.getLastname());
+        account.setCompany(updateAccountBody.getCompany());
+        account.setEmail(updateAccountBody.getEmail());
+        accountRepository.save(account);
+        return account;
+    }
+
+    @RequestMapping(value = "/upgrade/{username}", produces = "text/plain", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account upgradeToCustomer(@PathVariable String username) {
+        Account account = accountRepository.findOne(username);
+        account.setStatus(Status.CUSTOMER);
+        accountRepository.save(account);
+        return account;
+    }
+
+    @RequestMapping(value = "/removeservice/{username}", produces = "text/plain", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account addService(@PathVariable String username, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+        Account account = accountRepository.findOne(username);
+        modifyServiceBody.forEach(msb -> {
+            Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+            account.addService(servicetToAdd);
+        });
+        accountRepository.save(account);
+        return account;
+    }
+
+    @RequestMapping(value = "/addservice/{username}", produces = "text/plain", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account removeService(@PathVariable String username, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+        Account account = accountRepository.findOne(username);
+        modifyServiceBody.forEach(msb -> {
+            Service servicetToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+            account.removeService(servicetToRemove);
+        });
+        accountRepository.save(account);
+        return account;
+    }
+
+    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeAccount(@PathVariable String username) {
+        final Account account = accountRepository.findOne(username);
+        accountRepository.delete(account);
     }
 
 }

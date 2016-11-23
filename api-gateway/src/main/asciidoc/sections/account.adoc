@@ -24,8 +24,8 @@ Content-Length:
 [
  {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "company":"",
   "status":"PROSPECT",
@@ -55,15 +55,15 @@ Content-Length:
 
 {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "company":"",
   "status":"PROSPECT",
   "services": [
     "name":"PRODUCT",
     "name":"CUSTOMER",
-    '"name":"SALES",'
+    "name":"SALES"
   ]
 }
 
@@ -99,7 +99,7 @@ adding new services use the `addservice` resource.
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"", "company":"", "email":""}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":""}'
 ----
 
 ===== Example Response
@@ -111,14 +111,14 @@ Content-Length:
 
 {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "status":"PROSPECT",
   "services": [
     "name":"PRODUCT",
     "name":"CUSTOMER",
-    '"name":"SALES",'
+    "name":"SALES"
   ]
 }
 ----
@@ -128,7 +128,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/upgrade' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/upgrade/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -140,14 +140,14 @@ Content-Length: 0
 
 {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "status":"CUSTOMER",
   "services": [
     "name":"PRODUCT",
     "name":"CUSTOMER",
-    '"name":"SALES",'
+    "name":"SALES"
   ]
 }
 ----
@@ -157,7 +157,7 @@ Content-Length: 0
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/addservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"STATISTICS" ]'
+$ curl 'http://DOCKER-HOST:8080/accounts/addservice/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"STATISTICS" ]'
 ----
 
 ===== Example Response
@@ -169,8 +169,8 @@ Content-Length: 0
 
 {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "status":"CUSTOMER",
   "services": [
@@ -187,7 +187,7 @@ Content-Length: 0
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/removeservice' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "STATISTICS" ]'
+$ curl 'http://DOCKER-HOST:8080/accounts/removeservice/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "STATISTICS" ]'
 ----
 
 ===== Example Response
@@ -199,13 +199,13 @@ Content-Length: 0
 
 {
   "username": "",
-  "firstName":"",
-  "lastName":"",
+  "firstname":"",
+  "lastname":"",
   "email":"",
   "status":"CUSTOMER",
   "services": [
     "name":"PRODUCT",
-    'CUSTOMER'
+    "name":"CUSTOMER"
   ]
 }
 ----
@@ -218,7 +218,7 @@ You can only delete you own account which is identified by the auth token.
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/{username}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
