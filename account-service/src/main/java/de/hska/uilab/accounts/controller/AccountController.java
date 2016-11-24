@@ -95,18 +95,6 @@ public class AccountController {
         return account;
     }
 
-    @RequestMapping(value = "/removeservice/{username}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
-    @ResponseStatus(HttpStatus.OK)
-    public Account addService(@PathVariable String username, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
-        Account account = accountRepository.findOne(username);
-        modifyServiceBody.forEach(msb -> {
-            Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-            account.addService(servicetToAdd);
-        });
-        accountRepository.save(account);
-        return account;
-    }
-
     @RequestMapping(value = "/addservice/{username}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public Account removeService(@PathVariable String username, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
@@ -114,6 +102,18 @@ public class AccountController {
         modifyServiceBody.forEach(msb -> {
             Service servicetToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
             account.removeService(servicetToRemove);
+        });
+        accountRepository.save(account);
+        return account;
+    }
+
+    @RequestMapping(value = "/removeservice/{username}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account addService(@PathVariable String username, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+        Account account = accountRepository.findOne(username);
+        modifyServiceBody.forEach(msb -> {
+            Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+            account.addService(servicetToAdd);
         });
         accountRepository.save(account);
         return account;

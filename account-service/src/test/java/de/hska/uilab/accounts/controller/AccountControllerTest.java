@@ -251,4 +251,31 @@ public class AccountControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Ignore // TODO how to add lists with JSON
+    public void shouldAddSalesAndProductServiceToCustomer() throws Exception {
+        accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "SALES");
+
+        this.mockMvc.perform(put("/accounts/addservice/testuser2")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(salesService)))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/testuser2").accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").value("testuser2"))
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.status").value(Status.CUSTOMER.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
+                .andExpect(status().isOk());
+    }
+
 }
