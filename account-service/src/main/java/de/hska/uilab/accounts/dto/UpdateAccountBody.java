@@ -35,6 +35,9 @@ public class UpdateAccountBody {
     private String company;
     private String email;
 
+    public UpdateAccountBody() {
+    }
+
     public UpdateAccountBody(final String username, final String firstname, final String lastname, final String company, final String email) {
         this.username = username;
         this.firstname = firstname;

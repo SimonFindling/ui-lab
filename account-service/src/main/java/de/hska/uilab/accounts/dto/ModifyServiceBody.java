@@ -31,6 +31,9 @@ public class ModifyServiceBody {
 
     private String name;
 
+    public ModifyServiceBody() {
+    }
+
     public ModifyServiceBody(final String name) {
         this.name = name;
     }
