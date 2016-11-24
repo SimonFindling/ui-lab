@@ -229,4 +229,26 @@ public class AccountControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void shouldUpgradeToCustomer() throws Exception {
+        accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        this.mockMvc.perform(put("/accounts/upgrade/testuser2")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/testuser2").accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").value("testuser2"))
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.status").value(Status.CUSTOMER.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services").isEmpty())
+                .andExpect(status().isOk());
+    }
+
 }
