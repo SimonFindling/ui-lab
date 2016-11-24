@@ -23,9 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -276,6 +274,17 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void shouldDeleteAccount() throws Exception {
+        accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        this.mockMvc.perform(delete("/accounts/testuser2")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
 }
