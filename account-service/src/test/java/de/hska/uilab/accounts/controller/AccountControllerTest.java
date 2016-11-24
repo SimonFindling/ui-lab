@@ -19,8 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 /*
@@ -180,6 +185,20 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$[3].services[2].name").value(Service.ServiceName.PRODUCT.name()))
                 //
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCreateANewAccount() throws Exception {
+        Map<String, String> newAccount = new HashMap<>();
+        newAccount.put("email", "test@mail.org");
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newAccount)))
+//                .andExpect(content().)
+                .andExpect(status().isCreated());
+
     }
 
 }

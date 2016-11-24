@@ -31,6 +31,9 @@ public class CreateAccountBody {
 
     private String email;
 
+    public CreateAccountBody() {
+    }
+
     public CreateAccountBody(final String email) {
         this.email = email;
     }
