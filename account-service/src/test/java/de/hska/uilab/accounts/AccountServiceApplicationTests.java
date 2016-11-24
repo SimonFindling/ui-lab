@@ -1,4 +1,4 @@
-package de.hska.uilab;
+package de.hska.uilab.accounts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
