@@ -1,12 +1,12 @@
 [account]
 == Account-Service
 
-Handles the accounts of the tenants.
+Handles the accounts of the tenants of the HSKA ERP system.
 The tenant is identified by the 'Bearer Header Token'.
 
 === GET
 
-==== List all accounts (tenants)
+==== List all accounts of tenants
 
 ===== Example Request
 [source,bash,options="nowrap"]
@@ -23,28 +23,51 @@ Content-Length:
 
 [
  {
+  "id":"1",
   "username": "",
   "firstname":"",
   "lastname":"",
   "email":"",
   "company":"",
+  "tenandId": "null",
+  "type": "TENANT"
   "status":"PROSPECT",
   "services": [
     "name":"PRODUCT",
     "name":"CUSTOMER",
-    '"name":"SALES",'
+    "name":"SALES",
   ]
- }
+ },
+ {
+  "id":"2"
+  "username": "",
+  "firstname":"",
+  "lastname":"",
+  "email":"",
+  "company":"",
+  "tenandId:"1",
+  "type": "USER"
+ },
+ {
+   "id":"3"
+   "username": "",
+   "firstname":"",
+   "lastname":"",
+   "email":"",
+   "company":"null",
+   "tenandId:"null",
+   "type": "ADMIN"
+  }
 ]
 
 ----
 
-==== Get account by its unique username
+==== Get account by its unique id
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/{username}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
@@ -54,17 +77,20 @@ Content-Type: application/json;charset=UTF-8
 Content-Length:
 
 {
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "company":"",
-  "status":"PROSPECT",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER",
-    "name":"SALES"
-  ]
+ "id":"1",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":"",
+ "tenandId": "null",
+ "type": "TENANT"
+ "status":"PROSPECT",
+ "services": [
+   "name":"PRODUCT",
+   "name":"CUSTOMER",
+   "name":"SALES",
+ ]
 }
 
 ----
@@ -96,7 +122,9 @@ Content-Length:
 Anything but the `username` can be updated. For Upgrading the `status` use `/upgrade` and for
 adding new services use the `addservice` resource.
 
-===== Example Request
+===== Example Request for Tenant
+A tenant can only update personal data fields. He cannot change his status. This can only
+be done by an `Admin`.
 [source,bash,options="nowrap"]
 ----
 $ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":""}'
@@ -110,25 +138,53 @@ Content-Type: application/json;charset=UTF-8
 Content-Length:
 
 {
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "status":"PROSPECT",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER",
-    "name":"SALES"
-  ]
+ "id":"1",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":""
 }
 ----
 
-==== Upgrade client to customer
+===== Example Request for Admin
+A admin can edit all data fields.
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":"", "status":"PROSPECT", "services": ["name":"PRODUCT","name":"CUSTOMER","name":"SALES"]}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"1",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":"",
+ "tenandId": "null",
+ "type": "TENANT"
+ "status":"PROSPECT",
+ "services": [
+   "name":"PRODUCT",
+   "name":"CUSTOMER",
+   "name":"SALES",
+ ]
+}
+----
+
+==== Upgrade tenant from prospect to customer
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/upgrade/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/upgrade/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -139,16 +195,20 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 0
 
 {
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "status":"CUSTOMER",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER",
-    "name":"SALES"
-  ]
+ "id":"",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":"",
+ "tenandId": "null",
+ "type": "TENANT"
+ "status":"CUSTOMER",
+ "services": [
+   "name":"PRODUCT",
+   "name":"CUSTOMER",
+   "name":"SALES",
+ ]
 }
 ----
 
@@ -157,7 +217,7 @@ Content-Length: 0
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/addservice/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"STATISTICS" ]'
+$ curl 'http://DOCKER-HOST:8080/accounts/addservice/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"VENDOR" ]'
 ----
 
 ===== Example Response
@@ -168,26 +228,30 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 0
 
 {
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "status":"CUSTOMER",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER",
-    "name":"SALES",
-    "name":"STATISTICS"
-  ]
+ "id":"1",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":"",
+ "tenandId": "null",
+ "type": "TENANT"
+ "status":"PROSPECT",
+ "services": [
+   "name":"PRODUCT",
+   "name":"CUSTOMER",
+   "name":"SALES",
+   "name":"VENDORS",
+ ]
 }
 ----
 
-==== Remove services for a customer
+==== Remove services for a tenant in CUSTOMER state
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/removeservice/{username}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "STATISTICS" ]'
+$ curl 'http://DOCKER-HOST:8080/accounts/removeservice/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "VENDOR" ]'
 ----
 
 ===== Example Response
@@ -198,27 +262,31 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 0
 
 {
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "status":"CUSTOMER",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER"
-  ]
+ "id":"1",
+ "username": "",
+ "firstname":"",
+ "lastname":"",
+ "email":"",
+ "company":"",
+ "tenandId": "null",
+ "type": "TENANT"
+ "status":"CUSTOMER",
+ "services": [
+   "name":"PRODUCT",
+   "name":"CUSTOMER",
+ ]
 }
 ----
 
 === DELETE
 
 ==== Delete client account
-You can only delete you own account which is identified by the auth token.
+You can only delete you own account.
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts/{username}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/accounts/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
