@@ -1,16 +1,14 @@
 [sales]
 == Sales-Service
 
-The tenant is identified by the 'Bearer Header Token'.
-
 === GET
 
-==== List all sales of a client
+==== List all sales of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/sales' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/sales/{tenantId}' -i -X GET -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -23,63 +21,14 @@ Content-Length:
 [
  {
   "id":"",
-  "vendorId":"",
-  "productId":"",
-  "productName":"",
-  "amount":"",
-  "currency":""
+  "customerId":"",
+  "products": [
+    {"name":"", "description":"", "price":"", "quantity":""},
+    {"name":"", "description":"", "price":"", "quantity":""},
+    {"name":"", "description":"", "price":"", "quantity":""},
+  ]
+  "total":"",
+  "currency":"EUR"
  }
 ]
-----
-
-==== List all sales of a client for a vendor
-
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/sales/{vendorId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
-
-[
- {
-  "id":"",
-  "vendorId":"",
-  "productId":"",
-  "productName":"",
-  "amount":"",
-  "currency":""
- }
-]
-----
-
-==== List all sales of a client of specific product
-
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/sales/product/{productId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
-
- {
-  "id":"",
-  "vendorId":"",
-  "productId":"",
-  "productName":"",
-  "amount":"",
-  "currency":""
- }
 ----
