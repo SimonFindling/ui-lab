@@ -29,7 +29,7 @@ Content-Length:
   "lastname":"",
   "email":"",
   "company":"",
-  "tenandId": "null",
+  "tenantId": "null",
   "type": "TENANT"
   "status":"PROSPECT",
   "services": [
@@ -45,7 +45,7 @@ Content-Length:
   "lastname":"",
   "email":"",
   "company":"",
-  "tenandId:"1",
+  "tenantId:"1",
   "type": "USER"
  },
  {
@@ -55,7 +55,7 @@ Content-Length:
    "lastname":"",
    "email":"",
    "company":"null",
-   "tenandId:"null",
+   "tenantId:"null",
    "type": "ADMIN"
   }
 ]
@@ -83,7 +83,7 @@ Content-Length:
  "lastname":"",
  "email":"",
  "company":"",
- "tenandId": "null",
+ "tenantId": "null",
  "type": "TENANT"
  "status":"PROSPECT",
  "services": [
@@ -168,7 +168,7 @@ Content-Length:
  "lastname":"",
  "email":"",
  "company":"",
- "tenandId": "null",
+ "tenantId": "null",
  "type": "TENANT"
  "status":"PROSPECT",
  "services": [
@@ -201,7 +201,7 @@ Content-Length: 0
  "lastname":"",
  "email":"",
  "company":"",
- "tenandId": "null",
+ "tenantId": "null",
  "type": "TENANT"
  "status":"CUSTOMER",
  "services": [
@@ -234,7 +234,7 @@ Content-Length: 0
  "lastname":"",
  "email":"",
  "company":"",
- "tenandId": "null",
+ "tenantId": "null",
  "type": "TENANT"
  "status":"PROSPECT",
  "services": [
@@ -268,7 +268,7 @@ Content-Length: 0
  "lastname":"",
  "email":"",
  "company":"",
- "tenandId": "null",
+ "tenantId": "null",
  "type": "TENANT"
  "status":"CUSTOMER",
  "services": [
