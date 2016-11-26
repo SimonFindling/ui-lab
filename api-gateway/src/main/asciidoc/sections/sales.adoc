@@ -26,9 +26,53 @@ Content-Length:
     {"name":"", "description":"", "price":"", "quantity":""},
     {"name":"", "description":"", "price":"", "quantity":""},
     {"name":"", "description":"", "price":"", "quantity":""},
-  ]
+  ],
   "total":"",
   "currency":"EUR"
  }
 ]
+----
+
+==== Create a sale for a tenant
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/sales/{tenantId}' -i -X POST -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"customerId":"","products": [{"name":"", "description":"", "price":"", "quantity":""},{"name":"", "description":"", "price":"", "quantity":""},{"name":"", "description":"", "price":"", "quantity":""}], "total":"", "currency":"EUR"}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 CREATED
+
+----
+
+==== Update a sale for a tenant
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/sales/{tenantId}' -i -X PUT -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"customerId":"","products": [{"name":"", "description":"", "price":"", "quantity":""},{"name":"", "description":"", "price":"", "quantity":""},{"name":"", "description":"", "price":"", "quantity":""}], "total":"", "currency":"EUR"}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length:
+
+{
+ "id":"",
+ "customerId":"",
+ "products": [
+   {"name":"", "description":"", "price":"", "quantity":""},
+   {"name":"", "description":"", "price":"", "quantity":""},
+   {"name":"", "description":"", "price":"", "quantity":""},
+ ],
+ "total":"",
+ "currency":"EUR"
+}
+
 ----
