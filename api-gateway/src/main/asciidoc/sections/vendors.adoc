@@ -1,16 +1,14 @@
 [vendors]
 == Vendor-Service
 
-The tenant aka client is identified by the 'Bearer Header Token'.
-
 === GET
 
-==== List all vendors of a client
+==== List all vendors of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/vendors' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -23,17 +21,25 @@ Content-Length:
 [
  {
   "id":"",
-  "vendorName":""
+  "name":"",
+  "email":"",
+  "address": {
+    "street":"",
+    "number":"",
+    "postal":"",
+    "city":"",
+    "country":"",
+  }
  }
 ]
 ----
 
-==== List a single vendor of a client
+==== List a single vendor of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/vendors/{vendorId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -45,17 +51,25 @@ Content-Length:
 
 {
  "id":"",
- "vendorName":""
+ "name":"",
+ "email":"",
+ "address": {
+   "street":"",
+   "number":"",
+   "postal":"",
+   "city":"",
+   "country":"",
+ }
 }
 ----
 
 === POST
 
-==== Create a new vendor for a client
+==== Create a new vendor for a tenant
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/vendors' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorName":""}'
+$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"name":"", "email":"", "address": {"street":"","number":"","postal":"","city":"","country":""}}'
 ----
 
 ===== Example Response
@@ -67,12 +81,12 @@ HTTP/1.1 201 Created
 
 === PUT
 
-==== Modify a new product for a client
+==== Modify a new product for a tenant
 ===== Example Request
 The images have to be base64 encoded!
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/vendors/{productId}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorName":""}'
+$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"name":"", "email":"", "address": {"street":"","number":"","postal":"","city":"","country":""}}'
 ----
 
 ===== Example Response
@@ -84,18 +98,26 @@ Content-Length:
 
 {
  "id":"",
- "vendorName":""
+ "name":"",
+ "email":"",
+ "address": {
+   "street":"",
+   "number":"",
+   "postal":"",
+   "city":"",
+   "country":"",
+ }
 }
 
 ----
 
 === DELETE
 
-==== Deletes a vendor of a client
+==== Deletes a vendor of a tenant
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/vendors/{vendorId}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]
