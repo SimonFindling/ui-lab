@@ -1,30 +1,27 @@
 version: '2'
 services:
+  config-service:
+    image: ${DOCKER_USER}/config-service:${TAG}
+    restart: always
+    ports:
+    - 8888:8888
   discovery:
     image: ${DOCKER_USER}/discovery-service:${TAG}
     restart: always
     ports:
-      - "8761:8761"
+    - 8761:8761
   gateway:
     image: ${DOCKER_USER}/api-gateway:${TAG}
     restart: always
     ports:
-      - "8081:8081"
-    links:
-      - discovery
-      - login
-      - product
+    - 8081:8081
   login:
     image: ${DOCKER_USER}/login-microservice:${TAG}
     restart: always
-    ports:
-      - "9005:9005"
-    links:
-      - discovery
+    ports: 
+    - 9005:9005
   product:
     image: ${DOCKER_USER}/product-microservice:${TAG}
     restart: always
     ports:
-      - "7654:7654"
-    links:
-      - discovery
+    - 7654:7654
