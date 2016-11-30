@@ -32,10 +32,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by mavogel on 11/23/16.
@@ -52,7 +49,6 @@ public class Account implements Serializable {
     @Column(unique = true)
     private String email;
 
-    @Column(unique = true)
     private String username;
 
     @Length(min = 6, max = 64)
@@ -67,7 +63,7 @@ public class Account implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "username"))
-    private List<Service> services = new ArrayList<>();
+    private List<Service> services;
 
     /**
      * Creates a new account for a Tenant as PROSPECT.
@@ -92,7 +88,7 @@ public class Account implements Serializable {
     public static Account asUser(final Long tenantId,
                                  final String firstname, final String lastname, final String email,
                                  final Service... inheritedServices) {
-        return new Account(tenantId, firstname, lastname, email, AccountType.USER);
+        return new Account(tenantId, firstname, lastname, email, AccountType.USER, inheritedServices);
     }
 
 
@@ -116,7 +112,7 @@ public class Account implements Serializable {
         this.tenantId = tenantId;
         this.tenantStatus = AccountType.TENANT == accountType ? TenantStatus.PROSPECT : null;
         this.password = Base64.getEncoder().encodeToString(Instant.now().toString().getBytes());
-        this.services = Arrays.asList(inheritedServices);
+        this.services = inheritedServices != null ? new ArrayList<>(Arrays.asList(inheritedServices)) : new ArrayList<>();
     }
 
     ////// GETTER
@@ -161,6 +157,7 @@ public class Account implements Serializable {
     }
 
     public List<Service> getServices() {
+        services.sort((s1, s2) -> s1.getName().ordinal() - s2.getName().ordinal());
         return services;
     }
 
@@ -211,8 +208,8 @@ public class Account implements Serializable {
         this.services.add(service);
     }
 
-    public void addServices(final Service... service) {
-        this.services.addAll(Arrays.asList(service));
+    public void addServices(final Service... services) {
+        this.services.addAll(Arrays.asList(services));
     }
 
     public void removeService(final Service service) {

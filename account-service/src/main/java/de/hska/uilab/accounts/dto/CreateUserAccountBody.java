@@ -29,25 +29,25 @@ package de.hska.uilab.accounts.dto;/*
  */
 public class CreateUserAccountBody {
 
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private String email;
 
     public CreateUserAccountBody() {
     }
 
-    public CreateUserAccountBody(final String firstName, final String lastName, final String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public CreateUserAccountBody(final String firstname, final String lastname, final String email) {
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
     public String getEmail() {

@@ -131,35 +131,87 @@ public class AccountControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @Test
-//    public void shouldFindOneUserAccount() throws Exception {
-//        // == prepare ==
-//        serviceRepository.save(new Service(Service.ServiceName.SALES));
-//        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
-//        Account prospectAccount = accountRepository.save(Account.asProspect("prospectAcc@mail.org"));
-//        prospectAccount = accountRepository.findOne(prospectAccount.getId());
-//        prospectAccount.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
-//        prospectAccount.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
-//        accountRepository.save(prospectAccount);
-//
-//        Account userAccount = accountRepository.save(Account.asUser(prospectAccount.getId(), "John", "Doe", "testuser2@mail.org"));
-//
-//        // == go / verify ==
-//        this.mockMvc.perform(get("/accounts/" + userAccount.getId()).accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-//                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
-//                .andExpect(jsonPath("$.username").isEmpty())
-//                .andExpect(jsonPath("$.password").isNotEmpty())
-//                .andExpect(jsonPath("$.tenantStatus").isEmpty())
-//                .andExpect(jsonPath("$.tenantId").isEmpty())
-//                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
-//                .andExpect(jsonPath("$.firstname").value("John"))
-//                .andExpect(jsonPath("$.lastname").value("Doe"))
-//                .andExpect(jsonPath("$.company").isEmpty())
-//                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
-//                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.PRODUCT.name()))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    public void shouldFindOneProspectAccountWithMultipleServices() throws Exception {
+        // == prepare ==
+        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account createdAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        Account testuser2 = accountRepository.findOne(createdAccount.getId());
+        testuser2.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
+        testuser2.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
+        accountRepository.save(testuser2);
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + createdAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCreateANewProspectAccount() throws Exception {
+        Map<String, String> newProspectAccount = new HashMap<>();
+        newProspectAccount.put("email", "test@mail.org");
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldCreateAndFindOneUserAccount() throws Exception {
+        // == prepare ==
+        // 1: creates services and tenant account
+        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account tenantAccount = accountRepository.save(Account.asProspect("prospectAcc@mail.org"));
+        tenantAccount = accountRepository.findOne(tenantAccount.getId());
+        tenantAccount.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
+        tenantAccount.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
+        accountRepository.save(tenantAccount);
+
+        // 2: build and save user acc
+        Map<String, String> newUserAccount = new HashMap<>();
+        newUserAccount.put("firstname", "John");
+        newUserAccount.put("lastname", "Doe");
+        newUserAccount.put("email", "newuser@mail.org");
+
+        this.mockMvc.perform(post("/accounts/" + tenantAccount.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newUserAccount)))
+                .andExpect(status().isCreated());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/2").accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("newuser@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").isEmpty())
+                .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.firstname").value("John"))
+                .andExpect(jsonPath("$.lastname").value("Doe"))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+    }
 //
 //    @Test
 //    public void shouldGetAllAccounts() throws Exception {
@@ -227,18 +279,6 @@ public class AccountControllerTest {
 //                .andExpect(status().isOk());
 //    }
 //
-//    @Test
-//    public void shouldCreateANewAccount() throws Exception {
-//        Map<String, String> newAccount = new HashMap<>();
-//        newAccount.put("email", "test@mail.org");
-//
-//        this.mockMvc.perform(post("/accounts")
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.objectMapper.writeValueAsString(newAccount)))
-////                .andExpect(content().) TODO
-//                .andExpect(status().isCreated());
-//    }
 //
 //    @Test
 //    public void shouldUpdateAccountsMailAndCompany() throws Exception {

@@ -75,10 +75,12 @@ public class AccountController {
     @RequestMapping(value = "/{tenantId}", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
+        Account tenantAccount = accountRepository.findOne(tenantId);
         Account createdAccount = Account.asUser(tenantId,
-                                                createUserAccountBody.getFirstName(),
-                                                createUserAccountBody.getLastName(),
-                                                createUserAccountBody.getEmail());
+                createUserAccountBody.getFirstname(),
+                createUserAccountBody.getLastname(),
+                createUserAccountBody.getEmail(),
+                tenantAccount.getServices().toArray(new Service[]{}));
         accountRepository.save(createdAccount);
         return createdAccount.getPassword();
     }
