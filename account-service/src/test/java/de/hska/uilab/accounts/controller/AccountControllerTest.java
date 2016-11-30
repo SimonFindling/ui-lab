@@ -98,37 +98,39 @@ public class AccountControllerTest {
 
 
 
-//    @Test
-//    public void shouldCreateService() throws Exception {
-//        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
-//        Service testService = serviceRepository.findOne(Service.ServiceName.CUSTOMER);
-//        assertEquals(Service.ServiceName.CUSTOMER, testService.getName());
-//    }
-//
-//    @Test
-//    public void shouldFindOneAccount() throws Exception {
-//        // == prepare ==
-//        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
-//        accountRepository.save(Account.asProspect("testuser2@mail.org"));
-//
-//        Service customerService = serviceRepository.findOne(Service.ServiceName.CUSTOMER);
-//        Account testuser2 = accountRepository.findOne("testuser2");
-//        testuser2.addService(customerService);
-//        accountRepository.save(testuser2);
-//
-//        // == go / verify ==
-//        this.mockMvc.perform(get("/accounts/testuser2").accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-//                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
-//                .andExpect(jsonPath("$.username").value("testuser2"))
-//                .andExpect(jsonPath("$.password").isNotEmpty())
-//                .andExpect(jsonPath("$.status").value(TenantStatus.PROSPECT.name()))
-//                .andExpect(jsonPath("$.firstname").isEmpty())
-//                .andExpect(jsonPath("$.lastname").isEmpty())
-//                .andExpect(jsonPath("$.company").isEmpty())
-//                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    public void shouldCreateACustomerService() throws Exception {
+        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        Service testService = serviceRepository.findOne(Service.ServiceName.CUSTOMER);
+        assertEquals(Service.ServiceName.CUSTOMER, testService.getName());
+    }
+
+    @Test
+    public void shouldFindOneProspectAccount() throws Exception {
+        // == prepare ==
+        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        Account createdAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        Service customerService = serviceRepository.findOne(Service.ServiceName.CUSTOMER);
+        Account testuser2 = accountRepository.findOne(createdAccount.getId());
+        testuser2.addService(customerService);
+        accountRepository.save(testuser2);
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + createdAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+    }
 //
 //    @Test
 //    public void shouldGetAllAccounts() throws Exception {

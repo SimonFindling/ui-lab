@@ -29,7 +29,7 @@ Content-Length:
   "lastname":"",
   "email":"",
   "company":"",
-  "tenantId": "null",
+  "tenantId": "",
   "type": "TENANT"
   "status":"PROSPECT",
   "services": [
