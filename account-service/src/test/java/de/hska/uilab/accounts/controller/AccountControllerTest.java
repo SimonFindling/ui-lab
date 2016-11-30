@@ -27,6 +27,7 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -88,6 +89,7 @@ public class AccountControllerTest {
     public void shouldCreateAProspectAccount() throws Exception {
         Account createdAccount = accountRepository.save(Account.asProspect("test@mail.org"));
         Account testAcc = accountRepository.findOne(createdAccount.getId());
+
         assertEquals("test@mail.org", testAcc.getEmail());
         assertEquals(AccountType.TENANT, testAcc.getAccountType());
         assertEquals(null, testAcc.getTenantId());
@@ -423,16 +425,35 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
                 .andExpect(status().isOk());
     }
-//
-//
-//    @Test
-//    public void shouldDeleteAccount() throws Exception {
-//        accountRepository.save(Account.asProspect("testuser2@mail.org"));
-//
-//        this.mockMvc.perform(delete("/accounts/testuser2")
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNoContent());
-//    }
+
+    @Test
+    public void shouldDeleteAccount() throws Exception {
+        // == prepare ==
+        Account accountToDelete = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        // == go / verify ==
+        this.mockMvc.perform(delete("/accounts/" + accountToDelete.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertNull(accountRepository.findOne(accountToDelete.getId()));
+        this.mockMvc.perform(get("/accounts/" + accountToDelete.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    public void shouldFailDeletingNonExistentAccount() throws Exception {
+        // == prepare ==
+        Long nonExistingAccountId = 100L;
+
+        // == go / verify ==
+        this.mockMvc.perform(delete("/accounts/" + nonExistingAccountId)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
 }

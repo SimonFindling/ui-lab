@@ -95,7 +95,7 @@ public class Account implements Serializable {
     /**
      * JPA needs it
      */
-    private Account() {
+    public Account() {
     }
 
     /**
@@ -214,5 +214,9 @@ public class Account implements Serializable {
 
     public void removeService(final Service service) {
         this.services.remove(service);
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 }

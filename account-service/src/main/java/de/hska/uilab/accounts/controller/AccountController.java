@@ -62,8 +62,12 @@ public class AccountController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
-    public Account getAccount(@PathVariable long id) {
-        return accountRepository.findOne(id);
+    public ResponseEntity<Account> getAccount(@PathVariable long id) {
+        if (accountRepository.findOne(id) != null) {
+            return ResponseEntity.ok(accountRepository.findOne(id));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.POST)
@@ -170,9 +174,22 @@ public class AccountController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeAccount(@PathVariable long id) {
+    public ResponseEntity<Void> removeAccount(@PathVariable long id) {
         final Account account = accountRepository.findOne(id);
-        accountRepository.delete(account);
+        if(account == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            if (AccountType.USER == account.getAccountType()) {
+                accountRepository.delete(account);
+                return ResponseEntity.noContent().build();
+            } else if (AccountType.TENANT == account.getAccountType()) {
+                // TODO as well for each user if its a tenant acc
+                accountRepository.delete(account);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
     }
 
 }
