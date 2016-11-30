@@ -25,10 +25,21 @@ package de.hska.uilab.accounts.model;/*
  */
 
 /**
- * Created by mavogel on 11/23/16.
+ * Created by mavogel on 11/30/16.
  */
-public enum Status {
+public enum AccountType {
+    /**
+     * A tenant, our client
+     */
+    TENANT,
 
-    PROSPECT,
-    CUSTOMER
+    /**
+     * The employees of a tenant
+     */
+    USER,
+
+    /**
+     * Our admin accounts
+     */
+    ADMIN
 }

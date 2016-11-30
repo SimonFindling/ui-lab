@@ -1,4 +1,4 @@
-package de.hska.uilab.accounts.dto;/*
+package de.hska.uilab.accounts.model;/*
  *  The MIT License (MIT)
  *
  *  Copyright (c) 2016 Manuel Vogel
@@ -27,49 +27,8 @@ package de.hska.uilab.accounts.dto;/*
 /**
  * Created by mavogel on 11/23/16.
  */
-public class UpdateAccountBody {
+public enum TenantStatus {
 
-    private long id;
-    private String username;
-    private String firstname;
-    private String lastname;
-    private String company;
-    private String email;
-
-    public UpdateAccountBody() {
-    }
-
-    public UpdateAccountBody(final long id, final String username, final String firstname,
-                             final String lastname, final String company, final String email) {
-        this.id = id;
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.company = company;
-        this.email = email;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    PROSPECT,
+    CUSTOMER
 }

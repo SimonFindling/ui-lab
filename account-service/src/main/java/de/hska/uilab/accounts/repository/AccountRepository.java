@@ -30,5 +30,5 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * Created by mavogel on 11/23/16.
  */
-public interface AccountRepository extends CrudRepository<Account, String> {
+public interface AccountRepository extends CrudRepository<Account, Long> {
 }

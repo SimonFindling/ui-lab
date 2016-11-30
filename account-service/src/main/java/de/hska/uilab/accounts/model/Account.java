@@ -28,7 +28,6 @@ package de.hska.uilab.accounts.model;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -45,32 +44,50 @@ import java.util.List;
 public class Account implements Serializable {
 
     @Id
-    private String username;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @Email @NotBlank
+    @Email
+    @NotBlank
     private String email;
 
     @Length(min = 6, max = 64)
     private String password;
 
-    private Status status;
+    private String username;
     private String firstname;
     private String lastname;
     private String company;
+    private Integer tenantId;
+    private TenantStatus tenantStatus;
+    private AccountType accountType;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "username"))
     private List<Service> services = new ArrayList<>();
 
     /**
-     * Creates a new account for a PROSPECT
+     * Creates a new account for a Tenant as PROSPECT.
      *
-     * @param email the email
-     * @return the new account
+     * @param email the email-address
+     * @return the new account with a generated password
      */
     public static Account asProspect(final String email) {
-        return new Account(email);
+        return new Account(null, null, email, AccountType.TENANT);
     }
+
+    /**
+     * Creates a new account of a user/employee of a tenant.
+     *
+     * @param firstname the first name
+     * @param lastname  the last name
+     * @param email     the email-address
+     * @return the new account with a generated password
+     */
+    public static Account asUser(final String firstname, final String lastname, final String email) {
+        return new Account(firstname, lastname, email, AccountType.USER);
+    }
+
 
     /**
      * JPA needs it
@@ -81,14 +98,21 @@ public class Account implements Serializable {
     /**
      * C'tor
      */
-    private Account(final String email) {
+    private Account(final String firstname, final String lastname, final String email, final AccountType accountType) {
+        this.username = "";
+        this.firstname = firstname != null ? firstname : "";
+        this.lastname = lastname != null ? lastname : "";
         this.email = email;
-        this.username = email.substring(0, email.indexOf('@'));
-        this.status = Status.PROSPECT;
+        this.accountType = accountType;
+        this.tenantStatus = AccountType.TENANT == accountType ? TenantStatus.PROSPECT : null;
         this.password = Base64.getEncoder().encodeToString(Instant.now().toString().getBytes());
     }
 
     ////// GETTER
+    public Long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -101,8 +125,16 @@ public class Account implements Serializable {
         return password;
     }
 
-    public Status getStatus() {
-        return status;
+    public TenantStatus getTenantStatus() {
+        return tenantStatus;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
     }
 
     public String getFirstname() {
@@ -121,7 +153,17 @@ public class Account implements Serializable {
         return services;
     }
 
+
     ////// SETTER
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+
+    public void setTenantId(final Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+
     public void setEmail(final String email) {
         this.email = email;
     }
@@ -130,8 +172,12 @@ public class Account implements Serializable {
         this.password = password;
     }
 
-    public void setStatus(final Status status) {
-        this.status = status;
+    public void setTenantStatus(final TenantStatus tenantStatus) {
+        this.tenantStatus = tenantStatus;
+    }
+
+    public void setAccountType(final AccountType accountType) {
+        this.accountType = accountType;
     }
 
     public void setFirstname(final String firstname) {
