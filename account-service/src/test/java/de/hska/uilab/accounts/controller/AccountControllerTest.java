@@ -20,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertFalse;
@@ -291,6 +293,7 @@ public class AccountControllerTest {
 
     @Test
     public void shouldUpdateAccountsMailAndCompany() throws Exception {
+        // == prepare ==
         Account baseAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
 
         Map<String, String> updatedAccount = new HashMap<>();
@@ -305,6 +308,7 @@ public class AccountControllerTest {
                 .content(this.objectMapper.writeValueAsString(updatedAccount)))
                 .andExpect(status().isOk());
 
+        // == go / verify ==
         this.mockMvc.perform(get("/accounts/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("test123@mail.org"))
@@ -319,55 +323,106 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.services").isEmpty())
                 .andExpect(status().isOk());
     }
-//
-//    @Test
-//    public void shouldUpgradeToCustomer() throws Exception {
-//        accountRepository.save(Account.asProspect("testuser2@mail.org"));
-//
-//        this.mockMvc.perform(put("/accounts/upgrade/testuser2")
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(get("/accounts/testuser2").accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-//                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
-//                .andExpect(jsonPath("$.username").value("testuser2"))
-//                .andExpect(jsonPath("$.password").isNotEmpty())
-//                .andExpect(jsonPath("$.status").value(TenantStatus.CUSTOMER.name()))
-//                .andExpect(jsonPath("$.firstname").isEmpty())
-//                .andExpect(jsonPath("$.lastname").isEmpty())
-//                .andExpect(jsonPath("$.company").isEmpty())
-//                .andExpect(jsonPath("$.services").isEmpty())
-//                .andExpect(status().isOk());
-//    }
-//
-//    @Test
-//    @Ignore // TODO how to add lists with JSON
-//    public void shouldAddSalesAndProductServiceToCustomer() throws Exception {
-//        accountRepository.save(Account.asProspect("testuser2@mail.org"));
-//
-//        Map<String, String> salesService = new HashMap<>();
-//        salesService.put("name", "SALES");
-//
-//        this.mockMvc.perform(put("/accounts/addservice/testuser2")
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.objectMapper.writeValueAsString(salesService)))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(get("/accounts/testuser2").accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-//                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
-//                .andExpect(jsonPath("$.username").value("testuser2"))
-//                .andExpect(jsonPath("$.password").isNotEmpty())
-//                .andExpect(jsonPath("$.status").value(TenantStatus.CUSTOMER.name()))
-//                .andExpect(jsonPath("$.firstname").isEmpty())
-//                .andExpect(jsonPath("$.lastname").isEmpty())
-//                .andExpect(jsonPath("$.company").isEmpty())
-//                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
-//                .andExpect(status().isOk());
-//    }
+
+    @Test
+    public void shouldUpgradeProspectToCustomer() throws Exception {
+        // == prepare ==
+        Account baseAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        this.mockMvc.perform(put("/accounts/upgrade/" + baseAccount.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services").isEmpty())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldAddSalesServiceToCustomer() throws Exception {
+        // == prepare ==
+        serviceRepository.save(new Service(Service.ServiceName.SALES));
+        Account accountToAddServices = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        List<Map<String, String>> servicesToAdd = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "SALES");
+        servicesToAdd.add(salesService);
+
+        this.mockMvc.perform(put("/accounts/addservice/" + accountToAddServices.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToAdd)))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + accountToAddServices.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldRemovesSalesAndProductServiceToCustomer() throws Exception {
+        // == prepare ==
+        Service sales = serviceRepository.save(new Service(Service.ServiceName.SALES));
+        Service customer = serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        Service product = serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account accountToRemoveServices = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+        accountToRemoveServices.addServices(sales, customer, product);
+        accountRepository.save(accountToRemoveServices);
+
+        List<Map<String, String>> servicesToRemove = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "SALES");
+        Map<String, String> productService = new HashMap<>();
+        productService.put("name", "PRODUCT");
+
+        servicesToRemove.add(salesService);
+        servicesToRemove.add(productService);
+
+        this.mockMvc.perform(put("/accounts/rmservice/" + accountToRemoveServices.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToRemove)))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + accountToRemoveServices.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.password").isNotEmpty())
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.firstname").isEmpty())
+                .andExpect(jsonPath("$.lastname").isEmpty())
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+    }
 //
 //
 //    @Test

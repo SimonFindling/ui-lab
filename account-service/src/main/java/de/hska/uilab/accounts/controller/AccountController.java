@@ -29,12 +29,14 @@ import de.hska.uilab.accounts.dto.ModifyServiceBody;
 import de.hska.uilab.accounts.dto.CreateAccountBody;
 import de.hska.uilab.accounts.dto.UpdateAccountBody;
 import de.hska.uilab.accounts.model.Account;
+import de.hska.uilab.accounts.model.AccountType;
 import de.hska.uilab.accounts.model.Service;
 import de.hska.uilab.accounts.model.TenantStatus;
 import de.hska.uilab.accounts.repository.AccountRepository;
 import de.hska.uilab.accounts.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -87,51 +89,83 @@ public class AccountController {
 
     @RequestMapping(value = "", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
-    public Account updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
-        Account account = accountRepository.findOne(updateAccountBody.getId());
+    public ResponseEntity<Account> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
+        Account accountToUpdate = accountRepository.findOne(updateAccountBody.getId());
         // TODO validation maybe in the dto
-        account.setFirstname(updateAccountBody.getFirstname());
-        account.setLastname(updateAccountBody.getLastname());
-        account.setCompany(updateAccountBody.getCompany());
+        accountToUpdate.setFirstname(updateAccountBody.getFirstname());
+        accountToUpdate.setLastname(updateAccountBody.getLastname());
+        accountToUpdate.setCompany(updateAccountBody.getCompany());
         if (updateAccountBody.getEmail() != null && !updateAccountBody.getEmail().isEmpty()) {
-            account.setEmail(updateAccountBody.getEmail());
+            accountToUpdate.setEmail(updateAccountBody.getEmail());
         }
-        accountRepository.save(account);
-        return account;
+        accountRepository.save(accountToUpdate);
+        return ResponseEntity.ok(accountToUpdate);
     }
 
     @RequestMapping(value = "/upgrade/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
-    public Account upgradeToCustomer(@PathVariable long id) {
+    public ResponseEntity<Account> upgradeToCustomer(@PathVariable long id) {
+        Account accountToUpgrade = accountRepository.findOne(id);
+        if (AccountType.USER == accountToUpgrade.getAccountType()) {
+            accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
+            accountRepository.save(accountToUpgrade);
+            return ResponseEntity.ok(accountToUpgrade);
+        } else if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
+            // TODO upgrade all Users as well.
+            accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
+            accountRepository.save(accountToUpgrade);
+            return ResponseEntity.ok(accountToUpgrade);
+        } else {
+            return ResponseEntity.badRequest().body(accountToUpgrade);
+        }
+    }
+
+    @RequestMapping(value = "/rmservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Account> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        account.setTenantStatus(TenantStatus.CUSTOMER);
-        accountRepository.save(account);
-        return account;
+        if (AccountType.USER == account.getAccountType()) {
+            modifyServiceBody.forEach(msb -> {
+                Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.removeService(serviceToRemove);
+            });
+            accountRepository.save(account);
+            return ResponseEntity.ok(account);
+        } else if (AccountType.TENANT == account.getAccountType()) {
+            // TODO as well for each user if its a tenant acc
+            modifyServiceBody.forEach(msb -> {
+                Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.removeService(serviceToRemove);
+            });
+            accountRepository.save(account);
+            return ResponseEntity.ok(account);
+        } else {
+            return ResponseEntity.badRequest().body(account);
+        }
     }
 
     @RequestMapping(value = "/addservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
-    public Account removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+    public ResponseEntity<Account> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        modifyServiceBody.forEach(msb -> {
-            Service servicetToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-            account.removeService(servicetToRemove);
-        });
-        accountRepository.save(account);
-        return account;
-    }
-
-    @RequestMapping(value = "/removeservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
-    @ResponseStatus(HttpStatus.OK)
-    public Account addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
-        Account account = accountRepository.findOne(id);
-        modifyServiceBody.forEach(msb -> {
-            Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-            account.addService(servicetToAdd);
-        });
-        // TODO as well for each user if its a tenant acc
-        accountRepository.save(account);
-        return account;
+        if (AccountType.USER == account.getAccountType()) {
+            modifyServiceBody.forEach(msb -> {
+                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.addService(servicetToAdd);
+            });
+            accountRepository.save(account);
+            return ResponseEntity.ok(account);
+        } else if (AccountType.TENANT == account.getAccountType()) {
+            modifyServiceBody.forEach(msb -> {
+                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.addService(servicetToAdd);
+            });
+            // TODO as well for each user if its a tenant acc
+            accountRepository.save(account);
+            return ResponseEntity.ok(account);
+        } else {
+            return ResponseEntity.badRequest().body(account);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
