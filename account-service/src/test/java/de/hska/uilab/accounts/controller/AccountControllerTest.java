@@ -212,72 +212,82 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
                 .andExpect(status().isOk());
     }
-//
-//    @Test
-//    public void shouldGetAllAccounts() throws Exception {
-//        // == prepare ==
-//        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
-//        serviceRepository.save(new Service(Service.ServiceName.SALES));
-//        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
-//        accountRepository.save(Account.asProspect("testuser3@mail.org"));
-//        accountRepository.save(Account.asProspect("testuser4@mail.org"));
-//        accountRepository.save(Account.asProspect("testuser5@mail.org"));
-//        accountRepository.save(Account.asProspect("testuser6@mail.org"));
-//
-//        Account testuser3 = accountRepository.findOne("testuser3");
-//        testuser3.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
-//        accountRepository.save(testuser3);
-//
-//        Account testuser6 = accountRepository.findOne("testuser6");
-//        testuser6.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
-//        testuser6.addService(serviceRepository.findOne(Service.ServiceName.SALES));
-//        testuser6.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
-//        accountRepository.save(testuser6);
-//
-//        // == go / verify ==
-//        this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-//                // 1
-//                .andExpect(jsonPath("$[0].email").value("testuser3@mail.org"))
-//                .andExpect(jsonPath("$[0].username").value("testuser3"))
-//                .andExpect(jsonPath("$[0].password").isNotEmpty())
-//                .andExpect(jsonPath("$[0].status").value(TenantStatus.PROSPECT.name()))
-//                .andExpect(jsonPath("$[0].firstname").isEmpty())
-//                .andExpect(jsonPath("$[0].lastname").isEmpty())
-//                .andExpect(jsonPath("$[0].company").isEmpty())
-//                .andExpect(jsonPath("$[0].services[0].name").value(Service.ServiceName.CUSTOMER.name()))
-//                // 2
-//                .andExpect(jsonPath("$[1].email").value("testuser4@mail.org"))
-//                .andExpect(jsonPath("$[1].username").value("testuser4"))
-//                .andExpect(jsonPath("$[1].password").isNotEmpty())
-//                .andExpect(jsonPath("$[1].status").value(TenantStatus.PROSPECT.name()))
-//                .andExpect(jsonPath("$[1].firstname").isEmpty())
-//                .andExpect(jsonPath("$[1].lastname").isEmpty())
-//                .andExpect(jsonPath("$[1].company").isEmpty())
-//                .andExpect(jsonPath("$[1].services").isEmpty())
-//                // 3
-//                .andExpect(jsonPath("$[2].email").value("testuser5@mail.org"))
-//                .andExpect(jsonPath("$[2].username").value("testuser5"))
-//                .andExpect(jsonPath("$[2].password").isNotEmpty())
-//                .andExpect(jsonPath("$[2].status").value(TenantStatus.PROSPECT.name()))
-//                .andExpect(jsonPath("$[2].firstname").isEmpty())
-//                .andExpect(jsonPath("$[2].lastname").isEmpty())
-//                .andExpect(jsonPath("$[2].company").isEmpty())
-//                .andExpect(jsonPath("$[2].services").isEmpty())
-//                // 4
-//                .andExpect(jsonPath("$[3].email").value("testuser6@mail.org"))
-//                .andExpect(jsonPath("$[3].username").value("testuser6"))
-//                .andExpect(jsonPath("$[3].password").isNotEmpty())
-//                .andExpect(jsonPath("$[3].status").value(TenantStatus.PROSPECT.name()))
-//                .andExpect(jsonPath("$[3].firstname").isEmpty())
-//                .andExpect(jsonPath("$[3].lastname").isEmpty())
-//                .andExpect(jsonPath("$[3].company").isEmpty())
-//                .andExpect(jsonPath("$[3].services[0].name").value(Service.ServiceName.CUSTOMER.name()))
-//                .andExpect(jsonPath("$[3].services[1].name").value(Service.ServiceName.SALES.name()))
-//                .andExpect(jsonPath("$[3].services[2].name").value(Service.ServiceName.PRODUCT.name()))
-//                //
-//                .andExpect(status().isOk());
-//    }
+
+    @Test
+    public void shouldGetAllAccounts() throws Exception {
+        // == prepare ==
+        serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        serviceRepository.save(new Service(Service.ServiceName.SALES));
+        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account account3 = accountRepository.save(Account.asProspect("testuser3@mail.org"));
+        accountRepository.save(Account.asProspect("testuser4@mail.org"));
+        accountRepository.save(Account.asProspect("testuser5@mail.org"));
+        Account account6 = accountRepository.save(Account.asProspect("testuser6@mail.org"));
+
+        Account testuser3 = accountRepository.findOne(account3.getId());
+        testuser3.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
+        accountRepository.save(testuser3);
+
+        Account testuser6 = accountRepository.findOne(account6.getId());
+        testuser6.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
+        testuser6.addService(serviceRepository.findOne(Service.ServiceName.SALES));
+        testuser6.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
+        accountRepository.save(testuser6);
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                // 1
+                .andExpect(jsonPath("$[0].id").value(account3.getId()))
+                .andExpect(jsonPath("$[0].email").value("testuser3@mail.org"))
+                .andExpect(jsonPath("$[0].username").isEmpty())
+                .andExpect(jsonPath("$[0].password").isNotEmpty())
+                .andExpect(jsonPath("$[0].tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$[0].tenantId").isEmpty())
+                .andExpect(jsonPath("$[0].accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$[0].firstname").isEmpty())
+                .andExpect(jsonPath("$[0].lastname").isEmpty())
+                .andExpect(jsonPath("$[0].company").isEmpty())
+                .andExpect(jsonPath("$[0].services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                // 2
+                .andExpect(jsonPath("$[1].email").value("testuser4@mail.org"))
+                .andExpect(jsonPath("$[1].username").isEmpty())
+                .andExpect(jsonPath("$[1].password").isNotEmpty())
+                .andExpect(jsonPath("$[1].tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$[1].tenantId").isEmpty())
+                .andExpect(jsonPath("$[1].accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$[1].firstname").isEmpty())
+                .andExpect(jsonPath("$[1].lastname").isEmpty())
+                .andExpect(jsonPath("$[1].company").isEmpty())
+                .andExpect(jsonPath("$[1].services").isEmpty())
+                // 3
+                .andExpect(jsonPath("$[2].email").value("testuser5@mail.org"))
+                .andExpect(jsonPath("$[2].username").isEmpty())
+                .andExpect(jsonPath("$[2].password").isNotEmpty())
+                .andExpect(jsonPath("$[2].tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$[2].tenantId").isEmpty())
+                .andExpect(jsonPath("$[2].accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$[2].firstname").isEmpty())
+                .andExpect(jsonPath("$[2].lastname").isEmpty())
+                .andExpect(jsonPath("$[2].company").isEmpty())
+                .andExpect(jsonPath("$[2].services").isEmpty())
+                // 4
+                .andExpect(jsonPath("$[3].id").value(account6.getId()))
+                .andExpect(jsonPath("$[3].email").value("testuser6@mail.org"))
+                .andExpect(jsonPath("$[3].username").isEmpty())
+                .andExpect(jsonPath("$[3].password").isNotEmpty())
+                .andExpect(jsonPath("$[3].tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$[3].tenantId").isEmpty())
+                .andExpect(jsonPath("$[3].accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$[3].firstname").isEmpty())
+                .andExpect(jsonPath("$[3].lastname").isEmpty())
+                .andExpect(jsonPath("$[3].company").isEmpty())
+                .andExpect(jsonPath("$[3].services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$[3].services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(jsonPath("$[3].services[2].name").value(Service.ServiceName.SALES.name()))
+                //
+                .andExpect(status().isOk());
+    }
 //
 //
 //    @Test
