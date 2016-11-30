@@ -20,3 +20,11 @@ services:
       - "9005:9005"
     links:
       - discovery
+# (mavogel): disabled cuz not tested in docker yet, but need to merge due to api update
+#  account:
+#    image: ${DOCKER_USER}/account-service:${TAG}
+#    restart: always
+#    ports:
+#      - "6000:6000"
+#    links:
+#      - discovery
