@@ -98,7 +98,7 @@ Content-Length:
 === POST
 
 ==== Create a new account for a client
-Only the e-Mail address is required for creating an account. The generated password is returned.
+Only the e-Mail address is required for creating a prospect account. The generated password is returned.
 
 ===== Example Request
 [source,bash,options="nowrap"]
@@ -114,6 +114,25 @@ Content-Type: text/plain;charset=UTF-8
 Content-Length:
 
 84eeeb5fb09da9e2ed197cb3c1f1f0575f3bef33
+----
+
+==== Create a new account for a user/employee of a client
+The first-, lastname and e-Mail address is required for creating a user account. The generated password is returned.
+
+===== Example Request
+[source,bash,options="nowrap"]
+----
+$ curl 'http://DOCKER-HOST:8080/accounts/{tenantId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstname:": "", "lastname": "", email":""}'
+----
+
+===== Example Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+Content-Type: text/plain;charset=UTF-8
+Content-Length:
+
+84eeeb5fb09da9e2ed197cb3c1f1f0575f3we22
 ----
 
 === PUT

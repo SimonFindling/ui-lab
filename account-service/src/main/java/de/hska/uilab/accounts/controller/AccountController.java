@@ -24,6 +24,7 @@ package de.hska.uilab.accounts.controller;/*
  *  https://opensource.org/licenses/MIT
  */
 
+import de.hska.uilab.accounts.dto.CreateUserAccountBody;
 import de.hska.uilab.accounts.dto.ModifyServiceBody;
 import de.hska.uilab.accounts.dto.CreateAccountBody;
 import de.hska.uilab.accounts.dto.UpdateAccountBody;
@@ -67,6 +68,17 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createAccount(@RequestBody CreateAccountBody createAccountBody) {
         Account createdAccount = Account.asProspect(createAccountBody.getEmail());
+        accountRepository.save(createdAccount);
+        return createdAccount.getPassword();
+    }
+
+    @RequestMapping(value = "/{tenantId}", produces = "text/plain", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
+        Account createdAccount = Account.asUser(tenantId,
+                                                createUserAccountBody.getFirstName(),
+                                                createUserAccountBody.getLastName(),
+                                                createUserAccountBody.getEmail());
         accountRepository.save(createdAccount);
         return createdAccount.getPassword();
     }
@@ -115,6 +127,7 @@ public class AccountController {
             Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
             account.addService(servicetToAdd);
         });
+        // TODO as well for each user if its a tenant acc
         accountRepository.save(account);
         return account;
     }

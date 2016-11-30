@@ -97,7 +97,6 @@ public class AccountControllerTest {
     }
 
 
-
     @Test
     public void shouldCreateACustomerService() throws Exception {
         serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
@@ -131,6 +130,36 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
                 .andExpect(status().isOk());
     }
+
+//    @Test
+//    public void shouldFindOneUserAccount() throws Exception {
+//        // == prepare ==
+//        serviceRepository.save(new Service(Service.ServiceName.SALES));
+//        serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+//        Account prospectAccount = accountRepository.save(Account.asProspect("prospectAcc@mail.org"));
+//        prospectAccount = accountRepository.findOne(prospectAccount.getId());
+//        prospectAccount.addService(serviceRepository.findOne(Service.ServiceName.CUSTOMER));
+//        prospectAccount.addService(serviceRepository.findOne(Service.ServiceName.PRODUCT));
+//        accountRepository.save(prospectAccount);
+//
+//        Account userAccount = accountRepository.save(Account.asUser(prospectAccount.getId(), "John", "Doe", "testuser2@mail.org"));
+//
+//        // == go / verify ==
+//        this.mockMvc.perform(get("/accounts/" + userAccount.getId()).accept(MediaType.APPLICATION_JSON)
+//                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+//                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+//                .andExpect(jsonPath("$.username").isEmpty())
+//                .andExpect(jsonPath("$.password").isNotEmpty())
+//                .andExpect(jsonPath("$.tenantStatus").isEmpty())
+//                .andExpect(jsonPath("$.tenantId").isEmpty())
+//                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+//                .andExpect(jsonPath("$.firstname").value("John"))
+//                .andExpect(jsonPath("$.lastname").value("Doe"))
+//                .andExpect(jsonPath("$.company").isEmpty())
+//                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.SALES.name()))
+//                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.PRODUCT.name()))
+//                .andExpect(status().isOk());
+//    }
 //
 //    @Test
 //    public void shouldGetAllAccounts() throws Exception {

@@ -49,16 +49,19 @@ public class Account implements Serializable {
 
     @Email
     @NotBlank
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
+    private String username;
 
     @Length(min = 6, max = 64)
     private String password;
 
-    private String username;
     private String firstname;
     private String lastname;
     private String company;
-    private Integer tenantId;
+    private Long tenantId;
     private TenantStatus tenantStatus;
     private AccountType accountType;
 
@@ -73,19 +76,23 @@ public class Account implements Serializable {
      * @return the new account with a generated password
      */
     public static Account asProspect(final String email) {
-        return new Account(null, null, email, AccountType.TENANT);
+        return new Account(null, null, null, email, AccountType.TENANT);
     }
 
     /**
      * Creates a new account of a user/employee of a tenant.
      *
-     * @param firstname the first name
-     * @param lastname  the last name
-     * @param email     the email-address
+     * @param tenantId          the id of the tenant account which created the user
+     * @param firstname         the first name
+     * @param lastname          the last name
+     * @param email             the email-address
+     * @param inheritedServices the inherited services from the tenant
      * @return the new account with a generated password
      */
-    public static Account asUser(final String firstname, final String lastname, final String email) {
-        return new Account(firstname, lastname, email, AccountType.USER);
+    public static Account asUser(final Long tenantId,
+                                 final String firstname, final String lastname, final String email,
+                                 final Service... inheritedServices) {
+        return new Account(tenantId, firstname, lastname, email, AccountType.USER);
     }
 
 
@@ -98,14 +105,18 @@ public class Account implements Serializable {
     /**
      * C'tor
      */
-    private Account(final String firstname, final String lastname, final String email, final AccountType accountType) {
+    private Account(final Long tenantId,
+                    final String firstname, final String lastname, final String email, final AccountType accountType,
+                    final Service... inheritedServices) {
         this.username = "";
         this.firstname = firstname != null ? firstname : "";
         this.lastname = lastname != null ? lastname : "";
         this.email = email;
         this.accountType = accountType;
+        this.tenantId = tenantId;
         this.tenantStatus = AccountType.TENANT == accountType ? TenantStatus.PROSPECT : null;
         this.password = Base64.getEncoder().encodeToString(Instant.now().toString().getBytes());
+        this.services = Arrays.asList(inheritedServices);
     }
 
     ////// GETTER
@@ -129,7 +140,7 @@ public class Account implements Serializable {
         return tenantStatus;
     }
 
-    public Integer getTenantId() {
+    public Long getTenantId() {
         return tenantId;
     }
 
@@ -160,7 +171,7 @@ public class Account implements Serializable {
     }
 
 
-    public void setTenantId(final Integer tenantId) {
+    public void setTenantId(final Long tenantId) {
         this.tenantId = tenantId;
     }
 
