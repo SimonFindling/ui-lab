@@ -31,7 +31,7 @@ Content-Length:
   "company":"",
   "tenantId": "",
   "type": "TENANT"
-  "status":"PROSPECT",
+  "tenantStatus":"PROSPECT",
   "services": [
     "name":"PRODUCT",
     "name":"CUSTOMER",
@@ -85,7 +85,7 @@ Content-Length:
  "company":"",
  "tenantId": "null",
  "type": "TENANT"
- "status":"PROSPECT",
+ "tenantStatus":"PROSPECT",
  "services": [
    "name":"PRODUCT",
    "name":"CUSTOMER",
@@ -138,11 +138,11 @@ Content-Length:
 === PUT
 
 ==== Update an existing account for a client
-Anything but the `username` can be updated. For Upgrading the `status` use `/upgrade` and for
+Anything but the `username` can be updated. For Upgrading the `tenantStatus` use `/upgrade` and for
 adding new services use the `addservice` resource.
 
 ===== Example Request for Tenant
-A tenant can only update personal data fields. He cannot change his status. This can only
+A tenant can only update personal data fields. He cannot change his tenantStatus. This can only
 be done by an `Admin`.
 [source,bash,options="nowrap"]
 ----
@@ -170,7 +170,7 @@ Content-Length:
 A admin can edit all data fields.
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":"", "status":"PROSPECT", "services": ["name":"PRODUCT","name":"CUSTOMER","name":"SALES"]}'
+$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":"", "tenantStatus":"PROSPECT", "services": ["name":"PRODUCT","name":"CUSTOMER","name":"SALES"]}'
 ----
 
 ===== Example Response
@@ -189,7 +189,7 @@ Content-Length:
  "company":"",
  "tenantId": "null",
  "type": "TENANT"
- "status":"PROSPECT",
+ "tenantStatus":"PROSPECT",
  "services": [
    "name":"PRODUCT",
    "name":"CUSTOMER",
@@ -222,7 +222,7 @@ Content-Length: 0
  "company":"",
  "tenantId": "null",
  "type": "TENANT"
- "status":"CUSTOMER",
+ "tenantStatus":"CUSTOMER",
  "services": [
    "name":"PRODUCT",
    "name":"CUSTOMER",
@@ -255,7 +255,7 @@ Content-Length: 0
  "company":"",
  "tenantId": "null",
  "type": "TENANT"
- "status":"PROSPECT",
+ "tenantStatus":"PROSPECT",
  "services": [
    "name":"PRODUCT",
    "name":"CUSTOMER",
@@ -289,7 +289,7 @@ Content-Length: 0
  "company":"",
  "tenantId": "null",
  "type": "TENANT"
- "status":"CUSTOMER",
+ "tenantStatus":"CUSTOMER",
  "services": [
    "name":"PRODUCT",
    "name":"CUSTOMER",
