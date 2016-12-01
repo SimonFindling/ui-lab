@@ -1,0 +1,4 @@
+server:
+  port: 9006
+logging:
+  level: debug
