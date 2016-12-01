@@ -123,6 +123,33 @@ public class ApiDocumentation {
                 ));
     }
 
+    @Test
+    public void getAccountById() throws Exception {
+        Service product = createService(Service.ServiceName.PRODUCT);
+        Service sales = createService(Service.ServiceName.SALES);
+        Service customer = createService(Service.ServiceName.CUSTOMER);
+        Account sampleTenantAccount = createSampleTenantAccount("prospect1@test.org", product, sales, customer);
+
+        this.mockMvc.perform(get("/accounts/" + sampleTenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("id").description("The account ID"),
+                                fieldWithPath("email").description("the email address of the account"),
+                                fieldWithPath("username").description("the username of the account"),
+                                fieldWithPath("password").description("the password of the user"),
+                                fieldWithPath("tenantStatus").description("the status of the tenant PROSPECT or CUSTOMER, which is empty in ADMIN accounts"),
+                                fieldWithPath("tenantId").description("the corresponding tenantId, which is only set in USER accounts"),
+                                fieldWithPath("accountType").description("the type of the account: ADMIN, TENANT or USER"),
+                                fieldWithPath("firstname").description("the firstname of the account owner"),
+                                fieldWithPath("lastname").description("the lastname of the account owner"),
+                                fieldWithPath("company").description("the company of the account owner"),
+                                fieldWithPath("services.[]").description("the services/modules this account can use")
+                        )
+                ));
+    }
+
     private Service createService(final Service.ServiceName name) {
         return this.serviceRepository.save(new Service(name));
 

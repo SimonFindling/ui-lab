@@ -62,7 +62,7 @@ Content-Length:
 
 ----
 
-==== Get account by its unique id
+==== Get account by id
 
 ===== Example Request
 [source,bash,options="nowrap"]
