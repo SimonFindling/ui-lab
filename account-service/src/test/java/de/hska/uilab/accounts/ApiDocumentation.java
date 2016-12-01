@@ -157,6 +157,13 @@ public class ApiDocumentation {
                 ));
     }
 
+    @Test
+    public void getAccountByIdNotFound() throws Exception {
+        this.mockMvc.perform(get("/accounts/1000").accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isNotFound());
+    }
+
     /////////////
     // POST
     /////////////

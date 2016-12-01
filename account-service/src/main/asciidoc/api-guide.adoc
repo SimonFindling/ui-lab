@@ -97,6 +97,7 @@ include::{snippets}/get-account-by-id/http-request.adoc[]
 ===== Example response
 
 include::{snippets}/get-account-by-id/http-response.adoc[]
+include::{snippets}/get-account-by-id-not-found/http-response.adoc[]
 
 
 === POST
