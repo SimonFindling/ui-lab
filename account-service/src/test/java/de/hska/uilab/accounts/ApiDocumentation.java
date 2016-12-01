@@ -177,6 +177,34 @@ public class ApiDocumentation {
                 ));
     }
 
+    @Test
+    public void createUserAccount() throws Exception {
+        Service customer = serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        Service sales = serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account tenantAccount = accountRepository.save(Account.asProspect("prospectAcc@mail.org"));
+        tenantAccount.addServices(customer, sales);
+        accountRepository.save(tenantAccount);
+
+        // 2: build and save user acc
+        Map<String, String> newUserAccount = new HashMap<>();
+        newUserAccount.put("firstname", "John");
+        newUserAccount.put("lastname", "Doe");
+        newUserAccount.put("email", "newuser@mail.org");
+
+        this.mockMvc.perform(post("/accounts/" + tenantAccount.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newUserAccount)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("firstname").description("The first name of the user"),
+                                fieldWithPath("lastname").description("The last name of the user"),
+                                fieldWithPath("email").description("The email-address of the user")
+                        )
+                ));
+    }
+
     /////////////
     // PUT
     /////////////
@@ -199,7 +227,7 @@ public class ApiDocumentation {
      */
     private Account createSampleTenantAccount(final String email, final Service... services) {
         Account createdAcc = this.accountRepository.save(Account.asProspect(email));
-        if(services != null && services.length > 0) {
+        if (services != null && services.length > 0) {
             createdAcc.addServices(services);
             createdAcc = this.accountRepository.save(createdAcc);
         }
@@ -212,7 +240,7 @@ public class ApiDocumentation {
                                             final String email, final Service... services) {
         Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email));
 
-        if(services != null && services.length > 0) {
+        if (services != null && services.length > 0) {
             createdAcc.addServices(services);
             createdAcc = this.accountRepository.save(createdAcc);
         }

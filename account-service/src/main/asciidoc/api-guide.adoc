@@ -48,9 +48,6 @@ use of HTTP status codes.
 
 | `200 OK`
 | Standard response for successful HTTP requests.
-| The actual response will depend on the request method used.
-| In a GET request, the response will contain an entity corresponding to the requested resource.
-| In a POST request, the response will contain an entity describing or containing the result of the action.
 
 | `201 Created`
 | The request has been fulfilled and resulted in a new resource being created.
@@ -68,7 +65,7 @@ use of HTTP status codes.
 [[resources]]
 = Resources
 
-[[resources-categories]]
+[[resources-accounts]]
 == Accounts
 The `accounts` resource is used to create, list and delete accounts.
 
@@ -99,7 +96,7 @@ include::{snippets}/get-account-by-id/http-request.adoc[]
 
 ===== Example response
 
-include::{snippets}/get-accounts-by-id/http-response.adoc[]
+include::{snippets}/get-account-by-id/http-response.adoc[]
 
 
 === POST
@@ -119,8 +116,19 @@ include::{snippets}/create-tenant-account/http-request.adoc[]
 include::{snippets}/create-tenant-account/http-response.adoc[]
 
 
-==== Create a new account for a user/employee of a client
+==== Create user account
 The first-, lastname and e-Mail address is required for creating a user account. The generated password is returned.
+
+include::{snippets}/create-user-account/request-fields.adoc[]
+
+===== Example request
+
+include::{snippets}/create-user-account/curl-request.adoc[]
+include::{snippets}/create-user-account/http-request.adoc[]
+
+===== Example response
+
+include::{snippets}/create-user-account/http-response.adoc[]
 
 === PUT
 

@@ -116,7 +116,7 @@ Content-Length:
 84eeeb5fb09da9e2ed197cb3c1f1f0575f3bef33
 ----
 
-==== Create a new account for a user/employee of a client
+==== Create user account
 The first-, lastname and e-Mail address is required for creating a user account. The generated password is returned.
 
 ===== Example Request
