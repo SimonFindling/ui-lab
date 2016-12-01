@@ -1,15 +1,14 @@
 [customers]
 == Customer-Service
-The tenant aka client is identified by the 'Bearer Header Token'
 
 === GET
 
-==== List all customers of a client
+==== List all customers of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -22,18 +21,27 @@ Content-Length:
 [
  {
   "id":"",
+  "tenantId": "",
   "firstName":"",
-  "lastName":""
+  "lastName":"",
+  "email":"",
+  "address": {
+    "street":"",
+    "number":"",
+    "postal":"",
+    "city":"",
+    "country":"",
+  }
  }
 ]
 ----
 
-==== List a single customer of a client
+==== List a single customer of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers/{customerId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response
@@ -43,20 +51,29 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 Content-Length:
 
- {
-  "id":"{customerId}",
-  "firstName":"",
-  "lastName":""
+{
+ "id":"",
+ "tenantId": "",
+ "firstName":"",
+ "lastName":"",
+ "email":"",
+ "address": {
+   "street":"",
+   "number":"",
+   "postal":"",
+   "city":"",
+   "country":"",
  }
+}
 ----
 
 === POST
 
-==== Create a new customer for a client
+==== Create a new customer for a tenant
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"",  "email":"","address": {"street":"","number":"","postal":"","city":"","country":""}}'
 ----
 
 ===== Example Response
@@ -68,11 +85,11 @@ HTTP/1.1 201 Created
 
 === PUT
 
-==== Modify an existing customer for a client
+==== Modify an existing customer for a tenant
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers/{customerId}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":""}'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"firstName":"", "lastName":"",  "email":"","address": {"street":"","number":"","postal":"","city":"","country":""}}'
 ----
 
 ===== Example Response
@@ -82,22 +99,32 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 Content-Length:
 
- {
-  "firstName":"",
-  "lastName":""
+{
+ "id":"",
+ "tenantId": "",
+ "firstName":"",
+ "lastName":"",
+ "email":"",
+ "address": {
+   "street":"",
+   "number":"",
+   "postal":"",
+   "city":"",
+   "country":"",
  }
+}
 
 ----
 
 
 === DELETE
 
-==== Delete a customer of a client
+==== Delete a customer of a tenant
 
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers/{customerId}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 ===== Example Response
 [source,http,options="nowrap"]

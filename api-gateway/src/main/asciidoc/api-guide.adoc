@@ -12,12 +12,31 @@
 This document provides a proposal for the API Gateway of the HSKA ERP Cloud system
 developed in the master course **Graphical User Interfaces**.
 
+== Terms
+- Service Provider/Admin: the are we, the programmers of the HSKA ERP system.
+- Tenant: our customers, the users of our service
+- User: the employees of the tenants
+- Customer: the users/clients of the tenants
+- Vendor: the vendors of the products for each tenant
+
+== Service
+- Account Service: handles the accounts of the tenants/clients of the HSKA ERP system
+- Tenant Service: handles all the data of the tenants
+- Customer Service: handles all the data of each customer of each tenant
+- Product Service: handles all the product data of each tenant
+- Vendor Service: handles all the vendors of all the products of each tenant
+- User Service: handles all the users/employees of each tenant
+- Task Service: handles all the task of each user
+- Sales Service: handles and calculates the sales data of each tenant
+- Auth Service: perform the login and logout. handles the rights of each user
+
 include::sections/introduction.adoc[]
+include::sections/account.adoc[]
 include::sections/customers.adoc[]
 include::sections/products.adoc[]
 include::sections/vendors.adoc[]
+#include::sections/user.adoc[]
 include::sections/sales.adoc[]
-include::sections/employees.adoc[]
-include::sections/search.adoc[]
-include::sections/account.adoc[]
-include::sections/auth.adoc[]
+#include::sections/search.adoc[]
+#include::sections/auth.adoc[]
+#include::sections/task.adoc[]
