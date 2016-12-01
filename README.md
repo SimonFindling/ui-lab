@@ -9,7 +9,8 @@ If you want to build and set up the dockers containers locally:
 # we all use the uilab user now
 export DOCKER_USER=uilab
 export TAG=latest
-./build_locally.sh (or mvn install in the main project)
+./build_locally.sh 
+// or mvn install in the main project
 # Note the docker-compose.yml also needs the ENV vars
 docker-compose up -d
 ```
@@ -24,7 +25,7 @@ until everything is set up. Consider `docker logs -tf <container-hash>` for the 
 5. Log into  `travis-ci.org` with the github account where your fork is hosted (should be a public repository)
 6. Activate the repository in `travis`
 7. Go to the settings of your travis repository.
-8. Under `Environment Variables` set `DOCKER_EMAIL`, `DOCKER_USER` and `DOCKER_PASS` with your information. See [here](https://cinhtau.net/wp/use-travis-ci-in-github-to-build-and-deploy-to-dockerhub/#Deploy_to_Dockerhub) for details but **use names as specified here**.
+8. Under `Environment Variables` set `DOCKER_USER` and `DOCKER_PASS` with your information. See [here](https://cinhtau.net/wp/use-travis-ci-in-github-to-build-and-deploy-to-dockerhub/#Deploy_to_Dockerhub) for details but **use names as specified here**.
 9. Make a change, commit, push and see if `travis` builds
 10. If the build was successful, check your dockerhub account if the images appears
 11. Pull if from docker hub.
@@ -63,8 +64,18 @@ Watchtower only updates running containers, therefore make sure the containers y
     ```
 3. This adds the root `pom.xml` as parent-POM, which adds the maven-docker-plugin and spring boot to your service. The `template-project` shows how your new service `pom.xml` should look
 4. Add service to `docker-compose.yml`
-5. Add a new route in `application.yml` of the api-gateway
-6. Add the hook url to the image at docker hub or initially run the docker container of the service on your server with Watchtower
+5. a new route for the api-gateway is added automatically, when your service is connected to eureka with the `@EnableDiscoveryClient` Annotation
+6. To use the configuration service, add your application name and the config service url to your bootstrap.yml file like this 
+```
+spring:
+  application:
+    name: <application-name>
+  cloud:
+    config:
+      uri: http://config-service:8888
+      fail-fast: true
+```
+7. Now you can create a config file (replacing your local application.yml) in `config-service/src/main/resources/shared`. This file must be named like your `application name` in `bootstrap.yml` and must have the file ending `.yml`. Please note that config-service provides a standard configuration for every service in `shared/application.yml`. You only need to add those entries to your service configuration file, that are not already included in the standard configuration.
 
 
 ## Documentation of API Gateway
