@@ -76,25 +76,47 @@ The `accounts` resource is used to create, list and delete accounts.
 
 ==== List all accounts of tenants
 
-include::{snippets}/list-all-accounts-of-tenants/response-fields.adoc[]
+include::{snippets}/list-all-accounts/response-fields.adoc[]
 
 ===== Example request
 
-include::{snippets}/list-all-accounts-of-tenants/curl-request.adoc[]
-include::{snippets}/list-all-accounts-of-tenants/http-request.adoc[]
+include::{snippets}/list-all-accounts/curl-request.adoc[]
+include::{snippets}/list-all-accounts/http-request.adoc[]
 
 ===== Example response
 
-include::{snippets}/list-all-accounts-of-tenants/http-response.adoc[]
+include::{snippets}/list-all-accounts/http-response.adoc[]
 
 
 ==== Get account by its unique id
 
+include::{snippets}/get-account-by-id/response-fields.adoc[]
+
+===== Example request
+
+include::{snippets}/get-account-by-id/curl-request.adoc[]
+include::{snippets}/get-account-by-id/http-request.adoc[]
+
+===== Example response
+
+include::{snippets}/get-accounts-by-id/http-response.adoc[]
+
 
 === POST
 
-==== Create a new account for a client
+==== Create tenant account
 Only the e-Mail address is required for creating a prospect account. The generated password is returned.
+
+include::{snippets}/create-tenant-account/request-fields.adoc[]
+
+===== Example request
+
+include::{snippets}/create-tenant-account/curl-request.adoc[]
+include::{snippets}/create-tenant-account/http-request.adoc[]
+
+===== Example response
+
+include::{snippets}/create-tenant-account/http-response.adoc[]
 
 
 ==== Create a new account for a user/employee of a client

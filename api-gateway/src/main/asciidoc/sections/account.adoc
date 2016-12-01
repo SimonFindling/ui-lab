@@ -97,8 +97,8 @@ Content-Length:
 
 === POST
 
-==== Create a new account for a client
-Only the e-Mail address is required for creating a prospect account. The generated password is returned.
+==== Create tenant account
+Only the e-Mail address is required for creating a prospect account for a tenant. The generated password is returned.
 
 ===== Example Request
 [source,bash,options="nowrap"]

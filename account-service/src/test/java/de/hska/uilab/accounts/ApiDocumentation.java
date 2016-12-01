@@ -46,14 +46,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -93,8 +97,11 @@ public class ApiDocumentation {
                 .build();
     }
 
+    /////////////
+    // GET
+    /////////////
     @Test
-    public void listAllAccountsOfTenants() throws Exception {
+    public void listAllAccounts() throws Exception {
         Service product = createService(Service.ServiceName.PRODUCT);
         Service sales = createService(Service.ServiceName.SALES);
         Service customer = createService(Service.ServiceName.CUSTOMER);
@@ -150,11 +157,46 @@ public class ApiDocumentation {
                 ));
     }
 
+    /////////////
+    // POST
+    /////////////
+    @Test
+    public void createTenantAccount() throws Exception {
+        Map<String, String> newProspectAccount = new HashMap<>();
+        newProspectAccount.put("email", "test@mail.org");
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("email").description("The email-address of the tenant")
+                        )
+                ));
+    }
+
+    /////////////
+    // PUT
+    /////////////
+
+    /////////////
+    // PATCH
+    /////////////
+
+    /////////////
+    // DELETE
+    /////////////
+
     private Service createService(final Service.ServiceName name) {
         return this.serviceRepository.save(new Service(name));
 
     }
 
+    /**
+     * HELPERS
+     */
     private Account createSampleTenantAccount(final String email, final Service... services) {
         Account createdAcc = this.accountRepository.save(Account.asProspect(email));
         if(services != null && services.length > 0) {
