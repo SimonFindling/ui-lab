@@ -1,6 +1,10 @@
 spring:
-    application:
-        name: gateway
+  application:
+    name: gateway
+  cloud:
+    config:
+      uri: http://config-service:8888
+      fail-fast: true
 security:
   basic:
     enabled: false

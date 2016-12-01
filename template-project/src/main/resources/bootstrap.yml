@@ -1,3 +1,7 @@
 spring:
   application:
     name: template
+  cloud:
+    config:
+      uri: http://config-service:8888
+      fail-fast: true
