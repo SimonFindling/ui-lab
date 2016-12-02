@@ -26,11 +26,11 @@
 	</parent>
 
 	<modules>
-		<module>template-project</module>
-		<module>discovery-service</module>
-		<module>api-gateway</module>
-		<module>login-microservice</module>
+		<!--<module>template-project</module>-->
+		<!--<module>discovery-service</module>-->
+		<!--<module>login-microservice</module>-->
 		<module>account-service</module>
+		<module>api-gateway</module>
 	</modules>
 
 	<profiles>

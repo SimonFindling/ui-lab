@@ -45,7 +45,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,11 +52,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -107,8 +103,11 @@ public class ApiDocumentation {
         Service customer = createService(Service.ServiceName.CUSTOMER);
 
         Account sampleTenantAccount1 = createSampleTenantAccount("prospect1@test.org", product, sales, customer);
+        sampleTenantAccount1.setCompany("tenant1Company");
+        accountRepository.save(sampleTenantAccount1);
         createSampleTenantAccount("prospect2@test.org", product, customer);
-        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org", product, sales, customer);
+        // TODO create user via rest interface
+        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org", "tenant1Company", product, sales, customer);
 
         this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
@@ -192,7 +191,6 @@ public class ApiDocumentation {
         tenantAccount.addServices(customer, sales);
         accountRepository.save(tenantAccount);
 
-        // 2: build and save user acc
         Map<String, String> newUserAccount = new HashMap<>();
         newUserAccount.put("firstname", "John");
         newUserAccount.put("lastname", "Doe");
@@ -213,12 +211,37 @@ public class ApiDocumentation {
     }
 
     /////////////
-    // PUT
-    /////////////
-
-    /////////////
     // PATCH
     /////////////
+    @Test
+    public void updateTenantAccount() throws Exception {
+        // == prepare ==
+        Account baseAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        Map<String, String> updatedAccount = new HashMap<>();
+        updatedAccount.put("id", String.valueOf(baseAccount.getId()));
+        updatedAccount.put("username", "newUsername");
+        updatedAccount.put("firstname", "John");
+        updatedAccount.put("lastname", "Doe");
+        updatedAccount.put("email", "test123@mail.org");
+        updatedAccount.put("company", "VR Stuff");
+
+        this.mockMvc.perform(patch("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(updatedAccount)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("id").description("The id of the user"),
+                                fieldWithPath("username").description("The name of the user"),
+                                fieldWithPath("firstname").description("The first name of the user"),
+                                fieldWithPath("lastname").description("The last name of the user"),
+                                fieldWithPath("email").description("The email-address of the user"),
+                                fieldWithPath("company").description("The company name of the user")
+                        )
+                ));
+    }
 
     /////////////
     // DELETE
@@ -244,8 +267,8 @@ public class ApiDocumentation {
     }
 
     private Account createSampleUserAccount(final Long tenantId, final String firstName, final String lastName,
-                                            final String email, final Service... services) {
-        Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email));
+                                            final String email, final String company, final Service... services) {
+        Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email, company));
 
         if (services != null && services.length > 0) {
             createdAcc.addServices(services);

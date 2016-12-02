@@ -86,27 +86,30 @@ public class AccountController {
                 createUserAccountBody.getFirstname(),
                 createUserAccountBody.getLastname(),
                 createUserAccountBody.getEmail(),
+                tenantAccount.getCompany(),
                 tenantAccount.getServices().toArray(new Service[]{}));
         accountRepository.save(createdAccount);
         return createdAccount.getPassword();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
         Account accountToUpdate = accountRepository.findOne(updateAccountBody.getId());
-        // TODO validation maybe in the dto
+        accountToUpdate.setUsername(updateAccountBody.getUsername());
         accountToUpdate.setFirstname(updateAccountBody.getFirstname());
         accountToUpdate.setLastname(updateAccountBody.getLastname());
         accountToUpdate.setCompany(updateAccountBody.getCompany());
-        if (updateAccountBody.getEmail() != null && !updateAccountBody.getEmail().isEmpty()) {
-            accountToUpdate.setEmail(updateAccountBody.getEmail());
+        accountToUpdate.setEmail(updateAccountBody.getEmail());
+        try {
+            accountRepository.save(accountToUpdate);
+            return ResponseEntity.ok(accountToUpdate);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
         }
-        accountRepository.save(accountToUpdate);
-        return ResponseEntity.ok(accountToUpdate);
     }
 
-    @RequestMapping(value = "/upgrade/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/upgrade", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> upgradeToCustomer(@PathVariable long id) {
         Account accountToUpgrade = accountRepository.findOne(id);
@@ -124,7 +127,7 @@ public class AccountController {
         }
     }
 
-    @RequestMapping(value = "/rmservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/rmservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
@@ -148,7 +151,7 @@ public class AccountController {
         }
     }
 
-    @RequestMapping(value = "/addservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/addservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
@@ -176,7 +179,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> removeAccount(@PathVariable long id) {
         final Account account = accountRepository.findOne(id);
-        if(account == null) {
+        if (account == null) {
             return ResponseEntity.notFound().build();
         } else {
             if (AccountType.USER == account.getAccountType()) {

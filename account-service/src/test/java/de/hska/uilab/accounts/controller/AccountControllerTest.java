@@ -304,7 +304,7 @@ public class AccountControllerTest {
         updatedAccount.put("email", "test123@mail.org");
         updatedAccount.put("company", "VR Stuff");
 
-        this.mockMvc.perform(put("/accounts")
+        this.mockMvc.perform(patch("/accounts")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(updatedAccount)))
@@ -314,7 +314,7 @@ public class AccountControllerTest {
         this.mockMvc.perform(get("/accounts/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("test123@mail.org"))
-                .andExpect(jsonPath("$.username").isEmpty())
+                .andExpect(jsonPath("$.username").value("testuser2"))
                 .andExpect(jsonPath("$.password").isNotEmpty())
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
                 .andExpect(jsonPath("$.tenantId").isEmpty())
@@ -331,7 +331,7 @@ public class AccountControllerTest {
         // == prepare ==
         Account baseAccount = accountRepository.save(Account.asProspect("testuser2@mail.org"));
 
-        this.mockMvc.perform(put("/accounts/upgrade/" + baseAccount.getId())
+        this.mockMvc.perform(patch("/accounts/" + baseAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -363,7 +363,7 @@ public class AccountControllerTest {
         salesService.put("name", "SALES");
         servicesToAdd.add(salesService);
 
-        this.mockMvc.perform(put("/accounts/addservice/" + accountToAddServices.getId())
+        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/addservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToAdd)))
@@ -404,7 +404,7 @@ public class AccountControllerTest {
         servicesToRemove.add(salesService);
         servicesToRemove.add(productService);
 
-        this.mockMvc.perform(put("/accounts/rmservice/" + accountToRemoveServices.getId())
+        this.mockMvc.perform(patch("/accounts/" + accountToRemoveServices.getId() + "/rmservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToRemove)))

@@ -72,30 +72,24 @@ The `accounts` resource is used to create, list and delete accounts.
 === GET
 
 ==== List all accounts of tenants
-
 include::{snippets}/list-all-accounts/response-fields.adoc[]
 
 ===== Example request
-
 include::{snippets}/list-all-accounts/curl-request.adoc[]
 include::{snippets}/list-all-accounts/http-request.adoc[]
 
 ===== Example response
-
 include::{snippets}/list-all-accounts/http-response.adoc[]
 
 
 ==== Get account by its unique id
-
 include::{snippets}/get-account-by-id/response-fields.adoc[]
 
 ===== Example request
-
 include::{snippets}/get-account-by-id/curl-request.adoc[]
 include::{snippets}/get-account-by-id/http-request.adoc[]
 
 ===== Example response
-
 include::{snippets}/get-account-by-id/http-response.adoc[]
 include::{snippets}/get-account-by-id-not-found/http-response.adoc[]
 
@@ -108,12 +102,10 @@ Only the e-Mail address is required for creating a prospect account. The generat
 include::{snippets}/create-tenant-account/request-fields.adoc[]
 
 ===== Example request
-
 include::{snippets}/create-tenant-account/curl-request.adoc[]
 include::{snippets}/create-tenant-account/http-request.adoc[]
 
 ===== Example response
-
 include::{snippets}/create-tenant-account/http-response.adoc[]
 
 
@@ -123,30 +115,45 @@ The first-, lastname and e-Mail address is required for creating a user account.
 include::{snippets}/create-user-account/request-fields.adoc[]
 
 ===== Example request
-
 include::{snippets}/create-user-account/curl-request.adoc[]
 include::{snippets}/create-user-account/http-request.adoc[]
 
 ===== Example response
-
 include::{snippets}/create-user-account/http-response.adoc[]
+
+==== Create admin account
+TODO
+
+===== Example request
+===== Example response
 
 === PUT
 
-==== Update an existing account for a client
-Anything but the `username` can be updated. For Upgrading the `status` use `/upgrade` and for
-adding new services use the `addservice` resource.
+==== Update account
+For Upgrading the `status` use `/upgrade` and for adding new services use the `/addservice` resource.
 
-===== Example Request for Tenant
+===== Example request for Tenant
+include::{snippets}/update-tenant-account/request-fields.adoc[]
+include::{snippets}/update-tenant-account/curl-request.adoc[]
+include::{snippets}/update-tenant-account/http-request.adoc[]
 
-===== Example Request for Admin
+===== Example response for Tenant
+include::{snippets}/update-tenant-account/http-response.adoc[]
 
+===== Example request for Admin
+TOOD
 
-==== Upgrade tenant from prospect to customer
+===== Example response for Admin
+TODO
 
-==== Add new services for a customer
+==== Upgrade from prospect to customer
+This can only be done for `TENANT` accounts
 
-==== Remove services for a tenant in CUSTOMER state
+==== Add new services
+This can only be done in `CUSTOMER` state for `TENANTS`
+
+==== Remove services
+This can only be done in `CUSTOMER` state for `TENANTS`
 
 
 === DELETE

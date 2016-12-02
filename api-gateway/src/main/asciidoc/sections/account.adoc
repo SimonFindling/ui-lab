@@ -8,6 +8,9 @@ The tenant is identified by the 'Bearer Header Token'.
 
 ==== List all accounts of tenants
 
+TEST:
+include::../../../../account-service/target/generated-snippets/list-all-accounts/response-fields.adoc[]
+
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
@@ -135,7 +138,7 @@ Content-Length:
 84eeeb5fb09da9e2ed197cb3c1f1f0575f3we22
 ----
 
-=== PUT
+=== PATCH
 
 ==== Update an existing account for a client
 Anything but the `username` can be updated. For Upgrading the `tenantStatus` use `/upgrade` and for

@@ -42,11 +42,11 @@ public class UpdateAccountBody {
     public UpdateAccountBody(final long id, final String username, final String firstname,
                              final String lastname, final String company, final String email) {
         this.id = id;
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.company = company;
-        this.email = email;
+        this.username = username != null ? username : "";
+        this.firstname = firstname != null ? firstname : "";
+        this.lastname = lastname != null ? lastname : "";
+        this.company = company != null ? company : "";
+        this.email = email != null ? email : "";
     }
 
     public long getId() {
