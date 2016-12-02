@@ -173,6 +173,15 @@ include::{snippets}/add-service/http-response.adoc[]
 ==== Remove service(s)
 This can only be done in `CUSTOMER` state for `TENANTS`
 
+===== Example request
+include::{snippets}/remove-service/request-fields.adoc[]
+include::{snippets}/remove-service/curl-request.adoc[]
+include::{snippets}/remove-service/http-request.adoc[]
+
+===== Example response
+include::{snippets}/remove-service/response-fields.adoc[]
+include::{snippets}/remove-service/http-response.adoc[]
+
 
 === DELETE
 

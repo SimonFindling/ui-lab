@@ -279,7 +279,7 @@ public class ApiDocumentation {
         createService(Service.ServiceName.SALES);
         createService(Service.ServiceName.PRODUCT);
         createService(Service.ServiceName.CUSTOMER);
-        Account accountToAddServices = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+        Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org");
 
         List<Map<String, String>> servicesToAdd = new ArrayList<>();
         Map<String, String> salesService = new HashMap<>();
@@ -311,7 +311,44 @@ public class ApiDocumentation {
                                 fieldWithPath("services.[]").description("the services/modules this account can use")
                         )
                 ));
+    }
 
+    @Test
+    public void removeService() throws Exception {
+        // == prepare ==
+        Service sales = createService(Service.ServiceName.SALES);
+        Service product = createService(Service.ServiceName.PRODUCT);
+        Service customer = createService(Service.ServiceName.CUSTOMER);
+        Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org", sales, product, customer);
+
+        List<Map<String, String>> servicesToAdd = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "CUSTOMER");
+        servicesToAdd.add(salesService);
+
+        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/rmservice")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToAdd)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("[].name").description("The name of the service to remove")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("The account ID"),
+                                fieldWithPath("email").description("the email address of the account"),
+                                fieldWithPath("username").description("the username of the account"),
+                                fieldWithPath("password").description("the password of the user"),
+                                fieldWithPath("tenantStatus").description("the status of the tenant PROSPECT or CUSTOMER, which is empty in ADMIN accounts"),
+                                fieldWithPath("tenantId").description("the corresponding tenantId, which is only set in USER accounts"),
+                                fieldWithPath("accountType").description("the type of the account: ADMIN, TENANT or USER"),
+                                fieldWithPath("firstname").description("the firstname of the account owner"),
+                                fieldWithPath("lastname").description("the lastname of the account owner"),
+                                fieldWithPath("company").description("the company of the account owner"),
+                                fieldWithPath("services.[]").description("the services/modules this account can use")
+                        )
+                ));
     }
 
     /////////////
