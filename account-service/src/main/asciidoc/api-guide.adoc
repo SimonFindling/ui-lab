@@ -146,8 +146,16 @@ TOOD
 ===== Example response for Admin
 TODO
 
-==== Upgrade from prospect to customer
+==== Upgrade prospect to customer
 This can only be done for `TENANT` accounts
+
+===== Example request
+include::{snippets}/upgrade-prospect-to-customer/request-fields.adoc[]
+include::{snippets}/upgrade-prospect-to-customer/curl-request.adoc[]
+include::{snippets}/upgrade-prospect-to-customer/http-request.adoc[]
+
+===== Example response
+include::{snippets}/upgrade-prospect-to-customer/http-response.adoc[]
 
 ==== Add new services
 This can only be done in `CUSTOMER` state for `TENANTS`
