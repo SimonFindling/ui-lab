@@ -27,9 +27,7 @@ package de.hska.uilab.accounts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hska.uilab.accounts.model.Account;
-import de.hska.uilab.accounts.model.AccountType;
 import de.hska.uilab.accounts.model.Service;
-import de.hska.uilab.accounts.model.TenantStatus;
 import de.hska.uilab.accounts.repository.AccountRepository;
 import de.hska.uilab.accounts.repository.ServiceRepository;
 import org.junit.Before;
@@ -47,7 +45,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -56,7 +56,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -257,6 +256,47 @@ public class ApiDocumentation {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("id").description("The account ID"),
+                                fieldWithPath("email").description("the email address of the account"),
+                                fieldWithPath("username").description("the username of the account"),
+                                fieldWithPath("password").description("the password of the user"),
+                                fieldWithPath("tenantStatus").description("the status of the tenant PROSPECT or CUSTOMER, which is empty in ADMIN accounts"),
+                                fieldWithPath("tenantId").description("the corresponding tenantId, which is only set in USER accounts"),
+                                fieldWithPath("accountType").description("the type of the account: ADMIN, TENANT or USER"),
+                                fieldWithPath("firstname").description("the firstname of the account owner"),
+                                fieldWithPath("lastname").description("the lastname of the account owner"),
+                                fieldWithPath("company").description("the company of the account owner"),
+                                fieldWithPath("services.[]").description("the services/modules this account can use")
+                        )
+                ));
+
+    }
+
+    @Test
+    public void addService() throws Exception {
+        // == prepare ==
+        createService(Service.ServiceName.SALES);
+        createService(Service.ServiceName.PRODUCT);
+        createService(Service.ServiceName.CUSTOMER);
+        Account accountToAddServices = accountRepository.save(Account.asProspect("testuser2@mail.org"));
+
+        List<Map<String, String>> servicesToAdd = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "SALES");
+        salesService.put("name", "PRODUCT");
+        salesService.put("name", "CUSTOMER");
+        servicesToAdd.add(salesService);
+
+        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/addservice")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToAdd)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("[].name").description("The name of the service to add")
+                        ),
                         responseFields(
                                 fieldWithPath("id").description("The account ID"),
                                 fieldWithPath("email").description("the email address of the account"),
