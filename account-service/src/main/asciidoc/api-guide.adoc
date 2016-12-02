@@ -188,3 +188,10 @@ include::{snippets}/remove-service/http-response.adoc[]
 ==== Delete client account
 You can only delete you own account.
 
+===== Example request
+include::{snippets}/delete-service/curl-request.adoc[]
+include::{snippets}/delete-service/http-request.adoc[]
+
+===== Example response
+include::{snippets}/delete-service/http-response.adoc[]
+

@@ -354,6 +354,17 @@ public class ApiDocumentation {
     /////////////
     // DELETE
     /////////////
+    @Test
+    public void deleteAccount() throws Exception {
+        // == prepare ==
+        Account accountToDelete = createSampleTenantAccount("testuser2@mail.org");
+
+        // == go / verify ==
+        this.mockMvc.perform(delete("/accounts/" + accountToDelete.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
 
     private Service createService(final Service.ServiceName name) {
         return this.serviceRepository.save(new Service(name));
