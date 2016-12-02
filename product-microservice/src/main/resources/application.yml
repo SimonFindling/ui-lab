@@ -9,3 +9,15 @@ eureka:
 ribbon:
   eureka:
     enabled: true
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://db:3306/uilab
+    username: root
+    password: root
