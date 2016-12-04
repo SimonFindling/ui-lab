@@ -40,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by mavogel on 11/23/16.
@@ -128,9 +129,14 @@ public class AccountController {
             accountRepository.save(accountToUpgrade);
             return ResponseEntity.ok(accountToUpgrade);
         } else if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
-            // TODO upgrade all Users as well.
+            findAllUserAccounts(id)
+                    .forEach(useracc -> {
+                        useracc.setTenantStatus(TenantStatus.CUSTOMER);
+                        this.accountRepository.save(useracc);
+                    });
+
             accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
-            accountRepository.save(accountToUpgrade);
+            this.accountRepository.save(accountToUpgrade);
             return ResponseEntity.ok(accountToUpgrade);
         } else {
             return ResponseEntity.badRequest().body(accountToUpgrade);
@@ -146,7 +152,7 @@ public class AccountController {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
             });
-            accountRepository.save(account);
+            this.accountRepository.save(account);
             return ResponseEntity.ok(account);
         } else if (AccountType.TENANT == account.getAccountType()) {
             // TODO as well for each user if its a tenant acc
@@ -206,6 +212,14 @@ public class AccountController {
                 return ResponseEntity.badRequest().build();
             }
         }
+    }
+
+    private List<Account> findAllUserAccounts(final long tenantId) {
+        return ((List<Account>) accountRepository.findAll()).stream()
+                .filter(acc -> acc.getTenantId() != null)
+                .filter(acc -> acc.getTenantId() == tenantId)
+                .filter(acc -> AccountType.USER.equals(acc.getAccountType()))
+                .collect(Collectors.toList());
     }
 
 }

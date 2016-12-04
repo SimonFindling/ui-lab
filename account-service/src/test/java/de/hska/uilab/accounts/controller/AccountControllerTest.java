@@ -17,6 +17,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -247,6 +248,49 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
+    public void shouldUpgradeProspectWithUsersToACustomer() throws Exception {
+        // == prepare ==
+        Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
+        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org", null);
+        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org", null);
+        Account doe3 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe3", "doe3@mail.org", null);
+
+        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/upgrade")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
+                .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.lastname").value(doe1.getLastname()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
+                .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.lastname").value(doe2.getLastname()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe3.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
+                .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.lastname").value(doe3.getLastname()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
     public void shouldAddSalesServiceToCustomer() throws Exception {
         // == prepare ==
         Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org");
@@ -279,6 +323,11 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.services[2].name").value(Service.ServiceName.SALES.name()))
                 .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldAddSalesServiceToCustomerAndItsUsers() throws Exception {
+        fail("not yet implemented");
     }
 
     @Test
@@ -318,6 +367,11 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
+    public void shouldRemovesSalesAndProductServiceToCustomerAndItsUsers() throws Exception {
+        fail("not yet implemented");
+    }
+
+    @Test
     public void shouldDeleteAccount() throws Exception {
         // == prepare ==
         Account accountToDelete = createSampleTenantAccount("testuser2@mail.org");
@@ -333,6 +387,11 @@ public class AccountControllerTest extends AbstractTestBase {
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
 
+    }
+
+    @Test
+    public void shouldDeleteTenantAndItsUserAccounts() throws Exception {
+        fail("not yet implemented");
     }
 
     @Test
