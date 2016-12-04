@@ -150,7 +150,6 @@ TODO
 This can only be done for `TENANT` accounts
 
 ===== Example request
-include::{snippets}/upgrade-prospect-to-customer/request-fields.adoc[]
 include::{snippets}/upgrade-prospect-to-customer/curl-request.adoc[]
 include::{snippets}/upgrade-prospect-to-customer/http-request.adoc[]
 
@@ -189,9 +188,9 @@ include::{snippets}/remove-service/http-response.adoc[]
 You can only delete you own account.
 
 ===== Example request
-include::{snippets}/delete-service/curl-request.adoc[]
-include::{snippets}/delete-service/http-request.adoc[]
+include::{snippets}/delete-account/curl-request.adoc[]
+include::{snippets}/delete-account/http-request.adoc[]
 
 ===== Example response
-include::{snippets}/delete-service/http-response.adoc[]
+include::{snippets}/delete-account/http-response.adoc[]
 

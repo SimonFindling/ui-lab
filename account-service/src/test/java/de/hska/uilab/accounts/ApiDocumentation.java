@@ -25,25 +25,15 @@ package de.hska.uilab.accounts;
  *  https://opensource.org/licenses/MIT
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hska.uilab.accounts.model.Account;
 import de.hska.uilab.accounts.model.Service;
-import de.hska.uilab.accounts.repository.AccountRepository;
-import de.hska.uilab.accounts.repository.ServiceRepository;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,32 +51,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by mavogel on 11/1/16.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) // clear the db before each test
-public class ApiDocumentation {
+public class ApiDocumentation extends AbstractTestBase {
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
 
-    private MockMvc mockMvc;
-
     private RestDocumentationResultHandler documentationHandler;
-
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
+        createServices();
         this.documentationHandler = document("{method-name}",
                 preprocessResponse(prettyPrint()));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
@@ -100,16 +74,12 @@ public class ApiDocumentation {
     /////////////
     @Test
     public void listAllAccounts() throws Exception {
-        Service product = createService(Service.ServiceName.PRODUCT);
-        Service sales = createService(Service.ServiceName.SALES);
-        Service customer = createService(Service.ServiceName.CUSTOMER);
-
-        Account sampleTenantAccount1 = createSampleTenantAccount("prospect1@test.org", product, sales, customer);
+        Account sampleTenantAccount1 = createSampleTenantAccount("prospect1@test.org");
         sampleTenantAccount1.setCompany("tenant1Company");
         accountRepository.save(sampleTenantAccount1);
-        createSampleTenantAccount("prospect2@test.org", product, customer);
+        createSampleTenantAccount("prospect2@test.org");
         // TODO create user via rest interface
-        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org", "tenant1Company", product, sales, customer);
+        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org", "tenant1Company");
 
         this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
@@ -133,10 +103,7 @@ public class ApiDocumentation {
 
     @Test
     public void getAccountById() throws Exception {
-        Service product = createService(Service.ServiceName.PRODUCT);
-        Service sales = createService(Service.ServiceName.SALES);
-        Service customer = createService(Service.ServiceName.CUSTOMER);
-        Account sampleTenantAccount = createSampleTenantAccount("prospect1@test.org", product, sales, customer);
+        Account sampleTenantAccount = createSampleTenantAccount("prospect1@test.org");
 
         this.mockMvc.perform(get("/accounts/" + sampleTenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
@@ -248,8 +215,7 @@ public class ApiDocumentation {
     @Test
     public void upgradeProspectToCustomer() throws Exception {
         // == prepare ==
-        Service product = createService(Service.ServiceName.PRODUCT);
-        Account baseAccount = createSampleTenantAccount("testuser2@mail.org", product);
+        Account baseAccount = createSampleTenantAccount("testuser2@mail.org");
 
         this.mockMvc.perform(patch("/accounts/" + baseAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
@@ -316,10 +282,7 @@ public class ApiDocumentation {
     @Test
     public void removeService() throws Exception {
         // == prepare ==
-        Service sales = createService(Service.ServiceName.SALES);
-        Service product = createService(Service.ServiceName.PRODUCT);
-        Service customer = createService(Service.ServiceName.CUSTOMER);
-        Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org", sales, product, customer);
+        Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org");
 
         List<Map<String, String>> servicesToAdd = new ArrayList<>();
         Map<String, String> salesService = new HashMap<>();
@@ -365,89 +328,4 @@ public class ApiDocumentation {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
-
-    private Service createService(final Service.ServiceName name) {
-        return this.serviceRepository.save(new Service(name));
-
-    }
-
-    /**
-     * HELPERS
-     */
-    private Account createSampleTenantAccount(final String email, final Service... services) {
-        Account createdAcc = this.accountRepository.save(Account.asProspect(email));
-        if (services != null && services.length > 0) {
-            createdAcc.addServices(services);
-            createdAcc = this.accountRepository.save(createdAcc);
-        }
-
-        return createdAcc;
-
-    }
-
-    private Account createSampleUserAccount(final Long tenantId, final String firstName, final String lastName,
-                                            final String email, final String company, final Service... services) {
-        Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email, company));
-
-        if (services != null && services.length > 0) {
-            createdAcc.addServices(services);
-            createdAcc = this.accountRepository.save(createdAcc);
-        }
-
-        return createdAcc;
-    }
-
-
-//    @Test
-//    public void addCategory() throws Exception {
-//        Map<String, String> newCategory = new HashMap<>();
-//        newCategory.put("id", "1");
-//        newCategory.put("name", "TestCategory");
-//
-//        ConstrainedFields fields = new ConstrainedFields(Category.class);
-//
-//        this.mockMvc.perform(post("/categories")
-//                .header("Authorization: Basic", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.objectMapper.writeValueAsString(newCategory)))
-//                .andExpect(status().isCreated())
-//                .andDo(this.documentationHandler.document(
-//                        requestFields(
-//                                fields.withPath("id").description("The category ID"),
-//                                fields.withPath("name").description("The name of the category")
-//                        )
-//                ));
-//    }
-//
-//    @Test
-//    public void deleteCategory() throws Exception {
-//        Category originalCategory = createSampleCategory(1L, "TestCategory");
-//
-//        this.mockMvc.perform(delete("/categories/" + originalCategory.getId())
-//                .header("Authorization: Basic", "0b79bab50daca910b000d4f1a2b675d604257e42")
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNoContent());
-//    }
-//
-//    /**
-//     * HELPERS
-//     */
-//    private static class ConstrainedFields {
-//
-//        private final ConstraintDescriptions constraintDescriptions;
-//
-//        ConstrainedFields(Class<?> input) {
-//            this.constraintDescriptions = new ConstraintDescriptions(input);
-//        }
-//
-//        private FieldDescriptor withPath(String path) {
-//            return fieldWithPath(path).attributes(key("constraints").value(StringUtils
-//                    .collectionToDelimitedString(this.constraintDescriptions
-//                            .descriptionsForProperty(path), ". ")));
-//        }
-//    }
-//
-//    private Category createSampleCategory(final Long id, final String name) {
-//        return categoryRepository.save(new Category(id, name));
-//    }
 }

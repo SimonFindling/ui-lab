@@ -54,6 +54,9 @@ public class AccountController {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    /////////////
+    // GET
+    /////////////
     @RequestMapping(value = "", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Account> allAccounts() {
@@ -70,12 +73,16 @@ public class AccountController {
         }
     }
 
+    /////////////
+    // POST
+    /////////////
     @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String createAccount(@RequestBody CreateAccountBody createAccountBody) {
         Account createdAccount = Account.asProspect(createAccountBody.getEmail());
-        accountRepository.save(createdAccount);
-        return createdAccount.getPassword();
+        Service.getProspectStandardServices()
+                .forEach(service -> createdAccount.addService(this.serviceRepository.findOne(service)));
+        return accountRepository.save(createdAccount).getPassword();
     }
 
     @RequestMapping(value = "/{tenantId}", produces = "text/plain", method = RequestMethod.POST)
@@ -92,6 +99,9 @@ public class AccountController {
         return createdAccount.getPassword();
     }
 
+    /////////////
+    // PATCH
+    /////////////
     @RequestMapping(value = "", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
@@ -164,8 +174,8 @@ public class AccountController {
             return ResponseEntity.ok(account);
         } else if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
-                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.addService(servicetToAdd);
+                Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.addService(serviceToAdd);
             });
             // TODO as well for each user if its a tenant acc
             accountRepository.save(account);
@@ -175,6 +185,9 @@ public class AccountController {
         }
     }
 
+    /////////////
+    // DELETE
+    /////////////
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> removeAccount(@PathVariable long id) {
