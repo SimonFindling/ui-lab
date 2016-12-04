@@ -27,6 +27,7 @@ package de.hska.uilab.accounts;/*
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hska.uilab.accounts.model.Account;
 import de.hska.uilab.accounts.model.Service;
+import de.hska.uilab.accounts.model.TenantStatus;
 import de.hska.uilab.accounts.repository.AccountRepository;
 import de.hska.uilab.accounts.repository.ServiceRepository;
 import org.junit.runner.RunWith;
@@ -74,11 +75,12 @@ public abstract class AbstractTestBase {
         return this.accountRepository.save(createdAcc);
     }
 
-    protected Account createSampleUserAccount(final Long tenantId, final String firstName, final String lastName,
-                                              final String email, final String company) {
-        final Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email, company));
+    protected Account createSampleUserAccount(final Long tenantId, final String firstName, final String lastName, final String email) {
+        final Account tenantAccount = this.accountRepository.findOne(tenantId);
+        final Account createdAcc = this.accountRepository.save(Account.asUser(tenantId, firstName, lastName, email,
+                tenantAccount.getCompany(), tenantAccount.getTenantStatus()));
 
-        this.accountRepository.findOne(tenantId).getServices()
+        tenantAccount.getServices()
                 .forEach(service -> createdAcc.addServices(service));
 
         return this.accountRepository.save(createdAcc);

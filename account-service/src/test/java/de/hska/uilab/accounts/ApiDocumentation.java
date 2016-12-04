@@ -79,7 +79,7 @@ public class ApiDocumentation extends AbstractTestBase {
         accountRepository.save(sampleTenantAccount1);
         createSampleTenantAccount("prospect2@test.org");
         // TODO create user via rest interface
-        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org", "tenant1Company");
+        createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org");
 
         this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))

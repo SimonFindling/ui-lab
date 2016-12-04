@@ -61,6 +61,7 @@ public class Account implements Serializable {
     private TenantStatus tenantStatus;
     private AccountType accountType;
 
+    // TODO use a Set here!
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "username"))
     private List<Service> services;
@@ -72,7 +73,7 @@ public class Account implements Serializable {
      * @return the new account with a generated password
      */
     public static Account asProspect(final String email) {
-        return new Account(null, null, null, email, null, AccountType.TENANT);
+        return new Account(null, null, null, email, null, AccountType.TENANT, TenantStatus.PROSPECT);
     }
 
     /**
@@ -83,13 +84,15 @@ public class Account implements Serializable {
      * @param lastname          the last name
      * @param email             the email-address
      * @param company           the company of the tenant
+     * @param tenantStatus      the status of the tenant creating this user
      * @param inheritedServices the inherited services from the tenant
      * @return the new account with a generated password
      */
     public static Account asUser(final Long tenantId,
-                                 final String firstname, final String lastname, final String email, final String company,
+                                 final String firstname, final String lastname, final String email,
+                                 final String company, final TenantStatus tenantStatus,
                                  final Service... inheritedServices) {
-        return new Account(tenantId, firstname, lastname, email, company, AccountType.USER, inheritedServices);
+        return new Account(tenantId, firstname, lastname, email, company, AccountType.USER, tenantStatus, inheritedServices);
     }
 
 
@@ -104,7 +107,7 @@ public class Account implements Serializable {
      */
     private Account(final Long tenantId,
                     final String firstname, final String lastname, final String email, final String company,
-                    final AccountType accountType,
+                    final AccountType accountType, final TenantStatus tenantStatus,
                     final Service... inheritedServices) {
         this.username = "";
         this.firstname = firstname != null ? firstname : "";
@@ -113,7 +116,7 @@ public class Account implements Serializable {
         this.email = email;
         this.accountType = accountType;
         this.tenantId = tenantId;
-        this.tenantStatus = AccountType.TENANT == accountType ? TenantStatus.PROSPECT : null;
+        this.tenantStatus = tenantStatus;
         this.password = Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes());
         this.services = inheritedServices != null ? new ArrayList<>(Arrays.asList(inheritedServices)) : new ArrayList<>();
     }

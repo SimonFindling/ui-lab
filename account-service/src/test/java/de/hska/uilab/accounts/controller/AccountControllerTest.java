@@ -6,6 +6,7 @@ import de.hska.uilab.accounts.model.AccountType;
 import de.hska.uilab.accounts.model.Service;
 import de.hska.uilab.accounts.model.TenantStatus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -251,9 +252,12 @@ public class AccountControllerTest extends AbstractTestBase {
     public void shouldUpgradeProspectWithUsersToACustomer() throws Exception {
         // == prepare ==
         Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
-        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org", null);
-        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org", null);
-        Account doe3 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe3", "doe3@mail.org", null);
+        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org");
+        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org");
+        Account doe3 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe3", "doe3@mail.org");
+
+        Account tenantAccount2 = createSampleTenantAccount("tenant2@mail.org");
+        Account doe4 = createSampleUserAccount(tenantAccount2.getId(), "John", "Doe4", "doe4@mail.org");
 
         this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
@@ -261,6 +265,13 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(status().isOk());
 
         // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
         this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
@@ -288,12 +299,81 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
 
+        this.mockMvc.perform(get("/accounts/" + tenantAccount2.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").isEmpty())
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
+        this.mockMvc.perform(get("/accounts/" + doe4.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.tenantId").value(tenantAccount2.getId()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.lastname").value(doe4.getLastname()))
+                .andExpect(jsonPath("$.company").isEmpty())
+                .andExpect(status().isOk());
+
     }
 
     @Test
     public void shouldAddSalesServiceToCustomer() throws Exception {
         // == prepare ==
-        Account accountToAddServices = createSampleTenantAccount("testuser2@mail.org");
+        Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
+        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org");
+        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org");
+
+        List<Map<String, String>> servicesToAdd = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "SALES");
+        servicesToAdd.add(salesService);
+
+        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/addservice")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToAdd)))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("tenant@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(jsonPath("$.services[2].name").value(Service.ServiceName.SALES.name()))
+                .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("doe1@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(jsonPath("$.services[2].name").value(Service.ServiceName.SALES.name()))
+                .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("doe2@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
+                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(jsonPath("$.services[2].name").value(Service.ServiceName.SALES.name()))
+                .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldAddSalesServiceToCustomerAndItsUsers() throws Exception {
+        // == prepare ==
+        Account accountToAddServices = createSampleTenantAccount("tenant@mail.org");
 
         List<Map<String, String>> servicesToAdd = new ArrayList<>();
         Map<String, String> salesService = new HashMap<>();
@@ -326,12 +406,55 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    public void shouldAddSalesServiceToCustomerAndItsUsers() throws Exception {
-        fail("not yet implemented");
+    public void shouldRemovesVendorAndProductServiceToCustomer() throws Exception {
+        // == prepare ==
+        Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
+        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org");
+        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org");
+
+        List<Map<String, String>> servicesToRemove = new ArrayList<>();
+        Map<String, String> salesService = new HashMap<>();
+        salesService.put("name", "VENDOR");
+        Map<String, String> productService = new HashMap<>();
+        productService.put("name", "PRODUCT");
+
+        servicesToRemove.add(salesService);
+        servicesToRemove.add(productService);
+
+        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/rmservice")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(servicesToRemove)))
+                .andExpect(status().isOk());
+
+        // == go / verify ==
+        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("tenant@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("doe1@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(jsonPath("$.email").value("doe2@mail.org"))
+                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
+                .andExpect(jsonPath("$.accountType").value(AccountType.USER.name()))
+                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void shouldRemovesVendorAndProductServiceToCustomer() throws Exception {
+    public void shouldRemovesSalesAndProductServiceToCustomerAndItsUsers() throws Exception {
         // == prepare ==
         Account accountToRemoveServices = createSampleTenantAccount("testuser2@mail.org");
 
@@ -367,11 +490,6 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    public void shouldRemovesSalesAndProductServiceToCustomerAndItsUsers() throws Exception {
-        fail("not yet implemented");
-    }
-
-    @Test
     public void shouldDeleteAccount() throws Exception {
         // == prepare ==
         Account accountToDelete = createSampleTenantAccount("testuser2@mail.org");
@@ -390,8 +508,31 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
+    @Ignore
     public void shouldDeleteTenantAndItsUserAccounts() throws Exception {
-        fail("not yet implemented");
+        // == prepare ==
+        Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
+        Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org");
+        Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org");
+
+        // == go / verify ==
+        this.mockMvc.perform(delete("/accounts/" + tenantAccount.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertNull(accountRepository.findOne(tenantAccount.getId()));
+        assertNull(accountRepository.findOne(doe1.getId()));
+        assertNull(accountRepository.findOne(doe2.getId()));
+        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isNotFound());
+        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isNotFound());
+        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
+                .andExpect(status().isNotFound());
     }
 
     @Test

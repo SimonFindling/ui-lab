@@ -95,6 +95,7 @@ public class AccountController {
                 createUserAccountBody.getLastname(),
                 createUserAccountBody.getEmail(),
                 tenantAccount.getCompany(),
+                tenantAccount.getTenantStatus(),
                 tenantAccount.getServices().toArray(new Service[]{}));
         accountRepository.save(createdAccount);
         return createdAccount.getPassword();
@@ -155,10 +156,15 @@ public class AccountController {
             this.accountRepository.save(account);
             return ResponseEntity.ok(account);
         } else if (AccountType.TENANT == account.getAccountType()) {
-            // TODO as well for each user if its a tenant acc
             modifyServiceBody.forEach(msb -> {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
+
+                findAllUserAccounts(id)
+                        .forEach(useracc -> {
+                            useracc.removeService(serviceToRemove);
+                            this.accountRepository.save(useracc);
+                        });
             });
             accountRepository.save(account);
             return ResponseEntity.ok(account);
@@ -182,10 +188,15 @@ public class AccountController {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.addService(serviceToAdd);
+
+                findAllUserAccounts(id)
+                        .forEach(useracc -> {
+                            useracc.addService(serviceToAdd);
+                            this.accountRepository.save(useracc);
+                        });
             });
-            // TODO as well for each user if its a tenant acc
-            accountRepository.save(account);
-            return ResponseEntity.ok(account);
+
+            return ResponseEntity.ok(accountRepository.save(account));
         } else {
             return ResponseEntity.badRequest().body(account);
         }
@@ -205,8 +216,9 @@ public class AccountController {
                 accountRepository.delete(account);
                 return ResponseEntity.noContent().build();
             } else if (AccountType.TENANT == account.getAccountType()) {
-                // TODO as well for each user if its a tenant acc
                 accountRepository.delete(account);
+                findAllUserAccounts(id)
+                        .forEach(useracc -> this.accountRepository.delete(useracc));
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.badRequest().build();
