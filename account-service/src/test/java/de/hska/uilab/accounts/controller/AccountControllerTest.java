@@ -6,7 +6,6 @@ import de.hska.uilab.accounts.model.AccountType;
 import de.hska.uilab.accounts.model.Service;
 import de.hska.uilab.accounts.model.TenantStatus;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -389,7 +387,7 @@ public class AccountControllerTest extends AbstractTestBase {
         // == go / verify ==
         this.mockMvc.perform(get("/accounts/" + accountToAddServices.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-                .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
+                .andExpect(jsonPath("$.email").value("tenant@mail.org"))
                 .andExpect(jsonPath("$.username").isEmpty())
                 .andExpect(jsonPath("$.password").isNotEmpty())
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -508,7 +506,6 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    @Ignore
     public void shouldDeleteTenantAndItsUserAccounts() throws Exception {
         // == prepare ==
         Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
