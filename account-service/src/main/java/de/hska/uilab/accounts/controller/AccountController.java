@@ -125,11 +125,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> upgradeToCustomer(@PathVariable long id) {
         Account accountToUpgrade = accountRepository.findOne(id);
-        if (AccountType.USER == accountToUpgrade.getAccountType()) {
-            accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
-            accountRepository.save(accountToUpgrade);
-            return ResponseEntity.ok(accountToUpgrade);
-        } else if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
+        if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
             findAllUserAccounts(id)
                     .forEach(useracc -> {
                         useracc.setTenantStatus(TenantStatus.CUSTOMER);
@@ -148,14 +144,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        if (AccountType.USER == account.getAccountType()) {
-            modifyServiceBody.forEach(msb -> {
-                Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.removeService(serviceToRemove);
-            });
-            this.accountRepository.save(account);
-            return ResponseEntity.ok(account);
-        } else if (AccountType.TENANT == account.getAccountType()) {
+        if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
@@ -177,14 +166,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        if (AccountType.USER == account.getAccountType()) {
-            modifyServiceBody.forEach(msb -> {
-                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.addService(servicetToAdd);
-            });
-            accountRepository.save(account);
-            return ResponseEntity.ok(account);
-        } else if (AccountType.TENANT == account.getAccountType()) {
+        if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.addService(serviceToAdd);

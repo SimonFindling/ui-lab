@@ -67,10 +67,9 @@ use of HTTP status codes.
 
 [[resources-accounts]]
 == Accounts
-The `accounts` resource is used to create, list and delete accounts.
+The `accounts` resource is used to create, list, update and delete accounts.
 
 === GET
-
 ==== List all accounts of tenants
 include::{snippets}/list-all-accounts/response-fields.adoc[]
 
@@ -91,11 +90,12 @@ include::{snippets}/get-account-by-id/http-request.adoc[]
 
 ===== Example response
 include::{snippets}/get-account-by-id/http-response.adoc[]
+
+And if the account does not exist:
 include::{snippets}/get-account-by-id-not-found/http-response.adoc[]
 
 
 === POST
-
 ==== Create tenant account
 Only the e-Mail address is required for creating a prospect account. The generated password is returned.
 
@@ -121,14 +121,7 @@ include::{snippets}/create-user-account/http-request.adoc[]
 ===== Example response
 include::{snippets}/create-user-account/http-response.adoc[]
 
-==== Create admin account
-TODO
-
-===== Example request
-===== Example response
-
 === PUT
-
 ==== Update account
 For Upgrading the `status` use `/upgrade` and for adding new services use the `/addservice` resource.
 
@@ -140,12 +133,6 @@ include::{snippets}/update-tenant-account/http-request.adoc[]
 ===== Example response for Tenant
 include::{snippets}/update-tenant-account/http-response.adoc[]
 
-===== Example request for Admin
-TOOD
-
-===== Example response for Admin
-TODO
-
 ==== Upgrade prospect to customer
 This can only be done for `TENANT` accounts
 
@@ -155,6 +142,7 @@ include::{snippets}/upgrade-prospect-to-customer/http-request.adoc[]
 
 ===== Example response
 include::{snippets}/upgrade-prospect-to-customer/http-response.adoc[]
+
 
 ==== Add service(s)
 This can only be done in `CUSTOMER` state for `TENANTS`
@@ -183,7 +171,6 @@ include::{snippets}/remove-service/http-response.adoc[]
 
 
 === DELETE
-
 ==== Delete client account
 You can only delete you own account.
 
@@ -193,4 +180,7 @@ include::{snippets}/delete-account/http-request.adoc[]
 
 ===== Example response
 include::{snippets}/delete-account/http-response.adoc[]
+
+And if the account does not exist:
+include::{snippets}/delete-non-existing-account/http-response.adoc[]
 

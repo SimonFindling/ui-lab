@@ -87,35 +87,6 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    public void shouldCreateANewProspectAccount() throws Exception {
-        Map<String, String> newProspectAccount = new HashMap<>();
-        newProspectAccount.put("email", "test@mail.org");
-
-        this.mockMvc.perform(post("/accounts")
-                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
-                .andExpect(status().isCreated());
-
-        // == go / verify ==
-        this.mockMvc.perform(get("/accounts/1").accept(MediaType.APPLICATION_JSON)
-                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
-                .andExpect(jsonPath("$.email").value("test@mail.org"))
-                .andExpect(jsonPath("$.username").isEmpty())
-                .andExpect(jsonPath("$.password").isNotEmpty())
-                .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
-                .andExpect(jsonPath("$.tenantId").isEmpty())
-                .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
-                .andExpect(jsonPath("$.firstname").isEmpty())
-                .andExpect(jsonPath("$.lastname").isEmpty())
-                .andExpect(jsonPath("$.company").isEmpty())
-                .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.PRODUCT.name()))
-                .andExpect(jsonPath("$.services[1].name").value(Service.ServiceName.CUSTOMER.name()))
-                .andExpect(jsonPath("$.services[2].name").value(Service.ServiceName.VENDOR.name()))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void shouldGetAllAccounts() throws Exception {
         // == prepare ==
         Account account3 = createSampleTenantAccount("testuser3@mail.org");
@@ -531,17 +502,4 @@ public class AccountControllerTest extends AbstractTestBase {
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
     }
-
-    @Test
-    public void shouldFailDeletingNonExistentAccount() throws Exception {
-        // == prepare ==
-        Long nonExistingAccountId = 100L;
-
-        // == go / verify ==
-        this.mockMvc.perform(delete("/accounts/" + nonExistingAccountId)
-                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
 }
