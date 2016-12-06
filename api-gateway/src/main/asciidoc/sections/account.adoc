@@ -1,318 +1,121 @@
-[account]
+[[resources-accounts]]
 == Account-Service
 
+== Accounts
 Handles the accounts of the tenants of the HSKA ERP system.
-The tenant is identified by the 'Bearer Header Token'.
+The `accounts` resource is used to create, list, update and delete accounts.
 
 === GET
-
 ==== List all accounts of tenants
+include::{acc-service-snippets}/list-all-accounts/response-fields.adoc[]
 
-TEST:
-include::../../../../account-service/target/generated-snippets/list-all-accounts/response-fields.adoc[]
+===== Example request
+include::{acc-service-snippets}/list-all-accounts/curl-request.adoc[]
+include::{acc-service-snippets}/list-all-accounts/http-request.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example response
+include::{acc-service-snippets}/list-all-accounts/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
 
-[
- {
-  "id":"1",
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "company":"",
-  "tenantId": "",
-  "type": "TENANT"
-  "tenantStatus":"PROSPECT",
-  "services": [
-    "name":"PRODUCT",
-    "name":"CUSTOMER",
-    "name":"SALES",
-  ]
- },
- {
-  "id":"2"
-  "username": "",
-  "firstname":"",
-  "lastname":"",
-  "email":"",
-  "company":"",
-  "tenantId:"1",
-  "type": "USER"
- },
- {
-   "id":"3"
-   "username": "",
-   "firstname":"",
-   "lastname":"",
-   "email":"",
-   "company":"null",
-   "tenantId:"null",
-   "type": "ADMIN"
-  }
-]
+==== Get account by its unique id
+include::{acc-service-snippets}/get-account-by-id/response-fields.adoc[]
 
-----
+===== Example request
+include::{acc-service-snippets}/get-account-by-id/curl-request.adoc[]
+include::{acc-service-snippets}/get-account-by-id/http-request.adoc[]
 
-==== Get account by id
+===== Example response
+include::{acc-service-snippets}/get-account-by-id/http-response.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
+And if the account does not exist:
+include::{acc-service-snippets}/get-account-by-id-not-found/http-response.adoc[]
 
-{
- "id":"1",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":"",
- "tenantId": "null",
- "type": "TENANT"
- "tenantStatus":"PROSPECT",
- "services": [
-   "name":"PRODUCT",
-   "name":"CUSTOMER",
-   "name":"SALES",
- ]
-}
-
-----
 
 === POST
-
 ==== Create tenant account
-Only the e-Mail address is required for creating a prospect account for a tenant. The generated password is returned.
+Only the e-Mail address is required for creating a prospect account. The generated password is returned.
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X POST -H 'Content-Type: application/json' -d '{"email":""}'
-----
+include::{acc-service-snippets}/create-tenant-account/request-fields.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 201 Created
-Content-Type: text/plain;charset=UTF-8
-Content-Length:
+===== Example request
+include::{acc-service-snippets}/create-tenant-account/curl-request.adoc[]
+include::{acc-service-snippets}/create-tenant-account/http-request.adoc[]
 
-84eeeb5fb09da9e2ed197cb3c1f1f0575f3bef33
-----
+===== Example response
+include::{acc-service-snippets}/create-tenant-account/http-response.adoc[]
+
 
 ==== Create user account
 The first-, lastname and e-Mail address is required for creating a user account. The generated password is returned.
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/{tenantId}' -i -X POST -H 'Content-Type: application/json' -d '{"firstname:": "", "lastname": "", email":""}'
-----
+include::{acc-service-snippets}/create-user-account/request-fields.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 201 Created
-Content-Type: text/plain;charset=UTF-8
-Content-Length:
+===== Example request
+include::{acc-service-snippets}/create-user-account/curl-request.adoc[]
+include::{acc-service-snippets}/create-user-account/http-request.adoc[]
 
-84eeeb5fb09da9e2ed197cb3c1f1f0575f3we22
-----
+===== Example response
+include::{acc-service-snippets}/create-user-account/http-response.adoc[]
 
-=== PATCH
+=== PUT
+==== Update account
+For Upgrading the `status` use `/upgrade` and for adding new services use the `/addservice` resource.
 
-==== Update an existing account for a client
-Anything but the `username` can be updated. For Upgrading the `tenantStatus` use `/upgrade` and for
-adding new services use the `addservice` resource.
+===== Example request for Tenant
+include::{acc-service-snippets}/update-tenant-account/request-fields.adoc[]
+include::{acc-service-snippets}/update-tenant-account/curl-request.adoc[]
+include::{acc-service-snippets}/update-tenant-account/http-request.adoc[]
 
-===== Example Request for Tenant
-A tenant can only update personal data fields. He cannot change his tenantStatus. This can only
-be done by an `Admin`.
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":""}'
-----
+===== Example response for Tenant
+include::{acc-service-snippets}/update-tenant-account/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
+==== Upgrade prospect to customer
+This can only be done for `TENANT` accounts
 
-{
- "id":"1",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":""
-}
-----
+===== Example request
+include::{acc-service-snippets}/upgrade-prospect-to-customer/curl-request.adoc[]
+include::{acc-service-snippets}/upgrade-prospect-to-customer/http-request.adoc[]
 
-===== Example Request for Admin
-A admin can edit all data fields.
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"username":"", "firstname":"", "lastname":"", "company":"", "email":"", "tenantStatus":"PROSPECT", "services": ["name":"PRODUCT","name":"CUSTOMER","name":"SALES"]}'
-----
+===== Example response
+include::{acc-service-snippets}/upgrade-prospect-to-customer/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
 
-{
- "id":"1",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":"",
- "tenantId": "null",
- "type": "TENANT"
- "tenantStatus":"PROSPECT",
- "services": [
-   "name":"PRODUCT",
-   "name":"CUSTOMER",
-   "name":"SALES",
- ]
-}
-----
+==== Add service(s)
+This can only be done in `CUSTOMER` state for `TENANTS`
 
-==== Upgrade tenant from prospect to customer
+===== Example request
+include::{acc-service-snippets}/add-service/request-fields.adoc[]
+include::{acc-service-snippets}/add-service/curl-request.adoc[]
+include::{acc-service-snippets}/add-service/http-request.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/upgrade/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example response
+include::{acc-service-snippets}/add-service/response-fields.adoc[]
+include::{acc-service-snippets}/add-service/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 0
 
-{
- "id":"",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":"",
- "tenantId": "null",
- "type": "TENANT"
- "tenantStatus":"CUSTOMER",
- "services": [
-   "name":"PRODUCT",
-   "name":"CUSTOMER",
-   "name":"SALES",
- ]
-}
-----
+==== Remove service(s)
+This can only be done in `CUSTOMER` state for `TENANTS`
 
-==== Add new services for a customer
+===== Example request
+include::{acc-service-snippets}/remove-service/request-fields.adoc[]
+include::{acc-service-snippets}/remove-service/curl-request.adoc[]
+include::{acc-service-snippets}/remove-service/http-request.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/addservice/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "name":"VENDOR" ]'
-----
+===== Example response
+include::{acc-service-snippets}/remove-service/response-fields.adoc[]
+include::{acc-service-snippets}/remove-service/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 0
-
-{
- "id":"1",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":"",
- "tenantId": "null",
- "type": "TENANT"
- "tenantStatus":"PROSPECT",
- "services": [
-   "name":"PRODUCT",
-   "name":"CUSTOMER",
-   "name":"SALES",
-   "name":"VENDORS",
- ]
-}
-----
-
-==== Remove services for a tenant in CUSTOMER state
-
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/rmservice/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '[ "SALES", "VENDOR" ]'
-----
-
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 0
-
-{
- "id":"1",
- "username": "",
- "firstname":"",
- "lastname":"",
- "email":"",
- "company":"",
- "tenantId": "null",
- "type": "TENANT"
- "tenantStatus":"CUSTOMER",
- "services": [
-   "name":"PRODUCT",
-   "name":"CUSTOMER",
- ]
-}
-----
 
 === DELETE
-
 ==== Delete client account
 You can only delete you own account.
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/accounts/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 204 No Content
+===== Example request
+include::{acc-service-snippets}/delete-account/curl-request.adoc[]
+include::{acc-service-snippets}/delete-account/http-request.adoc[]
 
-----
+===== Example response
+include::{acc-service-snippets}/delete-account/http-response.adoc[]
+
+And if the account does not exist:
+include::{acc-service-snippets}/delete-non-existing-account/http-response.adoc[]
