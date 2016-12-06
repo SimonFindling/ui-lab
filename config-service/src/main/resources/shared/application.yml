@@ -1,0 +1,12 @@
+logging:
+  level:
+    org.springframework.security: TRACE
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+ribbon:
+  eureka:
+    enabled: true

@@ -1,10 +1,6 @@
 spring:
   application:
     name: discovery
-  cloud:
-    config:
-      uri: http://config-service:8888
-      fail-fast: true
 eureka:
   instance:
     prefer-ip-address: true

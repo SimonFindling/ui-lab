@@ -1,0 +1,7 @@
+server:
+  port: 8081
+sidecar:
+  port: 8000
+ribbon:
+  eureka:
+    enabled: false

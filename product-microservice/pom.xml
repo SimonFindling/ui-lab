@@ -3,10 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>template-project</artifactId>
+	<artifactId>product-microservice</artifactId>
+	<name>product-microservice</name>
 	<packaging>jar</packaging>
-
-	<name>template-project</name>
 
 	<parent>
 		<groupId>de.hska.uilab</groupId>
@@ -18,9 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<!-- overwritten port number for the docker machine. Change to your needed 
-			port. -->
-		<docker.port>8888</docker.port>
+		<docker.port>7654</docker.port>
 	</properties>
 
 	<dependencies>
@@ -32,8 +29,16 @@
 			</dependency> <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-zuul</artifactId> 
 			</dependency> -->
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
 		</dependency>
 	</dependencies>
 
