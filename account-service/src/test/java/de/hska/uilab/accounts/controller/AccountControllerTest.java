@@ -64,6 +64,44 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
+    public void shouldFailBecauseTenantExistAlready() throws Exception {
+        Map<String, String> newProspectAccount = new HashMap<>();
+        newProspectAccount.put("email", "test@mail.org");
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
+                .andExpect(status().isCreated());
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldFailBecauseThisEmailExistAlready() throws Exception {
+        Service customer = serviceRepository.save(new Service(Service.ServiceName.CUSTOMER));
+        Service sales = serviceRepository.save(new Service(Service.ServiceName.PRODUCT));
+        Account tenantAccount = accountRepository.save(Account.asProspect("newuser@mail.org"));
+        tenantAccount.addServices(customer, sales);
+        accountRepository.save(tenantAccount);
+
+        Map<String, String> newUserAccount = new HashMap<>();
+        newUserAccount.put("firstname", "John");
+        newUserAccount.put("lastname", "Doe");
+        newUserAccount.put("email", "newuser@mail.org");
+
+        this.mockMvc.perform(post("/accounts/" + tenantAccount.getId())
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newUserAccount)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void shouldFindAProspectAccount() throws Exception {
         // == prepare ==
         Account createdAccount = createSampleTenantAccount("testuser2@mail.org");
@@ -375,7 +413,7 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    public void shouldRemovesVendorAndProductServiceToCustomer() throws Exception {
+    public void shouldRemoveVendorAndProductServiceToCustomer() throws Exception {
         // == prepare ==
         Account tenantAccount = createSampleTenantAccount("tenant@mail.org");
         Account doe1 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe1", "doe1@mail.org");
@@ -423,7 +461,7 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
-    public void shouldRemovesSalesAndProductServiceToCustomerAndItsUsers() throws Exception {
+    public void shouldRemoveSalesAndProductServiceToCustomerAndItsUsers() throws Exception {
         // == prepare ==
         Account accountToRemoveServices = createSampleTenantAccount("testuser2@mail.org");
 

@@ -41,9 +41,13 @@
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <!--<scope>runtime</scope>-->
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -70,6 +74,27 @@
                 needed because you can't set the execution in parent project. The reason
                 is parent project don't builds a jar, which is needed to build the docker
                 container -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <images>
+                        <image>
+                            <build>
+                                <entryPoint>
+                                    <exec>
+                                        <arg>java</arg>
+                                        <arg>-Djava.security.egd=file:/dev/./urandom</arg>
+                                        <arg>-Dspring.profiles.active=container</arg>
+                                        <arg>-jar</arg>
+                                        <arg>/app.jar</arg>
+                                    </exec>
+                                </entryPoint>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

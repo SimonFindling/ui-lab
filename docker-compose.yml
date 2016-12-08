@@ -10,16 +10,22 @@ services:
     restart: always
     ports:
       - 8761:8761
+    links:
+      - config-service
   gateway:
     image: ${DOCKER_USER}/api-gateway:${TAG}
     restart: always
     ports:
       - 8081:8081
+    links:
+      - discovery
   login:
     image: ${DOCKER_USER}/login-microservice:${TAG}
     restart: always
-    ports: 
+    ports:
       - 9005:9005
+    links:
+      - discovery
   product:
     image: ${DOCKER_USER}/product-microservice:${TAG}
     restart: always
@@ -27,11 +33,24 @@ services:
       - 7654:7654
     links:
       - discovery
-# (mavogel): disabled cuz not tested in docker yet, but need to merge due to api update
-#  account:
-#    image: ${DOCKER_USER}/account-service:${TAG}
-#    restart: always
-#    ports:
-#      - "6000:6000"
-#    links:
-#      - discovery
+  account-db-image:
+    image: mysql:5.7.9
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: c8de110f37300a53a971749
+      MYSQL_DATABASE: account-db
+      MYSQL_USER: account-user
+      MYSQL_PASSWORD: account-user-pwd
+    ports:
+      - "3306:3306"
+  account:
+    image: ${DOCKER_USER}/account-service:${TAG}
+    restart: always
+    ports:
+      - 9006:9006
+    links:
+      - discovery
+      - account-db-image
+

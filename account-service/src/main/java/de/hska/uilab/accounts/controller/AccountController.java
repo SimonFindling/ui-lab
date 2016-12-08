@@ -39,6 +39,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,16 +80,20 @@ public class AccountController {
     /////////////
     @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAccount(@RequestBody CreateAccountBody createAccountBody) {
+    public ResponseEntity<String> createAccount(@RequestBody CreateAccountBody createAccountBody) {
         Account createdAccount = Account.asProspect(createAccountBody.getEmail());
         Service.getProspectStandardServices()
                 .forEach(service -> createdAccount.addService(this.serviceRepository.findOne(service)));
-        return accountRepository.save(createdAccount).getPassword();
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{tenantId}", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
+    public ResponseEntity<String> createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
         Account tenantAccount = accountRepository.findOne(tenantId);
         Account createdAccount = Account.asUser(tenantId,
                 createUserAccountBody.getFirstname(),
@@ -97,8 +102,11 @@ public class AccountController {
                 tenantAccount.getCompany(),
                 tenantAccount.getTenantStatus(),
                 tenantAccount.getServices().toArray(new Service[]{}));
-        accountRepository.save(createdAccount);
-        return createdAccount.getPassword();
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     /////////////

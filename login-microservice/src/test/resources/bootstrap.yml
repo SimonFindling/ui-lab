@@ -1,3 +1,6 @@
 spring:
   application:
     name: login
+eureka:
+  client:
+    enabled: false
