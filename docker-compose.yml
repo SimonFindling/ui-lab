@@ -10,24 +10,24 @@ services:
     restart: always
     ports:
       - "8761:8761"
-    depends_on: 
+    depends_on:
       - config-service
   gateway:
     image: ${DOCKER_USER}/api-gateway:${TAG}
     restart: always
     ports:
       - "8081:8081"
-    depends_on: 
-      - config-service 
+    depends_on:
+      - config-service
       - discovery
   login:
     image: ${DOCKER_USER}/login-microservice:${TAG}
     restart: always
     ports:
       - "9005:9005"
-    depends_on: 
-      - config-service 
-      - discovery 
+    depends_on:
+      - config-service
+      - discovery
       - gateway
 # (mavogel): disabled cuz not tested in docker yet, but need to merge due to api update
 #  account:
@@ -35,16 +35,25 @@ services:
 #    restart: always
 #    ports:
 #      - "6000:6000"
-#    depends_on: 
-#      - config-service 
-#      - discovery 
+#    depends_on:
+#      - config-service
+#      - discovery
 #      - gateway
   product:
     image: ${DOCKER_USER}/product-microservice:${TAG}
     restart: always
     ports:
       - "7654:7654"
-    depends_on: 
-      - config-service 
-      - discovery 
+    depends_on:
+      - config-service
+      - discovery
+      - gateway
+  customer:
+    image: ${DOCKER_USER}/customer-microservice:${TAG}
+    restart: always
+    ports:
+      - "9371:9371"
+    depends_on:
+      - config-service
+      - discovery
       - gateway
