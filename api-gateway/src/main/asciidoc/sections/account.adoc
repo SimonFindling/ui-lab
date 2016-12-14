@@ -1,7 +1,5 @@
 [[resources-accounts]]
 == Account-Service
-
-== Accounts
 Handles the accounts of the tenants of the HSKA ERP system.
 The `accounts` resource is used to create, list, update and delete accounts.
 
