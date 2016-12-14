@@ -4,33 +4,38 @@ services:
     image: ${DOCKER_USER}/config-service:${TAG}
     restart: always
     ports:
-      - 8888:8888
+      - "8888:8888"
   discovery:
     image: ${DOCKER_USER}/discovery-service:${TAG}
     restart: always
     ports:
-      - 8761:8761
-    links:
+      - "8761:8761"
+    depends_on: 
       - config-service
   gateway:
     image: ${DOCKER_USER}/api-gateway:${TAG}
     restart: always
     ports:
-      - 8081:8081
+      - "8081:8081"
     links:
+      - discovery
+    depends_on:
+      - config-service
       - discovery
   login:
     image: ${DOCKER_USER}/login-microservice:${TAG}
     restart: always
     ports:
-      - 9005:9005
-    links:
-      - discovery
+      - "9005:9005"
+    depends_on: 
+      - config-service 
+      - discovery 
+      - gateway
   product:
     image: ${DOCKER_USER}/product-microservice:${TAG}
     restart: always
     ports:
-      - 7654:7654
+      - "7654:7654"
     links:
       - discovery
   account-db-image:
@@ -49,8 +54,7 @@ services:
     image: ${DOCKER_USER}/account-service:${TAG}
     restart: always
     ports:
-      - 9006:9006
+      - "9006:9006"
     links:
       - discovery
       - account-db-image
-
