@@ -83,7 +83,13 @@ public class AccountController {
     public ResponseEntity<String> createAccount(@RequestBody CreateAccountBody createAccountBody) {
         Account createdAccount = Account.asProspect(createAccountBody.getEmail());
         Service.getProspectStandardServices()
-                .forEach(service -> createdAccount.addService(this.serviceRepository.findOne(service)));
+                .forEach(serviceName -> {
+                    Service serviceToAdd = this.serviceRepository.findOne(serviceName);
+                    if(serviceToAdd == null) {
+                        serviceToAdd = this.serviceRepository.save(new Service(serviceName));
+                    }
+                    createdAccount.addService(serviceToAdd);
+                });
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
         } catch (Exception e) {

@@ -64,6 +64,22 @@ public class AccountControllerTest extends AbstractTestBase {
     }
 
     @Test
+    public void shouldCreateATenantAccount() throws Exception {
+        Map<String, String> newProspectAccount = new HashMap<>();
+        newProspectAccount.put("email", "test@mail.org");
+
+        this.mockMvc.perform(post("/accounts")
+                .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newProspectAccount)))
+                .andExpect(status().isCreated());
+
+        Account createdAcc = this.accountRepository.findOne(1L);
+        assertEquals(Service.getProspectStandardServices().size(), createdAcc.getServices().size());
+    }
+
+
+    @Test
     public void shouldFailBecauseTenantExistAlready() throws Exception {
         Map<String, String> newProspectAccount = new HashMap<>();
         newProspectAccount.put("email", "test@mail.org");

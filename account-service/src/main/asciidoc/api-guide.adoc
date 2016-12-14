@@ -121,7 +121,7 @@ include::{snippets}/create-user-account/http-request.adoc[]
 ===== Example response
 include::{snippets}/create-user-account/http-response.adoc[]
 
-=== PUT
+=== PATCH
 ==== Update account
 For Upgrading the `status` use `/upgrade` and for adding new services use the `/addservice` resource.
 
