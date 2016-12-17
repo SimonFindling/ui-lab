@@ -1,4 +1,4 @@
-//package de.hska.uilab.product;
+//package de.hska.uilab.vendor;
 //
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -7,10 +7,8 @@
 //
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
-//public class ProductMicroserviceApplicationTests {
-//
+//public class VendorServiceApplicationTest {
 //	@Test
 //	public void contextLoads() {
 //	}
-//
 //}

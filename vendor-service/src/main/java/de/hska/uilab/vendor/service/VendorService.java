@@ -27,7 +27,7 @@ public class VendorService {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<String> showMessage() {
 		LOGGER.log(Level.INFO, "Helloooooo");
-		return new ResponseEntity<>("Helloooooo\n", HttpStatus.OK);
+		return new ResponseEntity<>("Helloooooo, I am VendorService!\n", HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/vendors/{tenantId}", method = RequestMethod.GET, produces = "application/json")
