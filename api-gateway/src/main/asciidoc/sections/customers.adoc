@@ -41,7 +41,7 @@ Content-Length:
 ===== Example Request
 [source,bash,options="nowrap"]
 ----
-$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
+$ curl 'http://DOCKER-HOST:8080/customers/{tenantId}/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
 ----
 
 ===== Example Response

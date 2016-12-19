@@ -4,4 +4,4 @@ spring:
   cloud:
     config:
       uri: http://config-service:8888
-      fail-fast: true  
+      fail-fast: true

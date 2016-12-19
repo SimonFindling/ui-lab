@@ -1,0 +1,14 @@
+server:
+  port: 9006
+spring:
+  profiles: container
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://account-db-image:3306/account-db?useSSL=false
+    username: account-user
+    password: account-user-pwd

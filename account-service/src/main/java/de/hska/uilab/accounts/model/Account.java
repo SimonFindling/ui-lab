@@ -31,7 +31,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.*;
 
 /**
@@ -61,8 +60,9 @@ public class Account implements Serializable {
     private TenantStatus tenantStatus;
     private AccountType accountType;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "username"))
+    // TODO use a Set here!
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(name = "service_account", joinColumns = @JoinColumn(name = "service_name"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<Service> services;
 
     /**
@@ -72,7 +72,7 @@ public class Account implements Serializable {
      * @return the new account with a generated password
      */
     public static Account asProspect(final String email) {
-        return new Account(null, null, null, email, AccountType.TENANT);
+        return new Account(null, null, null, email, null, AccountType.TENANT, TenantStatus.PROSPECT);
     }
 
     /**
@@ -82,13 +82,16 @@ public class Account implements Serializable {
      * @param firstname         the first name
      * @param lastname          the last name
      * @param email             the email-address
+     * @param company           the company of the tenant
+     * @param tenantStatus      the status of the tenant creating this user
      * @param inheritedServices the inherited services from the tenant
      * @return the new account with a generated password
      */
     public static Account asUser(final Long tenantId,
                                  final String firstname, final String lastname, final String email,
+                                 final String company, final TenantStatus tenantStatus,
                                  final Service... inheritedServices) {
-        return new Account(tenantId, firstname, lastname, email, AccountType.USER, inheritedServices);
+        return new Account(tenantId, firstname, lastname, email, company, AccountType.USER, tenantStatus, inheritedServices);
     }
 
 
@@ -102,16 +105,18 @@ public class Account implements Serializable {
      * C'tor
      */
     private Account(final Long tenantId,
-                    final String firstname, final String lastname, final String email, final AccountType accountType,
+                    final String firstname, final String lastname, final String email, final String company,
+                    final AccountType accountType, final TenantStatus tenantStatus,
                     final Service... inheritedServices) {
         this.username = "";
         this.firstname = firstname != null ? firstname : "";
         this.lastname = lastname != null ? lastname : "";
+        this.company = company != null ? company : "";
         this.email = email;
         this.accountType = accountType;
         this.tenantId = tenantId;
-        this.tenantStatus = AccountType.TENANT == accountType ? TenantStatus.PROSPECT : null;
-        this.password = Base64.getEncoder().encodeToString(Instant.now().toString().getBytes());
+        this.tenantStatus = tenantStatus;
+        this.password = Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes());
         this.services = inheritedServices != null ? new ArrayList<>(Arrays.asList(inheritedServices)) : new ArrayList<>();
     }
 

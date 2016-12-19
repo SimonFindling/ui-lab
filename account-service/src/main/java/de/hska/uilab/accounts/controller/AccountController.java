@@ -39,7 +39,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by mavogel on 11/23/16.
@@ -54,6 +56,9 @@ public class AccountController {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    /////////////
+    // GET
+    /////////////
     @RequestMapping(value = "", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Account> allAccounts() {
@@ -70,76 +75,99 @@ public class AccountController {
         }
     }
 
+    /////////////
+    // POST
+    /////////////
     @RequestMapping(value = "", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAccount(@RequestBody CreateAccountBody createAccountBody) {
+    public ResponseEntity<String> createAccount(@RequestBody CreateAccountBody createAccountBody) {
         Account createdAccount = Account.asProspect(createAccountBody.getEmail());
-        accountRepository.save(createdAccount);
-        return createdAccount.getPassword();
+        Service.getProspectStandardServices()
+                .forEach(serviceName -> {
+                    Service serviceToAdd = this.serviceRepository.findOne(serviceName);
+                    if(serviceToAdd == null) {
+                        serviceToAdd = this.serviceRepository.save(new Service(serviceName));
+                    }
+                    createdAccount.addService(serviceToAdd);
+                });
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{tenantId}", produces = "text/plain", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
+    public ResponseEntity<String> createAccount(@PathVariable long tenantId, @RequestBody CreateUserAccountBody createUserAccountBody) {
         Account tenantAccount = accountRepository.findOne(tenantId);
         Account createdAccount = Account.asUser(tenantId,
                 createUserAccountBody.getFirstname(),
                 createUserAccountBody.getLastname(),
                 createUserAccountBody.getEmail(),
+                tenantAccount.getCompany(),
+                tenantAccount.getTenantStatus(),
                 tenantAccount.getServices().toArray(new Service[]{}));
-        accountRepository.save(createdAccount);
-        return createdAccount.getPassword();
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    /////////////
+    // PATCH
+    /////////////
+    @RequestMapping(value = "", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
         Account accountToUpdate = accountRepository.findOne(updateAccountBody.getId());
-        // TODO validation maybe in the dto
+        accountToUpdate.setUsername(updateAccountBody.getUsername());
         accountToUpdate.setFirstname(updateAccountBody.getFirstname());
         accountToUpdate.setLastname(updateAccountBody.getLastname());
         accountToUpdate.setCompany(updateAccountBody.getCompany());
-        if (updateAccountBody.getEmail() != null && !updateAccountBody.getEmail().isEmpty()) {
-            accountToUpdate.setEmail(updateAccountBody.getEmail());
+        accountToUpdate.setEmail(updateAccountBody.getEmail());
+        try {
+            accountRepository.save(accountToUpdate);
+            return ResponseEntity.ok(accountToUpdate);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
         }
-        accountRepository.save(accountToUpdate);
-        return ResponseEntity.ok(accountToUpdate);
     }
 
-    @RequestMapping(value = "/upgrade/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/upgrade", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> upgradeToCustomer(@PathVariable long id) {
         Account accountToUpgrade = accountRepository.findOne(id);
-        if (AccountType.USER == accountToUpgrade.getAccountType()) {
+        if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
+            findAllUserAccounts(id)
+                    .forEach(useracc -> {
+                        useracc.setTenantStatus(TenantStatus.CUSTOMER);
+                        this.accountRepository.save(useracc);
+                    });
+
             accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
-            accountRepository.save(accountToUpgrade);
-            return ResponseEntity.ok(accountToUpgrade);
-        } else if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
-            // TODO upgrade all Users as well.
-            accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
-            accountRepository.save(accountToUpgrade);
+            this.accountRepository.save(accountToUpgrade);
             return ResponseEntity.ok(accountToUpgrade);
         } else {
             return ResponseEntity.badRequest().body(accountToUpgrade);
         }
     }
 
-    @RequestMapping(value = "/rmservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/rmservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        if (AccountType.USER == account.getAccountType()) {
+        if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
-            });
-            accountRepository.save(account);
-            return ResponseEntity.ok(account);
-        } else if (AccountType.TENANT == account.getAccountType()) {
-            // TODO as well for each user if its a tenant acc
-            modifyServiceBody.forEach(msb -> {
-                Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.removeService(serviceToRemove);
+
+                findAllUserAccounts(id)
+                        .forEach(useracc -> {
+                            useracc.removeService(serviceToRemove);
+                            this.accountRepository.save(useracc);
+                        });
             });
             accountRepository.save(account);
             return ResponseEntity.ok(account);
@@ -148,48 +176,58 @@ public class AccountController {
         }
     }
 
-    @RequestMapping(value = "/addservice/{id}", method = RequestMethod.PUT, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/addservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Account> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
-        if (AccountType.USER == account.getAccountType()) {
+        if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
-                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.addService(servicetToAdd);
+                Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
+                account.addService(serviceToAdd);
+
+                findAllUserAccounts(id)
+                        .forEach(useracc -> {
+                            useracc.addService(serviceToAdd);
+                            this.accountRepository.save(useracc);
+                        });
             });
-            accountRepository.save(account);
-            return ResponseEntity.ok(account);
-        } else if (AccountType.TENANT == account.getAccountType()) {
-            modifyServiceBody.forEach(msb -> {
-                Service servicetToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
-                account.addService(servicetToAdd);
-            });
-            // TODO as well for each user if its a tenant acc
-            accountRepository.save(account);
-            return ResponseEntity.ok(account);
+
+            return ResponseEntity.ok(accountRepository.save(account));
         } else {
             return ResponseEntity.badRequest().body(account);
         }
     }
 
+    /////////////
+    // DELETE
+    /////////////
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> removeAccount(@PathVariable long id) {
         final Account account = accountRepository.findOne(id);
-        if(account == null) {
+        if (account == null) {
             return ResponseEntity.notFound().build();
         } else {
             if (AccountType.USER == account.getAccountType()) {
                 accountRepository.delete(account);
                 return ResponseEntity.noContent().build();
             } else if (AccountType.TENANT == account.getAccountType()) {
-                // TODO as well for each user if its a tenant acc
                 accountRepository.delete(account);
+                findAllUserAccounts(id)
+                        .forEach(useracc -> this.accountRepository.delete(useracc));
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.badRequest().build();
             }
         }
+    }
+
+    private List<Account> findAllUserAccounts(final long tenantId) {
+        return ((List<Account>) accountRepository.findAll()).stream()
+                .filter(acc -> acc.getTenantId() != null)
+                .filter(acc -> acc.getTenantId() == tenantId)
+                .filter(acc -> AccountType.USER.equals(acc.getAccountType()))
+                .collect(Collectors.toList());
     }
 
 }

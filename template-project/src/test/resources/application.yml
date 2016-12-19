@@ -1,5 +1,11 @@
 server:
-  port: 9654
+  port: 9006
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
 ribbon:
   eureka:
-    enabled: false
+    enabled: true

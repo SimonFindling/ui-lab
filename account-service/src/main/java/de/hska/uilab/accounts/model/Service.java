@@ -41,7 +41,8 @@ public class Service implements Serializable {
     public enum ServiceName {
         PRODUCT,
         CUSTOMER,
-        SALES
+        SALES,
+        VENDOR
     }
 
     @Id
@@ -66,7 +67,13 @@ public class Service implements Serializable {
         return name;
     }
 
-    public static List<ServiceName> getProspectStandartServices() {
-        return Arrays.asList(ServiceName.values());
+    /**
+     * @return the standard services for a new prospect
+     */
+    public static List<ServiceName> getProspectStandardServices() {
+        return Arrays.asList(
+                ServiceName.PRODUCT,
+                ServiceName.CUSTOMER,
+                ServiceName.VENDOR);
     }
 }

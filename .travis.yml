@@ -13,6 +13,6 @@ after_success:
   # on a separate branch before going to master. If not all teams will pull
   # the images immediately by watchtower
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - mvn docker:build
+  - mvn clean package docker:build
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASS"
   - mvn docker:push
