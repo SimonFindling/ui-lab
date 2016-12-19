@@ -58,3 +58,21 @@ services:
     links:
       - discovery
       - account-db-image
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uilab
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
+  vendor:
+    image: ${DOCKER_USER}/vendor-service:${TAG}
+    restart: always
+    ports:
+      - "9009:9009"
+    links:  
+      - discovery 
+    depends_on:
+      - db
