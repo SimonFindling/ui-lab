@@ -23,14 +23,8 @@ public class ProductMicroserviceApplication implements ApplicationRunner {
 	// Fill Database with some demo Products..
 	@Override
 	public void run(ApplicationArguments applicationArguments) throws Exception {
-/*		repository.save(new Product("HTC Vive"));
-		repository.save(new Product("Oculus Rift"));
-		repository.save(new Product("Sony PlayStation VR"));
-		repository.save(new Product("Samsung Gear VR"));
-		repository.save(new Product("Google Daydream View"));
-		repository.save(new Product("Microsoft HoloLens"));
-		repository.save(new Product("Fove 0"));
-		repository.save(new Product("Razer OSVR HDK 2"));*/
+/*		repository.save(new Product("HTC Vive", 259.99, "base64ImageCode", "VR-Brille von HTC", "123456789"));
+		repository.save(new Product("Oculus Rift", 300.00, "base64ImageCode", "VR-Brille von Oculus", "987654321"));*/
 	}
 
 }

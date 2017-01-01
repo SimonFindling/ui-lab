@@ -15,14 +15,16 @@ public class Product {
     private double price;
     private String image;
     private String description;
+	private String ean;
+	
+	protected Product() {}
 
-    protected Product() {}
-
-    public Product(String name, double price, String image, String description) {
+    public Product(String name, double price, String image, String description, String ean) {
         this.name = name;
         this.price = price;
         this.image = image;
         this.description = description;
+        this.ean = ean;
     }
 
     public String getName() {
@@ -55,6 +57,14 @@ public class Product {
     public void setImage(String image) {
         this.image = image;
     }
+    
+    public String getEan() {
+		return ean;
+	}
+
+	public void setEan(String ean) {
+		this.ean = ean;
+	}
 
     public Long getId() {
         return id;
