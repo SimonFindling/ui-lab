@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: vendor
+eureka:
+  client:
+    enabled: false

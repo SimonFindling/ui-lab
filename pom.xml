@@ -34,6 +34,7 @@
 		<module>product-microservice</module>
 		<module>config-service</module>
 		<module>vendor-service</module>
+        	<module>warehouse-underscore-service</module>
 	</modules>
 
     <profiles>

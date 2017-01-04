@@ -76,3 +76,13 @@ services:
       - discovery 
     depends_on:
       - db
+
+  warehouse-underscore:
+    image: ${DOCKER_USER}/warehouse-underscore-service:${TAG}
+    restart: always
+    ports:
+      - "9099:9099"
+    links:  
+      - discovery 
+    depends_on:
+      - db
