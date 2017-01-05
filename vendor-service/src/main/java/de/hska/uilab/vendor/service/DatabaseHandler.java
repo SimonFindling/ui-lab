@@ -17,7 +17,7 @@ public class DatabaseHandler {
 	@Autowired
 	AddressRepository addressRepositoty;
 
-	public List<Vendor> getVendorsByTenantId(int tenantId) {
+	public List<Vendor> getVendorsByTenantId(long tenantId) {
 		return vendorRepository.findByTenantId(tenantId);
 	}
 
@@ -29,7 +29,7 @@ public class DatabaseHandler {
 	 * @param vendorId
 	 * @return
 	 */
-	public Vendor getVendorByTenantIdAndId(int tenantId, int vendorId) {
+	public Vendor getVendorByTenantIdAndId(long tenantId, long vendorId) {
 		List<Vendor> vendors = vendorRepository.findByTenantId(tenantId);
 		for (Vendor v : vendors) {
 			if (v.getVendorId() == vendorId)
@@ -45,7 +45,7 @@ public class DatabaseHandler {
 	 * @param tenantId
 	 * @return
 	 */
-	public boolean createVendorForTenant(Vendor vendor, int tenantId) {
+	public boolean createVendorForTenant(Vendor vendor, long tenantId) {
 		Vendor newVendor = vendor.getNewVendorForTenant(tenantId);
 		vendorRepository.save(newVendor);
 		return true;
@@ -59,7 +59,7 @@ public class DatabaseHandler {
 	 * @param tenantId
 	 * @return
 	 */
-	public Vendor modifyVendorForTenant(Vendor vendor, int tenantId, int vendorId) {
+	public Vendor modifyVendorForTenant(Vendor vendor, long tenantId, long vendorId) {
 		Vendor v = getVendorByTenantIdAndId(tenantId, vendorId);
 		if (v == null)
 			return null;
@@ -78,7 +78,7 @@ public class DatabaseHandler {
 	 * @param tenantId
 	 * @param id
 	 */
-	public boolean deleteVendorForTenant(int tenantId, int vendorId) {
+	public boolean deleteVendorForTenant(long tenantId, long vendorId) {
 		Vendor v = getVendorByTenantIdAndId(tenantId, vendorId);
 		if (v != null) {
 			vendorRepository.delete(v);

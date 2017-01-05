@@ -9,13 +9,13 @@ import de.hska.uilab.vendor.data.Vendor;
 public class MockService {
 	public List<Vendor> getVendorList(int i){
 		List<Vendor> retList = new ArrayList<>();
-		for(int j = 0; j < i; j++){
+		for(long j = 0; j < i; j++){
 			retList.add(getVendor(j));
 		}
 		return retList;
 	}
 	
-	public Vendor getVendor(int i){
+	public Vendor getVendor(Long i){
 		Vendor retVendor = new Vendor();
 		retVendor.setAddress(getAddress(i));
 		retVendor.setEmail("email " + i);
@@ -24,7 +24,7 @@ public class MockService {
 		return retVendor;
 	}
 	
-	private Address getAddress(int i){
+	private Address getAddress(Long i){
 		Address retAddress = new Address();
 		retAddress.setCity("city " + i);
 		retAddress.setCountry("country " + i);
@@ -38,11 +38,11 @@ public class MockService {
 		return true;
 	}
 
-	public Vendor modifyVendorForTenant(int id, Vendor vendor, int tenantId) {
+	public Vendor modifyVendorForTenant(Long id, Vendor vendor, Long tenantId) {
 		return getVendor(id);
 	}
 
-	public boolean deleteVendorForTenant(int id, int tenantId) {
+	public boolean deleteVendorForTenant(Long id, Long tenantId) {
 		return true;
 	}
 }
