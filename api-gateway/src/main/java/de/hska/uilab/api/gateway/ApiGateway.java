@@ -7,7 +7,8 @@ import org.springframework.cloud.netflix.sidecar.EnableSidecar;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 @SpringBootApplication
-@EnableSidecar
+@EnableDiscoveryClient
+@EnableZuulProxy
 public class ApiGateway {
 
 	public static void main(String[] args) {

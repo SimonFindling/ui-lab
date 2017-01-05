@@ -14,7 +14,7 @@ public class Vendor {
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "vendorid")
-	private int vendorId;
+	private Long vendorId;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "email")
@@ -23,19 +23,19 @@ public class Vendor {
 	@JoinColumn(name = "addressid")
 	private Address address;
 	@Column(name = "tenantid")
-	private int tenantId;
+	private Long tenantId;
 	
 	public Vendor(){}
-	public Vendor(int vendorId, String name, String email, Address address){
+	public Vendor(Long vendorId, String name, String email, Address address){
 		this.vendorId = vendorId;
 		this.name = name;
 		this.email = email;
 		this.address = address;
 	}
-	public int getVendorId() {
+	public Long getVendorId() {
 		return vendorId;
 	}
-	public void setVendorId(int vendorId) {
+	public void setVendorId(Long vendorId) {
 		this.vendorId = vendorId;
 	}
 	public String getName() {
@@ -56,13 +56,13 @@ public class Vendor {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	public int getTenantId() {
+	public Long getTenantId() {
 		return tenantId;
 	}
-	public void setTenantId(int tenantId) {
+	public void setTenantId(Long tenantId) {
 		this.tenantId = tenantId;
 	}
-	public Vendor getNewVendorForTenant(int tenantId){
+	public Vendor getNewVendorForTenant(Long tenantId){
 		Vendor newVendor = new Vendor();
 		newVendor.address = address;
 		newVendor.email = email;

@@ -11,7 +11,7 @@ public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	private Integer id;
+	private Long id;
 	@Column(name = "street")
 	private String street;
 	@Column(name = "number")
@@ -32,7 +32,7 @@ public class Address {
 		this.country = country;
 	}
 	
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 	public String getStreet() {
