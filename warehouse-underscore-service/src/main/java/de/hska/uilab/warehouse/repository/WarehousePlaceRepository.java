@@ -8,5 +8,6 @@ import de.hska.uilab.warehouse.data.Warehouse;
 import de.hska.uilab.warehouse.data.WarehousePlace;
 
 public interface WarehousePlaceRepository extends CrudRepository<WarehousePlace, Long> {
-	List<WarehousePlaceRepository> findByWarehouse(Warehouse warehouse);
+	List<WarehousePlace> findByWarehouse(Warehouse warehouse);
+	WarehousePlace findByName(String name);
 }
