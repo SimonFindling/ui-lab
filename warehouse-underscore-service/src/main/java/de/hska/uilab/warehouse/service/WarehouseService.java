@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import de.hska.uilab.warehouse.data.Product;
 import de.hska.uilab.warehouse.data.Warehouse;
 import de.hska.uilab.warehouse.data.WarehousePlace;
+import de.hska.uilab.warehouse.data.WarehousePlaceProduct;
 
 @RestController
 public class WarehouseService {
@@ -90,4 +91,43 @@ public class WarehouseService {
 			return new ResponseEntity<Long>(-1l, HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
+	
+	// get all products from within the warehousePlace with the matching placeId
+	@RequestMapping(value = "/warehouseplace/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<WarehousePlaceProduct>> getWarehousePlaceProductForWarehousePlaceId(
+			@PathVariable long warehousePlaceId) {
+		LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehousePlaceId " + warehousePlaceId);
+		return new ResponseEntity<List<WarehousePlaceProduct>>(dbh.getWarehousePlaceProductForWarehousePlaceId(warehousePlaceId), HttpStatus.OK);
+	}
+	
+	// count all products with $ID in all warehouses
+	@RequestMapping(value = "/warehouseplaceproductcount/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Integer> getWarehousePlaceProductCount(
+			@PathVariable Integer warehouseplaceProductId) {
+		LOGGER.log(Level.INFO, "get warehouseplaceProduct count by warehouseplaceProductId " + warehouseplaceProductId);
+		return new ResponseEntity<Integer>(dbh.getWarehousePlaceProductForProductId(warehouseplaceProductId).size(), HttpStatus.OK);
+	}
+	
+	// get all products with the matching productId
+	@RequestMapping(value = "/warehouseplaceproducts/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<WarehousePlaceProduct>> getWarehousePlaceProductForProductId(
+			@PathVariable Integer warehouseplaceProductId) {
+		LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehouseplaceProductId " + warehouseplaceProductId);
+		return new ResponseEntity<List<WarehousePlaceProduct>>(dbh.getWarehousePlaceProductForProductId(warehouseplaceProductId), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/warehouseplaceproducts", method = RequestMethod.POST)
+	public ResponseEntity<Long> createWarehousePlaceProduct(
+			@RequestBody WarehousePlaceProduct warehousePlaceProduct) {
+		long createdId = dbh.createWarehousePlaceProduct(warehousePlaceProduct);
+		if (createdId != -1) {
+			LOGGER.log(Level.INFO, "Created warehousePlaceProduct with id: " + createdId + ".");
+			return new ResponseEntity<Long>(createdId, HttpStatus.CREATED);
+		} else {
+			LOGGER.log(Level.INFO, "Couldn't create warehousePlaceProduct.");
+			return new ResponseEntity<Long>(-1l, HttpStatus.NOT_ACCEPTABLE);
+		}
+	}
+	
+	
 }

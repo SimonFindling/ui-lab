@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import de.hska.uilab.warehouse.data.Warehouse;
 import de.hska.uilab.warehouse.data.WarehousePlace;
+import de.hska.uilab.warehouse.data.WarehousePlaceProduct;
 import de.hska.uilab.warehouse.repository.WarehousePlaceProductRepository;
 import de.hska.uilab.warehouse.repository.WarehousePlaceRepository;
 import de.hska.uilab.warehouse.repository.WarehouseRepository;
@@ -65,5 +66,20 @@ public class DatabaseHandler {
 	public List<WarehousePlace> getAllWarehousePlacesForWarehouseId(long warehouseId) {
 		Warehouse dbWarehouse = warehouseRepository.findOne(warehouseId);
 		return warehousePlaceRepository.findByWarehouse(dbWarehouse);
+	}
+	
+	public List<WarehousePlaceProduct> getWarehousePlaceProductForWarehousePlaceId(long warehousePlaceId) {
+		List<WarehousePlaceProduct> dbWPP = warehousePlaceProductRepository.findByWarehouseplaceid(warehousePlaceId); 
+		return dbWPP;
+	}
+	
+	public List<WarehousePlaceProduct> getWarehousePlaceProductForProductId(Integer productId) {
+		List<WarehousePlaceProduct> dbWPP = warehousePlaceProductRepository.findByProductid(productId); 
+		return dbWPP;
+	}
+	
+	public long createWarehousePlaceProduct(WarehousePlaceProduct warehousePlaceProduct) {
+		warehousePlaceProductRepository.save(warehousePlaceProduct);
+		return warehousePlaceProduct.getId();
 	}
 }
