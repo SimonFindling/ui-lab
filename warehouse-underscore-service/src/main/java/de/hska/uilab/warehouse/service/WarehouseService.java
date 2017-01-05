@@ -45,11 +45,22 @@ public class WarehouseService {
 	public ResponseEntity<List<Warehouse>> getWarehouses() {
 		LOGGER.log(Level.INFO, "get all warehouses");
 
-		ResponseEntity<Product[]> responseEntity = this.restTemplate.getForEntity("http://172.19.0.8:7654/products",
+		ResponseEntity<Product[]> responseEntity = this.restTemplate.getForEntity("http://172.19.0.6:7654/products",
 				Product[].class);
 		Product[] objects = responseEntity.getBody();
 		LOGGER.log(Level.INFO, objects + "");
 		return new ResponseEntity<List<Warehouse>>(dbh.getAllWarehouses(), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/warehouses/{warehouseId}", method = RequestMethod.GET)
+	public ResponseEntity<Warehouse> getWarehouseById(@PathVariable long warehouseId) {
+		LOGGER.log(Level.INFO, "get warehouse by id " + warehouseId);
+		Warehouse wdb = dbh.getWarehouseById(warehouseId);
+		if (wdb == null) {
+			return new ResponseEntity<Warehouse>(HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<Warehouse>(wdb, HttpStatus.OK);
+		}
 	}
 
 	@RequestMapping(value = "/warehouses", method = RequestMethod.POST)
@@ -64,23 +75,37 @@ public class WarehouseService {
 			return new ResponseEntity<Long>(-1l, HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
-	
+
+	@RequestMapping(value = "/warehouses/{warehouseId}", method = RequestMethod.PUT)
+	public ResponseEntity<Warehouse> modifyWarehouse(@RequestBody Warehouse warehouse, @PathVariable long warehouseId) {
+		LOGGER.log(Level.INFO, "Modify warehouse " + warehouseId);
+		Warehouse updatedWarehouse = dbh.modifyWarehouse(warehouseId, warehouse);
+		if (updatedWarehouse != null) {
+			LOGGER.log(Level.INFO, "Modified warehouse.");
+			return new ResponseEntity<>(updatedWarehouse, HttpStatus.OK);
+		} else {
+			LOGGER.log(Level.INFO, "Couldn't modify warehouse.");
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
+	}
+
 	@RequestMapping(value = "/warehouseplaces", method = RequestMethod.GET)
 	public ResponseEntity<List<WarehousePlace>> getWarehousePlaces() {
 		LOGGER.log(Level.INFO, "get all warehouseplacess");
 		return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlaces(), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/warehouseplaces/{id}", method = RequestMethod.GET)
-	public ResponseEntity<List<WarehousePlace>> getWarehousePlacesForWarehouseId(
-			@PathVariable long warehouseId) {
-		LOGGER.log(Level.INFO, "get all warehouseplaces for warehouse with id " + warehouseId);
-		return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlacesForWarehouseId(warehouseId), HttpStatus.OK);
+
+	@RequestMapping(value = "/warehouseplaces/{warehousePlaceId}", method = RequestMethod.GET)
+	public ResponseEntity<List<WarehousePlace>> getWarehousePlacesForWarehouseId(@PathVariable long warehousePlaceId) {
+		LOGGER.log(Level.INFO, "get all warehouseplaces for warehouse with id " + warehousePlaceId);
+		return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlacesForWarehouseId(warehousePlaceId),
+				HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/warehouseplaces", method = RequestMethod.POST)
 	public ResponseEntity<Long> createWarehouse(@RequestBody WarehousePlace warehousePlace) {
-		LOGGER.log(Level.INFO, "Create warehouse " + warehousePlace.getName() + " for warehouse " + warehousePlace.getWarehouse().getId());
+		LOGGER.log(Level.INFO, "Create warehouseplace " + warehousePlace.getName() + " for warehouse "
+				+ warehousePlace.getWarehouse().getId());
 		long createdId = dbh.createWarehousePlace(warehousePlace);
 		if (createdId != -1) {
 			LOGGER.log(Level.INFO, "Created warehouseplace with id: " + createdId + ".");
@@ -88,6 +113,19 @@ public class WarehouseService {
 		} else {
 			LOGGER.log(Level.INFO, "Couldn't create warehouseplace.");
 			return new ResponseEntity<Long>(-1l, HttpStatus.NOT_ACCEPTABLE);
+		}
+	}
+	
+	@RequestMapping(value = "/warehouseplaces/{warehousePlaceId}", method = RequestMethod.PUT)
+	public ResponseEntity<WarehousePlace> modifyWarehousePlace(@RequestBody WarehousePlace warehousePlace, @PathVariable long warehousePlaceId) {
+		LOGGER.log(Level.INFO, "Modify warehouseplace " + warehousePlaceId);
+		WarehousePlace updatedWarehousePlace = dbh.modifyWarehousePlace(warehousePlaceId, warehousePlace);
+		if (updatedWarehousePlace != null) {
+			LOGGER.log(Level.INFO, "Modified warehouseplace.");
+			return new ResponseEntity<>(updatedWarehousePlace, HttpStatus.OK);
+		} else {
+			LOGGER.log(Level.INFO, "Couldn't modify warehouseplace.");
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
 }

@@ -17,13 +17,13 @@ import de.hska.uilab.warehouse.repository.WarehouseRepository;
 public class DatabaseHandler {
 	@Autowired
 	WarehouseRepository warehouseRepository;
-	
+
 	@Autowired
 	WarehousePlaceRepository warehousePlaceRepository;
-	
+
 	@Autowired
 	WarehousePlaceProductRepository warehousePlaceProductRepository;
-	
+
 	private final static Logger LOGGER = Logger.getLogger(DatabaseHandler.class.getName());
 
 	public List<Warehouse> getAllWarehouses() {
@@ -32,7 +32,7 @@ public class DatabaseHandler {
 
 	public long createWarehouse(Warehouse warehouse) {
 		Warehouse dbw = warehouseRepository.findByName(warehouse.getName());
-		if(dbw != null){
+		if (dbw != null) {
 			LOGGER.log(Level.INFO, "warehouse with name " + warehouse.getName() + " already exists");
 			return -1;
 		}
@@ -45,19 +45,29 @@ public class DatabaseHandler {
 	}
 
 	public long createWarehousePlace(WarehousePlace warehousePlace) {
+		if (warehousePlace.getWarehouse() == null)
+			return -1;
+		
+		if(warehousePlace.getWarehouse().getId() == null)
+			return -1;
+
+		if(warehouseRepository.findOne(warehousePlace.getWarehouse().getId()) == null)
+			return -1;
+		
 		List<WarehousePlace> dbWarehousePlace = warehousePlaceRepository.findByWarehouse(warehousePlace.getWarehouse());
 		boolean alreadyInDB = false;
-		for(WarehousePlace wp: dbWarehousePlace){
-			if(wp.getName().equals(warehousePlace.getName())){
+		for (WarehousePlace wp : dbWarehousePlace) {
+			if (wp.getName().equals(warehousePlace.getName())) {
 				alreadyInDB = true;
 				break;
 			}
 		}
-		if(alreadyInDB){
-			LOGGER.log(Level.INFO, "warehouseplace with name " + warehousePlace.getName() + " for warehouse " + warehousePlace.getWarehouse().getId() + " already exsists in db.");
+		if (alreadyInDB) {
+			LOGGER.log(Level.INFO, "warehouseplace with name " + warehousePlace.getName() + " for warehouse "
+					+ warehousePlace.getWarehouse().getId() + " already exsists in db.");
 			return -1;
 		}
-		
+
 		warehousePlaceRepository.save(warehousePlace);
 		return warehousePlace.getId();
 	}
@@ -65,5 +75,37 @@ public class DatabaseHandler {
 	public List<WarehousePlace> getAllWarehousePlacesForWarehouseId(long warehouseId) {
 		Warehouse dbWarehouse = warehouseRepository.findOne(warehouseId);
 		return warehousePlaceRepository.findByWarehouse(dbWarehouse);
+	}
+
+	public Warehouse getWarehouseById(long warehouseId) {
+		return warehouseRepository.findOne(warehouseId);
+	}
+
+	public Warehouse modifyWarehouse(long warehouseId, Warehouse warehouse) {
+		LOGGER.log(Level.INFO, warehouseId+"");
+		Warehouse w = warehouseRepository.findOne(warehouseId);
+		LOGGER.log(Level.INFO, w+"");
+		if (w == null)
+			return null;
+		else {
+			w.setDescription(warehouse.getDescription());
+			w.setName(warehouse.getName());
+			warehouseRepository.save(w);
+			return w;
+		}
+	}
+
+	public WarehousePlace modifyWarehousePlace(long warehousePlaceId, WarehousePlace warehousePlace) {
+		LOGGER.log(Level.INFO, warehousePlaceId+"");
+		WarehousePlace w = warehousePlaceRepository.findOne(warehousePlaceId);
+		LOGGER.log(Level.INFO, w+"");
+		if (w == null)
+			return null;
+		else {
+			w.setDescription(warehousePlace.getDescription());
+			w.setName(warehousePlace.getName());
+			warehousePlaceRepository.save(w);
+			return w;
+		}
 	}
 }
