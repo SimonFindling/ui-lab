@@ -32,6 +32,8 @@ public class WarehousePlace {
 	@JoinColumn(name="warehouseplace_id", referencedColumnName="id")
 	private List<WarehousePlaceProduct> warehousePlaceProduct;
 	
+	public WarehousePlace(){}
+	
 	public WarehousePlace(String name, String description, Warehouse warehouse){
 		this.name = name;
 		this.description = description;
@@ -64,6 +66,10 @@ public class WarehousePlace {
 
 	public Long getId() {
 		return id;
+	}
+	
+	public void setId(Long id){
+		this.id = id;
 	}
 
 	public List<WarehousePlaceProduct> getWarehousePlaceProduct() {
