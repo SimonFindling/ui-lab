@@ -21,12 +21,12 @@ import de.hska.uilab.product.schema.ProductsMock;
 public class ProductController {
 	private ProductsMock pm = new ProductsMock();
 
-	@RequestMapping(value = "/products", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Product>> getAllProducts() {
 		return new ResponseEntity<List<Product>>(pm.getAllProducts(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/products", method = RequestMethod.POST)
+	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity createProduct(@RequestBody Map<String, String> body) {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);
@@ -41,7 +41,7 @@ public class ProductController {
 	 * @param productId id for product
 	 * @return
 	 */
-	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{productId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Product> getSingleProduct(@PathVariable int productId) {
 		Product productById = pm.getProductById(productId);
 		if (productById != null) {
@@ -50,7 +50,7 @@ public class ProductController {
 		return new ResponseEntity<Product>(productById, HttpStatus.NOT_FOUND);
 	}
 	
-	@RequestMapping(value = "/products", method = RequestMethod.PUT)
+	@RequestMapping(value = "/", method = RequestMethod.PUT)
 	public ResponseEntity changeProduct(@RequestBody Map<String, String> body) {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);
@@ -60,7 +60,7 @@ public class ProductController {
 		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
 	}
 	
-	@RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{productId}", method = RequestMethod.DELETE)
 	public ResponseEntity deleteProduct(@PathVariable int productId) {
 		if (pm.deleteProductById(productId)) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);

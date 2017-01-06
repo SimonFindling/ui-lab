@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class LoginController {
 
-	@RequestMapping(value="/login/{username}/{password}", method=RequestMethod.GET)
+	@RequestMapping(value="/{username}/{password}", method=RequestMethod.GET)
 	public ResponseEntity<String> login(@PathVariable String username, @PathVariable String password) {
 		
 		String res = "false";
