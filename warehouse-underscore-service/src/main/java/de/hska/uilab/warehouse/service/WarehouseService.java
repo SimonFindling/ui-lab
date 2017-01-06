@@ -154,6 +154,7 @@ public class WarehouseService {
 		return new ResponseEntity<List<WarehousePlaceProduct>>(dbh.getWarehousePlaceProductForProductId(warehouseplaceProductId), HttpStatus.OK);
 	}
 	
+	// create new whpProduct
 	@RequestMapping(value = "/warehouseplaceproducts", method = RequestMethod.POST)
 	public ResponseEntity<Long> createWarehousePlaceProduct(
 			@RequestBody WarehousePlaceProduct warehousePlaceProduct) {
@@ -166,5 +167,20 @@ public class WarehouseService {
 			return new ResponseEntity<Long>(-1l, HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
-
+	
+	// update existing whpProduct
+	@RequestMapping(value = "/warehouseplaceproducts/{id}", method = RequestMethod.POST)
+	public ResponseEntity<WarehousePlaceProduct> updateWarehousePlaceProduct(
+			@PathVariable long warehousePlaceProductId,
+			@RequestBody WarehousePlaceProduct warehousePlaceProduct) {
+		LOGGER.log(Level.INFO, "Modify warehouseplaceproduct " + warehousePlaceProductId);
+		WarehousePlaceProduct updatedWarehousePlaceProduct = dbh.modifyWarehousePlaceProduct(warehousePlaceProductId, warehousePlaceProduct);
+		if (updatedWarehousePlaceProduct != null) {
+			LOGGER.log(Level.INFO, "Modified warehouseplace.");
+			return new ResponseEntity<>(updatedWarehousePlaceProduct, HttpStatus.OK);
+		} else {
+			LOGGER.log(Level.INFO, "Couldn't modify warehouseplace.");
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
+	}
 }

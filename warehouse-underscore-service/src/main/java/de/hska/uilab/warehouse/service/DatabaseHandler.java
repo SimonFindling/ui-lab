@@ -124,4 +124,20 @@ public class DatabaseHandler {
 		warehousePlaceProductRepository.save(warehousePlaceProduct);
 		return warehousePlaceProduct.getId();
 	}
+	
+	public WarehousePlaceProduct modifyWarehousePlaceProduct(long warehousePlaceProductId, WarehousePlaceProduct warehousePlaceProduct) {
+		LOGGER.log(Level.INFO, warehousePlaceProductId + "");
+		WarehousePlaceProduct dbWhpProduct = warehousePlaceProductRepository.findById(warehousePlaceProductId);
+		LOGGER.log(Level.INFO, dbWhpProduct +"");
+		if (dbWhpProduct == null)
+			return null;
+		else {
+			dbWhpProduct.setProductid(warehousePlaceProduct.getProductid());
+			dbWhpProduct.setQuantity(warehousePlaceProduct.getQuantity());
+			dbWhpProduct.setUnit(warehousePlaceProduct.getUnit());
+			dbWhpProduct.setWarehouseplaceid(warehousePlaceProduct.getWarehouseplace());
+			warehousePlaceProductRepository.save(dbWhpProduct);
+			return dbWhpProduct;
+		}
+	}
 }
