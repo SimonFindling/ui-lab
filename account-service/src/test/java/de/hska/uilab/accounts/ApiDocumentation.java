@@ -84,7 +84,7 @@ public class ApiDocumentation extends AbstractTestBase {
         // TODO create user via rest interface
         createSampleUserAccount(sampleTenantAccount1.getId(), "John", "Doe", "user@test.org");
 
-        this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isOk())
                 .andDo(this.documentationHandler.document(
@@ -108,7 +108,7 @@ public class ApiDocumentation extends AbstractTestBase {
     public void getAccountById() throws Exception {
         Account sampleTenantAccount = createSampleTenantAccount("prospect1@test.org");
 
-        this.mockMvc.perform(get("/accounts/" + sampleTenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + sampleTenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isOk())
                 .andDo(this.documentationHandler.document(
@@ -130,7 +130,7 @@ public class ApiDocumentation extends AbstractTestBase {
 
     @Test
     public void getAccountByIdNotFound() throws Exception {
-        this.mockMvc.perform(get("/accounts/1000").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/1000").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
     }
@@ -144,7 +144,7 @@ public class ApiDocumentation extends AbstractTestBase {
         newProspectAccount.put("email", "test@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(post("/accounts")
+        this.mockMvc.perform(post("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newProspectAccount)))
@@ -169,7 +169,7 @@ public class ApiDocumentation extends AbstractTestBase {
         newUserAccount.put("lastname", "Doe");
         newUserAccount.put("email", "newuser@mail.org");
 
-        this.mockMvc.perform(post("/accounts/" + tenantAccount.getId())
+        this.mockMvc.perform(post("/" + tenantAccount.getId())
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newUserAccount)))
@@ -199,7 +199,7 @@ public class ApiDocumentation extends AbstractTestBase {
         updatedAccount.put("email", "test123@mail.org");
         updatedAccount.put("company", "VR Stuff");
 
-        this.mockMvc.perform(patch("/accounts")
+        this.mockMvc.perform(patch("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(updatedAccount)))
@@ -221,7 +221,7 @@ public class ApiDocumentation extends AbstractTestBase {
         // == prepare ==
         Account baseAccount = createSampleTenantAccount("testuser2@mail.org");
 
-        this.mockMvc.perform(patch("/accounts/" + baseAccount.getId() + "/upgrade")
+        this.mockMvc.perform(patch("/" + baseAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -258,7 +258,7 @@ public class ApiDocumentation extends AbstractTestBase {
         salesService.put("name", "CUSTOMER");
         servicesToAdd.add(salesService);
 
-        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/addservice")
+        this.mockMvc.perform(patch("/" + accountToAddServices.getId() + "/addservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToAdd)))
@@ -293,7 +293,7 @@ public class ApiDocumentation extends AbstractTestBase {
         salesService.put("name", "CUSTOMER");
         servicesToAdd.add(salesService);
 
-        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/rmservice")
+        this.mockMvc.perform(patch("/" + accountToAddServices.getId() + "/rmservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToAdd)))
@@ -327,7 +327,7 @@ public class ApiDocumentation extends AbstractTestBase {
         Account accountToDelete = createSampleTenantAccount("testuser2@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(delete("/accounts/" + accountToDelete.getId())
+        this.mockMvc.perform(delete("/" + accountToDelete.getId())
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -339,7 +339,7 @@ public class ApiDocumentation extends AbstractTestBase {
         Long nonExistingAccountId = 100L;
 
         // == go / verify ==
-        this.mockMvc.perform(delete("/accounts/" + nonExistingAccountId)
+        this.mockMvc.perform(delete("/" + nonExistingAccountId)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

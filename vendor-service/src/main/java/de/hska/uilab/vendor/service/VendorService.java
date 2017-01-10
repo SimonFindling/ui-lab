@@ -30,19 +30,19 @@ public class VendorService {
 		return new ResponseEntity<>("Helloooooo, I am VendorService!\n", HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/vendors/{tenantId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{tenantId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Vendor>> getVendorsByTenantId(@PathVariable long tenantId) {
 		LOGGER.log(Level.INFO, "Get vendors by tenantId " + tenantId);
 		return new ResponseEntity<List<Vendor>>(dbh.getVendorsByTenantId(tenantId), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/vendors/{tenantId}/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{tenantId}/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Vendor> getVendorByTenantIdAndId(@PathVariable long tenantId, @PathVariable long id) {
 		LOGGER.log(Level.INFO, "Get vendor by tenantId " + tenantId + " and id " + id);
 		return new ResponseEntity<Vendor>(dbh.getVendorByTenantIdAndId(tenantId, id), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/vendors/{tenantId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{tenantId}", method = RequestMethod.POST)
 	public ResponseEntity createVendorForTenant(@RequestBody Vendor vendor, @PathVariable long tenantId) {
 		LOGGER.log(Level.INFO, "Create vendor " + vendor.getName() + " for tenant " + tenantId);
 		if (dbh.createVendorForTenant(vendor, tenantId)) {
@@ -54,7 +54,7 @@ public class VendorService {
 		}
 	}
 
-	@RequestMapping(value = "/vendors/{tenantId}/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{tenantId}/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Vendor> modifyVendorForTenant(@RequestBody Vendor vendor, @PathVariable long tenantId,
 			@PathVariable long id) {
 		LOGGER.log(Level.INFO, "Modify vendor " + id + " for tenant " + tenantId);
@@ -68,7 +68,7 @@ public class VendorService {
 		}
 	}
 
-	@RequestMapping(value = "/vendors/{tenantId}/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{tenantId}/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity deleteVendorForTenant(@PathVariable long tenantId, @PathVariable long id) {
 		LOGGER.log(Level.INFO, "Delete vendor " + id + " for tenant " + tenantId);
 		if (dbh.deleteVendorForTenant(tenantId, id)) {

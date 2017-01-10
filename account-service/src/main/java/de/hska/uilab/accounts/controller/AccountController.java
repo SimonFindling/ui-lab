@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  * Created by mavogel on 11/23/16.
  */
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/")
 public class AccountController {
 
     @Autowired

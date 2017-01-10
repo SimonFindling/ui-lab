@@ -68,7 +68,7 @@ public class AccountControllerTest extends AbstractTestBase {
         Map<String, String> newProspectAccount = new HashMap<>();
         newProspectAccount.put("email", "test@mail.org");
 
-        this.mockMvc.perform(post("/accounts")
+        this.mockMvc.perform(post("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newProspectAccount)))
@@ -84,13 +84,13 @@ public class AccountControllerTest extends AbstractTestBase {
         Map<String, String> newProspectAccount = new HashMap<>();
         newProspectAccount.put("email", "test@mail.org");
 
-        this.mockMvc.perform(post("/accounts")
+        this.mockMvc.perform(post("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newProspectAccount)))
                 .andExpect(status().isCreated());
 
-        this.mockMvc.perform(post("/accounts")
+        this.mockMvc.perform(post("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newProspectAccount)))
@@ -110,7 +110,7 @@ public class AccountControllerTest extends AbstractTestBase {
         newUserAccount.put("lastname", "Doe");
         newUserAccount.put("email", "newuser@mail.org");
 
-        this.mockMvc.perform(post("/accounts/" + tenantAccount.getId())
+        this.mockMvc.perform(post("/" + tenantAccount.getId())
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(newUserAccount)))
@@ -123,7 +123,7 @@ public class AccountControllerTest extends AbstractTestBase {
         Account createdAccount = createSampleTenantAccount("testuser2@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + createdAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + createdAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
                 .andExpect(jsonPath("$.username").isEmpty())
@@ -149,7 +149,7 @@ public class AccountControllerTest extends AbstractTestBase {
         Account account6 = createSampleTenantAccount("testuser6@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 // 1
                 .andExpect(jsonPath("$[0].id").value(account3.getId()))
@@ -219,14 +219,14 @@ public class AccountControllerTest extends AbstractTestBase {
         updatedAccount.put("email", "test123@mail.org");
         updatedAccount.put("company", "VR Stuff");
 
-        this.mockMvc.perform(patch("/accounts")
+        this.mockMvc.perform(patch("/")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(updatedAccount)))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("test123@mail.org"))
                 .andExpect(jsonPath("$.username").value("testuser2"))
@@ -248,13 +248,13 @@ public class AccountControllerTest extends AbstractTestBase {
         // == prepare ==
         Account baseAccount = createSampleTenantAccount("testuser2@mail.org");
 
-        this.mockMvc.perform(patch("/accounts/" + baseAccount.getId() + "/upgrade")
+        this.mockMvc.perform(patch("/" + baseAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + baseAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
                 .andExpect(jsonPath("$.username").isEmpty())
@@ -282,20 +282,20 @@ public class AccountControllerTest extends AbstractTestBase {
         Account tenantAccount2 = createSampleTenantAccount("tenant2@mail.org");
         Account doe4 = createSampleUserAccount(tenantAccount2.getId(), "John", "Doe4", "doe4@mail.org");
 
-        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/upgrade")
+        this.mockMvc.perform(patch("/" + tenantAccount.getId() + "/upgrade")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
                 .andExpect(jsonPath("$.tenantId").isEmpty())
                 .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
-        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
                 .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
@@ -304,7 +304,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
                 .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
@@ -313,7 +313,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe3.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe3.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.CUSTOMER.name()))
                 .andExpect(jsonPath("$.tenantId").value(tenantAccount.getId()))
@@ -322,14 +322,14 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + tenantAccount2.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + tenantAccount2.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
                 .andExpect(jsonPath("$.tenantId").isEmpty())
                 .andExpect(jsonPath("$.accountType").value(AccountType.TENANT.name()))
                 .andExpect(jsonPath("$.company").isEmpty())
                 .andExpect(status().isOk());
-        this.mockMvc.perform(get("/accounts/" + doe4.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe4.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
                 .andExpect(jsonPath("$.tenantId").value(tenantAccount2.getId()))
@@ -352,14 +352,14 @@ public class AccountControllerTest extends AbstractTestBase {
         salesService.put("name", "SALES");
         servicesToAdd.add(salesService);
 
-        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/addservice")
+        this.mockMvc.perform(patch("/" + tenantAccount.getId() + "/addservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToAdd)))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("tenant@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -370,7 +370,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("doe1@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -381,7 +381,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.services[3].name").value(Service.ServiceName.VENDOR.name()))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("doe2@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -403,14 +403,14 @@ public class AccountControllerTest extends AbstractTestBase {
         salesService.put("name", "SALES");
         servicesToAdd.add(salesService);
 
-        this.mockMvc.perform(patch("/accounts/" + accountToAddServices.getId() + "/addservice")
+        this.mockMvc.perform(patch("/" + accountToAddServices.getId() + "/addservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToAdd)))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + accountToAddServices.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + accountToAddServices.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("tenant@mail.org"))
                 .andExpect(jsonPath("$.username").isEmpty())
@@ -444,14 +444,14 @@ public class AccountControllerTest extends AbstractTestBase {
         servicesToRemove.add(salesService);
         servicesToRemove.add(productService);
 
-        this.mockMvc.perform(patch("/accounts/" + tenantAccount.getId() + "/rmservice")
+        this.mockMvc.perform(patch("/" + tenantAccount.getId() + "/rmservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToRemove)))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("tenant@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -459,7 +459,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("doe1@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -467,7 +467,7 @@ public class AccountControllerTest extends AbstractTestBase {
                 .andExpect(jsonPath("$.services[0].name").value(Service.ServiceName.CUSTOMER.name()))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("doe2@mail.org"))
                 .andExpect(jsonPath("$.tenantStatus").value(TenantStatus.PROSPECT.name()))
@@ -490,14 +490,14 @@ public class AccountControllerTest extends AbstractTestBase {
         servicesToRemove.add(salesService);
         servicesToRemove.add(productService);
 
-        this.mockMvc.perform(patch("/accounts/" + accountToRemoveServices.getId() + "/rmservice")
+        this.mockMvc.perform(patch("/" + accountToRemoveServices.getId() + "/rmservice")
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(servicesToRemove)))
                 .andExpect(status().isOk());
 
         // == go / verify ==
-        this.mockMvc.perform(get("/accounts/" + accountToRemoveServices.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + accountToRemoveServices.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(jsonPath("$.email").value("testuser2@mail.org"))
                 .andExpect(jsonPath("$.username").isEmpty())
@@ -518,13 +518,13 @@ public class AccountControllerTest extends AbstractTestBase {
         Account accountToDelete = createSampleTenantAccount("testuser2@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(delete("/accounts/" + accountToDelete.getId())
+        this.mockMvc.perform(delete("/" + accountToDelete.getId())
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         assertNull(accountRepository.findOne(accountToDelete.getId()));
-        this.mockMvc.perform(get("/accounts/" + accountToDelete.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + accountToDelete.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
 
@@ -538,7 +538,7 @@ public class AccountControllerTest extends AbstractTestBase {
         Account doe2 = createSampleUserAccount(tenantAccount.getId(), "John", "Doe2", "doe2@mail.org");
 
         // == go / verify ==
-        this.mockMvc.perform(delete("/accounts/" + tenantAccount.getId())
+        this.mockMvc.perform(delete("/" + tenantAccount.getId())
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -546,13 +546,13 @@ public class AccountControllerTest extends AbstractTestBase {
         assertNull(accountRepository.findOne(tenantAccount.getId()));
         assertNull(accountRepository.findOne(doe1.getId()));
         assertNull(accountRepository.findOne(doe2.getId()));
-        this.mockMvc.perform(get("/accounts/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + tenantAccount.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
-        this.mockMvc.perform(get("/accounts/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe1.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
-        this.mockMvc.perform(get("/accounts/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/" + doe2.getId()).accept(MediaType.APPLICATION_JSON)
                 .header("Authorization: Bearer", "0b79bab50daca910b000d4f1a2b675d604257e42"))
                 .andExpect(status().isNotFound());
     }
