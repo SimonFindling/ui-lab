@@ -24,16 +24,14 @@ package de.hska.uilab.accounts.controller;/*
  *  https://opensource.org/licenses/MIT
  */
 
-import de.hska.uilab.accounts.dto.CreateUserAccountBody;
-import de.hska.uilab.accounts.dto.ModifyServiceBody;
-import de.hska.uilab.accounts.dto.CreateAccountBody;
-import de.hska.uilab.accounts.dto.UpdateAccountBody;
+import de.hska.uilab.accounts.dto.*;
 import de.hska.uilab.accounts.model.Account;
 import de.hska.uilab.accounts.model.AccountType;
 import de.hska.uilab.accounts.model.Service;
 import de.hska.uilab.accounts.model.TenantStatus;
 import de.hska.uilab.accounts.repository.AccountRepository;
 import de.hska.uilab.accounts.repository.ServiceRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +45,7 @@ import java.util.stream.Collectors;
  * Created by mavogel on 11/23/16.
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/account")
 public class AccountController {
 
     @Autowired
@@ -56,20 +54,25 @@ public class AccountController {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    @Autowired
+    private ModelMapper mapper;
+
     /////////////
     // GET
     /////////////
-    @RequestMapping(value = "", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Account> allAccounts() {
-        return accountRepository.findAll();
+    public Iterable<AccountDto> allAccounts() {
+        return ((List<Account>) accountRepository.findAll()).stream()
+                .map(acc -> mapper.map(acc, AccountDto.class))
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Account> getAccount(@PathVariable long id) {
+    public ResponseEntity<AccountDto> getAccount(@PathVariable long id) {
         if (accountRepository.findOne(id) != null) {
-            return ResponseEntity.ok(accountRepository.findOne(id));
+            return ResponseEntity.ok(mapper.map(accountRepository.findOne(id), AccountDto.class));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -85,7 +88,7 @@ public class AccountController {
         Service.getProspectStandardServices()
                 .forEach(serviceName -> {
                     Service serviceToAdd = this.serviceRepository.findOne(serviceName);
-                    if(serviceToAdd == null) {
+                    if (serviceToAdd == null) {
                         serviceToAdd = this.serviceRepository.save(new Service(serviceName));
                     }
                     createdAccount.addService(serviceToAdd);
@@ -93,7 +96,7 @@ public class AccountController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account with email '" + createAccountBody.getEmail() + "' exists already");
         }
     }
 
@@ -111,16 +114,16 @@ public class AccountController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(accountRepository.save(createdAccount).getPassword());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account with email '" + createUserAccountBody.getEmail() + "' exists already");
         }
     }
 
     /////////////
     // PATCH
     /////////////
-    @RequestMapping(value = "", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Account> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
+    public ResponseEntity<AccountDto> updateAccount(@RequestBody UpdateAccountBody updateAccountBody) {
         Account accountToUpdate = accountRepository.findOne(updateAccountBody.getId());
         accountToUpdate.setUsername(updateAccountBody.getUsername());
         accountToUpdate.setFirstname(updateAccountBody.getFirstname());
@@ -129,18 +132,18 @@ public class AccountController {
         accountToUpdate.setEmail(updateAccountBody.getEmail());
         try {
             accountRepository.save(accountToUpdate);
-            return ResponseEntity.ok(accountToUpdate);
+            return ResponseEntity.ok(mapper.map(accountToUpdate, AccountDto.class));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    @RequestMapping(value = "/{id}/upgrade", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/upgrade", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Account> upgradeToCustomer(@PathVariable long id) {
+    public ResponseEntity<AccountDto> upgradeToCustomer(@PathVariable long id) {
         Account accountToUpgrade = accountRepository.findOne(id);
         if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
-            findAllUserAccounts(id)
+            accountRepository.findByTenantId(id)
                     .forEach(useracc -> {
                         useracc.setTenantStatus(TenantStatus.CUSTOMER);
                         this.accountRepository.save(useracc);
@@ -148,60 +151,60 @@ public class AccountController {
 
             accountToUpgrade.setTenantStatus(TenantStatus.CUSTOMER);
             this.accountRepository.save(accountToUpgrade);
-            return ResponseEntity.ok(accountToUpgrade);
+            return ResponseEntity.ok(mapper.map(accountToUpgrade, AccountDto.class));
         } else {
-            return ResponseEntity.badRequest().body(accountToUpgrade);
+            return ResponseEntity.badRequest().body(mapper.map(accountToUpgrade, AccountDto.class));
         }
     }
 
-    @RequestMapping(value = "/{id}/rmservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/rmservice", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Account> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+    public ResponseEntity<AccountDto> removeService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
         if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
 
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> {
                             useracc.removeService(serviceToRemove);
                             this.accountRepository.save(useracc);
                         });
             });
             accountRepository.save(account);
-            return ResponseEntity.ok(account);
+            return ResponseEntity.ok(mapper.map(account, AccountDto.class));
         } else {
-            return ResponseEntity.badRequest().body(account);
+            return ResponseEntity.badRequest().body(mapper.map(account, AccountDto.class));
         }
     }
 
-    @RequestMapping(value = "/{id}/addservice", method = RequestMethod.PATCH, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}/addservice", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Account> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
+    public ResponseEntity<AccountDto> addService(@PathVariable long id, @RequestBody List<ModifyServiceBody> modifyServiceBody) {
         Account account = accountRepository.findOne(id);
         if (AccountType.TENANT == account.getAccountType()) {
             modifyServiceBody.forEach(msb -> {
                 Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.addService(serviceToAdd);
 
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> {
                             useracc.addService(serviceToAdd);
                             this.accountRepository.save(useracc);
                         });
             });
 
-            return ResponseEntity.ok(accountRepository.save(account));
+            return ResponseEntity.ok(mapper.map(accountRepository.save(account), AccountDto.class));
         } else {
-            return ResponseEntity.badRequest().body(account);
+            return ResponseEntity.badRequest().body(mapper.map(account, AccountDto.class));
         }
     }
 
     /////////////
     // DELETE
     /////////////
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = {"Authorization: Bearer"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> removeAccount(@PathVariable long id) {
         final Account account = accountRepository.findOne(id);
@@ -213,21 +216,13 @@ public class AccountController {
                 return ResponseEntity.noContent().build();
             } else if (AccountType.TENANT == account.getAccountType()) {
                 accountRepository.delete(account);
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> this.accountRepository.delete(useracc));
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.badRequest().build();
             }
         }
-    }
-
-    private List<Account> findAllUserAccounts(final long tenantId) {
-        return ((List<Account>) accountRepository.findAll()).stream()
-                .filter(acc -> acc.getTenantId() != null)
-                .filter(acc -> acc.getTenantId() == tenantId)
-                .filter(acc -> AccountType.USER.equals(acc.getAccountType()))
-                .collect(Collectors.toList());
     }
 
 }

@@ -25,6 +25,7 @@ package de.hska.uilab.accounts.model;
  *  https://opensource.org/licenses/MIT
  */
 
+import org.bouncycastle.crypto.generators.BCrypt;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -223,5 +224,23 @@ public class Account implements Serializable {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Account{");
+        sb.append("id=").append(id);
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", username='").append(username).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", firstname='").append(firstname).append('\'');
+        sb.append(", lastname='").append(lastname).append('\'');
+        sb.append(", company='").append(company).append('\'');
+        sb.append(", tenantId=").append(tenantId);
+        sb.append(", tenantStatus=").append(tenantStatus);
+        sb.append(", accountType=").append(accountType);
+        sb.append(", services=").append(services);
+        sb.append('}');
+        return sb.toString();
     }
 }

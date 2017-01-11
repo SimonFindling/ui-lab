@@ -12,6 +12,7 @@ after_success:
   # Keep the TAG different, because adding new services should be tested first
   # on a separate branch before going to master. If not all teams will pull
   # the images immediately by watchtower
+  # and additional 'clean package' step is necessary due to api doc generation with asciidoctor!
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - mvn clean package docker:build
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASS"

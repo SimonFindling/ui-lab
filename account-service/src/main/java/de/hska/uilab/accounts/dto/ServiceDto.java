@@ -1,7 +1,7 @@
-package de.hska.uilab.accounts.repository;/*
+package de.hska.uilab.accounts.dto;/*
  *  The MIT License (MIT)
  *
- *  Copyright (c) 2016 Manuel Vogel
+ *  Copyright (c) 2017 Manuel Vogel
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,23 @@ package de.hska.uilab.accounts.repository;/*
  *  https://opensource.org/licenses/MIT
  */
 
-import de.hska.uilab.accounts.model.Account;
-import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
+import de.hska.uilab.accounts.model.Service;
 
 /**
- * Created by mavogel on 11/23/16.
+ * Created by mavogel on 1/11/17.
  */
-public interface AccountRepository extends CrudRepository<Account, Long> {
+public class ServiceDto {
 
-    /**
-     * Finds all user accounts of a tenant by its id
-     *
-     * @param tenantId the id of the tenant
-     * @return the accounts
-     */
-    List<Account> findByTenantId(Long tenantId);
+    private Service.ServiceName name;
+
+    public ServiceDto() {
+    }
+
+    public Service.ServiceName getName() {
+        return name;
+    }
+
+    public void setName(final Service.ServiceName name) {
+        this.name = name;
+    }
 }

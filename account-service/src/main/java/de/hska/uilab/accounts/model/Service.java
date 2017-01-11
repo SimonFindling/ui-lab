@@ -76,4 +76,12 @@ public class Service implements Serializable {
                 ServiceName.CUSTOMER,
                 ServiceName.VENDOR);
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Service{");
+        sb.append("name=").append(name);
+        sb.append('}');
+        return sb.toString();
+    }
 }

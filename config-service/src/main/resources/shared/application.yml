@@ -1,12 +1,24 @@
 logging:
   level:
     org.springframework.security: TRACE
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    serviceUrl:
+#      defaultZone: http://discovery:8761/eureka/
 eureka:
   instance:
-    prefer-ip-address: true
+    preferIpAddress: true
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health
+    leaseRenewalIntervalInSeconds: 5
+    metadataMap:
+      instanceId: "${spring.application.name}:${random.value}"
   client:
     serviceUrl:
       defaultZone: http://discovery:8761/eureka/
+    fetch-registry: true
 ribbon:
   eureka:
     enabled: true

@@ -31,10 +31,13 @@ done
 echo "-> Fine √"
 
 ###################
-info "Check if ENV variables were set"
-[ -z "$DOCKER_USER" ] && echo "Need to set GROUP" && exit 1;
-[ -z "$TAG" ] && echo "Need to set SERVER_URL" && exit 1;
+info "Stop and remove stopped images"
+docker-compose stop && docker-compose rm -f
 
 ###################
 info "Bulding microservices"
-mvn clean package docker:build
+mvn clean install
+
+###################
+info "Setup containers and follow logs"
+docker-compose up -d --remove-orphans && docker-compose logs -tf
