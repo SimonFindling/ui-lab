@@ -1,0 +1,34 @@
+[[resources-warehouse]]
+== Warehouse
+The `warehouse` resource is used to create, list, update and delete warehouse,
+its in places and the products stored in those places.
+
+=== GET
+==== Get warehouse by its unique id
+include::{snippets}/get-warehouse-by-id/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouse-by-id/curl-request.adoc[]
+include::{snippets}/get-warehouse-by-id/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouse-by-id/http-response.adoc[]
+
+
+=== POST
+==== Create a new warehouse
+The name and description are needed for creating a new warehouse.
+
+include::{snippets}/create-new-warehouse/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/create-new-warehouse/curl-request.adoc[]
+include::{snippets}/create-new-warehouse/http-request.adoc[]
+
+===== Example response
+The `id` of the created warehouse.
+include::{snippets}/create-new-warehouse/http-response.adoc[]
+
+=== PATCH
+
+=== DELETE

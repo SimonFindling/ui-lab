@@ -1,6 +1,6 @@
-[[resources-accounts]]
-== Accounts
-The `accounts` resource is used to create, list, update and delete accounts.
+[[resources-account]]
+== Account
+The `account` resource is used to create, list, update and delete accounts.
 
 === GET
 ==== List all accounts of tenants

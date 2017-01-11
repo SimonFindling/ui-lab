@@ -10,9 +10,9 @@ Manuel Vogel;
 [[resources]]
 = Resources
 
-[[resources-accounts]]
+[[resources-account]]
 == Accounts
-The `accounts` resource is used to create, list, update and delete accounts.
+The `account` resource is used to create, list, update and delete accounts.
 
 === GET
 ==== List all accounts of tenants

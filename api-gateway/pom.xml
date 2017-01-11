@@ -20,6 +20,7 @@
         <docker.port>8081</docker.port>
         <!-- For the documentation -->
         <accountServiceSnippetsDirectory>${project.basedir}/../account-service/target/generated-snippets</accountServiceSnippetsDirectory>
+        <warehouseServiceSnippetsDirectory>${project.basedir}/../warehouse-underscore-service/target/generated-snippets</warehouseServiceSnippetsDirectory>
     </properties>
 
 	<dependencies>
@@ -76,6 +77,7 @@
                             <doctype>book</doctype>
                             <attributes>
                                 <acc-service-snippets>${accountServiceSnippetsDirectory}</acc-service-snippets>
+                                <warehouse-service-snippets>${warehouseServiceSnippetsDirectory}</warehouse-service-snippets>
                             </attributes>
                         </configuration>
                     </execution>

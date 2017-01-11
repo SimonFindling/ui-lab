@@ -25,6 +25,7 @@ developed in the master course **Graphical User Interfaces**.
 - Customer Service: handles all the data of each customer of each tenant
 - Product Service: handles all the product data of each tenant
 - Vendor Service: handles all the vendors of all the products of each tenant
+- Wareehouse Service: handles the documentation of the physical storage of the products
 - User Service: handles all the users/employees of each tenant
 - Task Service: handles all the task of each user
 - Sales Service: handles and calculates the sales data of each tenant
@@ -35,8 +36,5 @@ include::sections/account.adoc[]
 include::sections/customers.adoc[]
 include::sections/products.adoc[]
 include::sections/vendors.adoc[]
-#include::sections/user.adoc[]
+include::sections/warehouse.adoc[]
 include::sections/sales.adoc[]
-#include::sections/search.adoc[]
-#include::sections/auth.adoc[]
-#include::sections/task.adoc[]

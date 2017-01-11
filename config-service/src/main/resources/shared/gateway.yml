@@ -18,3 +18,8 @@ zuul:
       serviceId: account
       stripPrefix: false
       sensitiveHeaders:
+    warehouse-underscore:
+      path: /warehouse/**
+      serviceId: warehouse-underscore
+      stripPrefix: false
+      sensitiveHeaders:
