@@ -143,7 +143,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> upgradeToCustomer(@PathVariable long id) {
         Account accountToUpgrade = accountRepository.findOne(id);
         if (AccountType.TENANT == accountToUpgrade.getAccountType()) {
-            findAllUserAccounts(id)
+            accountRepository.findByTenantId(id)
                     .forEach(useracc -> {
                         useracc.setTenantStatus(TenantStatus.CUSTOMER);
                         this.accountRepository.save(useracc);
@@ -166,7 +166,7 @@ public class AccountController {
                 Service serviceToRemove = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.removeService(serviceToRemove);
 
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> {
                             useracc.removeService(serviceToRemove);
                             this.accountRepository.save(useracc);
@@ -188,7 +188,7 @@ public class AccountController {
                 Service serviceToAdd = serviceRepository.findOne(Service.ServiceName.valueOf(msb.getName()));
                 account.addService(serviceToAdd);
 
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> {
                             useracc.addService(serviceToAdd);
                             this.accountRepository.save(useracc);
@@ -216,22 +216,13 @@ public class AccountController {
                 return ResponseEntity.noContent().build();
             } else if (AccountType.TENANT == account.getAccountType()) {
                 accountRepository.delete(account);
-                findAllUserAccounts(id)
+                accountRepository.findByTenantId(id)
                         .forEach(useracc -> this.accountRepository.delete(useracc));
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.badRequest().build();
             }
         }
-    }
-
-    // TODO as query
-    private List<Account> findAllUserAccounts(final long tenantId) {
-        return ((List<Account>) accountRepository.findAll()).stream()
-                .filter(acc -> acc.getTenantId() != null)
-                .filter(acc -> acc.getTenantId() == tenantId)
-                .filter(acc -> AccountType.USER.equals(acc.getAccountType()))
-                .collect(Collectors.toList());
     }
 
 }

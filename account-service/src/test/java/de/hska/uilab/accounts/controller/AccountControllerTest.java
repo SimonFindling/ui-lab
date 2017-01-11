@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -17,9 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,6 +55,23 @@ public class AccountControllerTest extends AbstractTestBase {
     public void setUp() {
         createServices();
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
+    }
+
+    @Test
+    public void shouldFindAllUserForATenant() throws Exception {
+        Account tenantAccount1 = createSampleTenantAccount("tenant@mail.org");
+        createSampleUserAccount(tenantAccount1.getId(), "John", "Doe1", "doe1@mail.org");
+        createSampleUserAccount(tenantAccount1.getId(), "John", "Doe2", "doe2@mail.org");
+        createSampleUserAccount(tenantAccount1.getId(), "John", "Doe3", "doe3@mail.org");
+
+        Account tenantAccount2 = createSampleTenantAccount("tenant2@mail.org");
+        createSampleUserAccount(tenantAccount2.getId(), "John", "Doe4", "doe4@mail.org");
+        createSampleUserAccount(tenantAccount2.getId(), "John", "Doe5", "doe5@mail.org");
+
+        List<Account> byTenantId1 = this.accountRepository.findByTenantId(tenantAccount1.getId());
+        assertEquals(3, byTenantId1.size());
+        List<Account> byTenantId2 = this.accountRepository.findByTenantId(tenantAccount2.getId());
+        assertEquals(2, byTenantId2.size());
     }
 
     @Test

@@ -27,8 +27,18 @@ package de.hska.uilab.accounts.repository;/*
 import de.hska.uilab.accounts.model.Account;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 /**
  * Created by mavogel on 11/23/16.
  */
 public interface AccountRepository extends CrudRepository<Account, Long> {
+
+    /**
+     * Finds all user accounts of a tenant by its id
+     *
+     * @param tenantId the id of the tenant
+     * @return the accounts
+     */
+    List<Account> findByTenantId(Long tenantId);
 }

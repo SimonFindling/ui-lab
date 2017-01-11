@@ -46,5 +46,8 @@ use of HTTP status codes.
 
 | `404 Not Found`
 | The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
+
+| `409 Conflict`
+| There was a conflict creating the requested resource, because it exists already.
 |===
 

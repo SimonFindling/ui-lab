@@ -1,6 +1,5 @@
 [[resources-accounts]]
-== Account-Service
-Handles the accounts of the tenants of the HSKA ERP system.
+== Accounts
 The `accounts` resource is used to create, list, update and delete accounts.
 
 === GET
@@ -41,6 +40,18 @@ include::{acc-service-snippets}/create-tenant-account/http-request.adoc[]
 
 ===== Example response
 include::{acc-service-snippets}/create-tenant-account/http-response.adoc[]
+
+==== Fails to create tenant account
+Fails to create a prospect account because the e-Mail address exists already.
+
+include::{acc-service-snippets}/fail-due-to-existing-tenant-account/request-fields.adoc[]
+
+===== Example request
+include::{acc-service-snippets}/fail-due-to-existing-tenant-account/curl-request.adoc[]
+include::{acc-service-snippets}/fail-due-to-existing-tenant-account/http-request.adoc[]
+
+===== Example response
+include::{acc-service-snippets}/fail-due-to-existing-tenant-account/http-response.adoc[]
 
 
 ==== Create user account
@@ -117,3 +128,4 @@ include::{acc-service-snippets}/delete-account/http-response.adoc[]
 
 And if the account does not exist:
 include::{acc-service-snippets}/delete-non-existing-account/http-response.adoc[]
+
