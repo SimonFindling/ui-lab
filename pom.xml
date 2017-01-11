@@ -26,14 +26,14 @@
     </parent>
 
 	<modules>
-		<module>template-project</module>
-		<module>discovery-service</module>
-		<module>api-gateway</module>
-		<module>login-microservice</module>
-		<module>account-service</module>
-		<module>product-microservice</module>
+		<!--<module>template-project</module>-->
 		<module>config-service</module>
-		<module>vendor-service</module>
+		<module>discovery-service</module>
+		<!--<module>login-microservice</module>-->
+		<module>account-service</module>
+		<!--<module>product-microservice</module>-->
+		<!--<module>vendor-service</module>-->
+		<module>api-gateway</module>
 	</modules>
 
     <profiles>
@@ -66,11 +66,11 @@
                             <images>
                                 <image>
                                     <alias>${project.name}</alias>
-                                    <name>${env.DOCKER_USER}/${project.artifactId}</name>
+                                    <name>uilab/${project.artifactId}</name>
                                     <build>
                                         <from>frolvlad/alpine-oraclejdk8:slim</from>
                                         <tags>
-                                            <tag>${env.TAG}</tag>
+                                            <tag>latest</tag>
                                         </tags>
                                         <ports>
                                             <port>${docker.port}</port>

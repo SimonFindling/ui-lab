@@ -6,13 +6,13 @@ This project is part of the masters course Graphical user interfaces.
 ### Local setup
 If you want to build and set up the dockers containers locally:
 ```bash
-# we all use the uilab user now
-export DOCKER_USER=uilab
-export TAG=latest
 ./build_locally.sh 
-// or mvn install in the main project
-# Note the docker-compose.yml also needs the ENV vars
-docker-compose up -d
+# or 
+mvn clean install
+# shut old services down and remove old images
+docker-compose stop && docker-compose rm -f
+# set containers up and follow logs
+docker-compose up -d --remove-orphans && docker-compose logs -tf
 ```
 Check `curl localhost:8081/docs/api-guide.html`, which can take some time
 until everything is set up. Consider `docker logs -tf <container-hash>` for the logs.

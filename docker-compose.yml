@@ -1,43 +1,41 @@
 version: '2'
 services:
   config-service:
-    image: ${DOCKER_USER}/config-service:${TAG}
+    image: uilab/config-service
     restart: always
     ports:
       - "8888:8888"
   discovery:
-    image: ${DOCKER_USER}/discovery-service:${TAG}
+    image: uilab/discovery-service
     restart: always
     ports:
       - "8761:8761"
     depends_on: 
       - config-service
   gateway:
-    image: ${DOCKER_USER}/api-gateway:${TAG}
+    image: uilab/api-gateway
     restart: always
     ports:
       - "8081:8081"
-    links:
-      - discovery
     depends_on:
       - config-service
       - discovery
-  login:
-    image: ${DOCKER_USER}/login-microservice:${TAG}
-    restart: always
-    ports:
-      - "9005:9005"
-    depends_on: 
-      - config-service 
-      - discovery 
-      - gateway
-  product:
-    image: ${DOCKER_USER}/product-microservice:${TAG}
-    restart: always
-    ports:
-      - "7654:7654"
-    links:
-      - discovery
+#  login:
+#    image: uilab/login-microservice
+#    restart: always
+#    ports:
+#      - "9005:9005"
+#    depends_on:
+#      - config-service
+#      - discovery
+#      - gateway
+#  product:
+#    image: uilab/product-microservice
+#    restart: always
+#    ports:
+#      - "7654:7654"
+#    links:
+#      - discovery
   account-db-image:
     image: mysql:5.7.9
     volumes:
@@ -51,28 +49,27 @@ services:
     ports:
       - "3306:3306"
   account:
-    image: ${DOCKER_USER}/account-service:${TAG}
+    image: uilab/account-service
     restart: always
     ports:
       - "9006:9006"
     links:
-      - discovery
       - account-db-image
-  db:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: uilab
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-
-  vendor:
-    image: ${DOCKER_USER}/vendor-service:${TAG}
-    restart: always
-    ports:
-      - "9009:9009"
-    links:  
-      - discovery 
-    depends_on:
-      - db
+#  db:
+#    image: mysql:5.7
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: uilab
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: root
+#
+#  vendor:
+#    image: uilab/vendor-service
+#    restart: always
+#    ports:
+#      - "9009:9009"
+#    links:
+#      - discovery
+#    depends_on:
+#      - db

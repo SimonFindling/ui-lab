@@ -25,6 +25,7 @@ package de.hska.uilab.accounts.model;
  *  https://opensource.org/licenses/MIT
  */
 
+import org.bouncycastle.crypto.generators.BCrypt;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;

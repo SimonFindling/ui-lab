@@ -1,8 +1,8 @@
 server:
   port: 8081
 zuul:
-#  ignoredServices: '*'
-#  routes:
+  ignoredServices: '*'
+  routes:
 #    product:
 #      path: /products/**
 #      serviceId: product
@@ -10,6 +10,8 @@ zuul:
 #    vendor:
 #      path: /vendors/**
 #      url: http://vendor:9009/vendors
-#    account:
-#      path: /accounts/**
-#      url: http://account:9006/accounts
+    account:
+      path: /account/**
+      serviceId: account
+      stripPrefix: false
+      sensitiveHeaders:
