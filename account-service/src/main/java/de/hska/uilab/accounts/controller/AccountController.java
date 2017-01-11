@@ -225,6 +225,7 @@ public class AccountController {
         }
     }
 
+    // TODO as query
     private List<Account> findAllUserAccounts(final long tenantId) {
         return ((List<Account>) accountRepository.findAll()).stream()
                 .filter(acc -> acc.getTenantId() != null)

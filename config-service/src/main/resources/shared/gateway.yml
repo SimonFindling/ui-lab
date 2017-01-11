@@ -3,13 +3,16 @@ server:
 zuul:
   ignoredServices: '*'
   routes:
-#    product:
-#      path: /products/**
-#      serviceId: product
-#      url: http://product:7654/products
-#    vendor:
-#      path: /vendors/**
-#      url: http://vendor:9009/vendors
+    product:
+      path: /product/**
+      serviceId: product
+      stripPrefix: false
+      sensitiveHeaders:
+    vendor:
+      path: /vendor/**
+      serviceId: vendor
+      stripPrefix: false
+      sensitiveHeaders:
     account:
       path: /account/**
       serviceId: account

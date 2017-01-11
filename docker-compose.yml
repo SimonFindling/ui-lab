@@ -27,15 +27,12 @@ services:
 #      - "9005:9005"
 #    depends_on:
 #      - config-service
-#      - discovery
-#      - gateway
-#  product:
-#    image: uilab/product-microservice
-#    restart: always
-#    ports:
-#      - "7654:7654"
-#    links:
-#      - discovery
+  product:
+    image: uilab/product-microservice
+    restart: always
+    ports:
+      - "7654:7654"
+
   account-db-image:
     image: mysql:5.7.9
     volumes:
@@ -48,6 +45,7 @@ services:
       MYSQL_PASSWORD: account-user-pwd
     ports:
       - "3306:3306"
+
   account:
     image: uilab/account-service
     restart: always
@@ -55,21 +53,20 @@ services:
       - "9006:9006"
     links:
       - account-db-image
-#  db:
-#    image: mysql:5.7
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: root
-#      MYSQL_DATABASE: uilab
-#      MYSQL_USER: root
-#      MYSQL_PASSWORD: root
-#
-#  vendor:
-#    image: uilab/vendor-service
-#    restart: always
-#    ports:
-#      - "9009:9009"
-#    links:
-#      - discovery
-#    depends_on:
-#      - db
+
+  vendor-db-image:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uilab
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
+  vendor:
+    image: uilab/vendor-service
+    restart: always
+    ports:
+      - "9009:9009"
+    links:
+      - vendor-db-image:db

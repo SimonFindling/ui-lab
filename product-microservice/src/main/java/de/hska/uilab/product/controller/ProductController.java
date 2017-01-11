@@ -17,16 +17,16 @@ import de.hska.uilab.product.schema.Product;
 import de.hska.uilab.product.schema.ProductsMock;
 
 @RestController
-@SuppressWarnings("rawtypes")
+@RequestMapping("/product")
 public class ProductController {
 	private ProductsMock pm = new ProductsMock();
 
-	@RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Product>> getAllProducts() {
 		return new ResponseEntity<List<Product>>(pm.getAllProducts(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity createProduct(@RequestBody Map<String, String> body) {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);
@@ -50,7 +50,7 @@ public class ProductController {
 		return new ResponseEntity<Product>(productById, HttpStatus.NOT_FOUND);
 	}
 	
-	@RequestMapping(value = "/", method = RequestMethod.PUT)
+	@RequestMapping(value = "", method = RequestMethod.PUT)
 	public ResponseEntity changeProduct(@RequestBody Map<String, String> body) {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);
@@ -68,7 +68,7 @@ public class ProductController {
 		return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ResponseEntity<String> info() {
 		return new ResponseEntity<String>("Hello! This is product-microservice", HttpStatus.OK);
 	}

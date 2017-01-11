@@ -31,8 +31,8 @@
 		<module>discovery-service</module>
 		<!--<module>login-microservice</module>-->
 		<module>account-service</module>
-		<!--<module>product-microservice</module>-->
-		<!--<module>vendor-service</module>-->
+		<module>product-microservice</module>
+		<module>vendor-service</module>
 		<module>api-gateway</module>
 	</modules>
 
