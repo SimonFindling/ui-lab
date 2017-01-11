@@ -33,14 +33,8 @@ until everything is set up. Consider `docker logs -tf <container-hash>` for the 
 
 ### Setup for server
 #### Intial setup
-1. Set up ENV Vars
-
-    ```bash
-    $ export DOCKER_USER="<your group name>"
-    $ export TAG=latest
-    ```
-2. Use the `docker-compose.yml` file from root and copy it onto the remote server
-3. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag of the container. Specify another version if you're working on a branch. 
+1. Use the `docker-compose.yml` file from root and copy it onto the remote server
+2. Run `docker compose up -d` there. **Note:** that it pulls per default the **:latest** version/tag of the container. Specify another version if you're working on a branch. 
 
 #### Update Images via Watchtower
 Another alternative is [Watchtower](https://github.com/CenturyLinkLabs/watchtower). Watchtower runs as an docker container and checks all few minutes, if a new version of your running containers is available. If a new version is available, watchtower automatically pulls it and restarts the container.
@@ -82,7 +76,7 @@ spring:
 ### With running Spring container
 Once the API Gateway is set up via 
 - `cd api-gateway && mvn spring-boot:run` or 
-- `docker run -p8081:8081 <your group name>/api-gateway` 
+- `docker run -p8081:8081 uilab/api-gateway` 
 the documentation can be accessed through `http://localhost:8081/docs/api-guide.html`
 
 ### Statically
@@ -97,7 +91,7 @@ the documentation can be accessed through `http://localhost:8081/docs/api-guide.
 - With `sidecar` the route to a service is defined by its `spring.application.name` in the `bootstrap.properties` or `yml`.
 Then the defined resources in the controllers can be accessed. Here is an example. 
 ```bash
-$ curl -D- -X GET localhost:8081/login/login/admin/admin
+$ curl -D- -X GET localhost:8081/login/admin/admin
 ```
 - It is possible to see all current routings under `<gateway-url>/routes`. See [here](http://212.227.198.46:8081/routes) for a working gateway server.
 
