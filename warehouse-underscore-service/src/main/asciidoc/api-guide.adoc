@@ -17,29 +17,29 @@ its in places and the products stored in those places.
 
 === GET
 ==== Get warehouse by its unique id
-include::{warehouse-service-snippets}/get-warehouse-by-id/response-fields.adoc[]
+include::{snippets}/get-warehouse-by-id/response-fields.adoc[]
 
 ===== Example request
-include::{warehouse-service-snippets}/get-warehouse-by-id/curl-request.adoc[]
-include::{warehouse-service-snippets}/get-warehouse-by-id/http-request.adoc[]
+include::{snippets}/get-warehouse-by-id/curl-request.adoc[]
+include::{snippets}/get-warehouse-by-id/http-request.adoc[]
 
 ===== Example response
-include::{warehouse-service-snippets}/get-warehouse-by-id/http-response.adoc[]
+include::{snippets}/get-warehouse-by-id/http-response.adoc[]
 
 
 === POST
 ==== Create a new warehouse
 The name and description are needed for creating a new warehouse.
 
-include::{warehouse-service-snippets}/create-new-warehouse/request-fields.adoc[]
+include::{snippets}/create-new-warehouse/request-fields.adoc[]
 
 ===== Example request
-include::{warehouse-service-snippets}/create-new-warehouse/curl-request.adoc[]
-include::{warehouse-service-snippets}/create-new-warehouse/http-request.adoc[]
+include::{snippets}/create-new-warehouse/curl-request.adoc[]
+include::{snippets}/create-new-warehouse/http-request.adoc[]
 
 ===== Example response
 The `id` of the created warehouse.
-include::{warehouse-service-snippets}/create-new-warehouse/http-response.adoc[]
+include::{snippets}/create-new-warehouse/http-response.adoc[]
 
 === PATCH
 
