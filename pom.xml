@@ -30,10 +30,10 @@
         <module>config-service</module>
         <module>discovery-service</module>
         <!--<module>login-microservice</module>-->
-        <module>account-service</module>
+        <!--<module>account-service</module>-->
         <module>product-microservice</module>
-        <module>vendor-service</module>
-        <module>warehouse-underscore-service</module>
+        <!--<module>vendor-service</module>-->
+        <!--<module>warehouse-underscore-service</module>-->
         <module>api-gateway</module>
     </modules>
 

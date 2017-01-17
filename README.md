@@ -95,6 +95,10 @@ $ curl -D- -X GET localhost:8081/login/admin/admin
 ```
 - It is possible to see all current routings under `<gateway-url>/routes`. See [here](http://212.227.198.46:8081/routes) for a working gateway server.
 
+## Web Access Url
+- Group `noname`: `http://82.165.207.147:8081/docs/api-guide.html`
+- Group `sfindling`: `http://212.227.198.46:8081/docs/api-guide.html`
+
 # Inspiration / Props
 - [piggymetrics](https://github.com/sqshq/PiggyMetrics)
 - [spring-cloud-example](https://github.com/kbastani/spring-cloud-microservice-example)

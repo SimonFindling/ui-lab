@@ -33,48 +33,48 @@ services:
     ports:
       - "7654:7654"
 
-  account-db-image:
-    image: mysql:5.7.9
-    volumes:
-      - "./.data/db:/var/lib/mysql"
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: c8de110f37300a53a971749
-      MYSQL_DATABASE: account-db
-      MYSQL_USER: account-user
-      MYSQL_PASSWORD: account-user-pwd
-    ports:
-      - "3306:3306"
-
-  account:
-    image: uilab/account-service
-    restart: always
-    ports:
-      - "9006:9006"
-    links:
-      - account-db-image
-
-  vendor-db-image:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: uilab
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-
-  vendor:
-    image: uilab/vendor-service
-    restart: always
-    ports:
-      - "9009:9009"
-    links:
-      - vendor-db-image:db
-
-  warehouse-underscore:
-    image: uilab/warehouse-underscore-service
-    restart: always
-    ports:
-      - "9099:9099"
-    links:
-      - vendor-db-image:db
+#  account-db-image:
+#    image: mysql:5.7.9
+#    volumes:
+#      - "./.data/db:/var/lib/mysql"
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: c8de110f37300a53a971749
+#      MYSQL_DATABASE: account-db
+#      MYSQL_USER: account-user
+#      MYSQL_PASSWORD: account-user-pwd
+#    ports:
+#      - "3306:3306"
+#
+#  account:
+#    image: uilab/account-service
+#    restart: always
+#    ports:
+#      - "9006:9006"
+#    links:
+#      - account-db-image
+#
+#  vendor-db-image:
+#    image: mysql:5.7
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: uilab
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: root
+#
+#  vendor:
+#    image: uilab/vendor-service
+#    restart: always
+#    ports:
+#      - "9009:9009"
+#    links:
+#      - vendor-db-image:db
+#
+#  warehouse-underscore:
+#    image: uilab/warehouse-underscore-service
+#    restart: always
+#    ports:
+#      - "9099:9099"
+#    links:
+#      - vendor-db-image:db
