@@ -49,9 +49,8 @@ public class WarehouseService {
     public ResponseEntity<List<Warehouse>> getWarehouses() {
         LOGGER.log(Level.INFO, "get all warehouses");
 
-        List<Product> objects = this.productClient.getAllProducts().getBody();
-
-        LOGGER.log(Level.INFO, objects + "");
+//        List<Product> objects = this.productClient.getAllProducts().getBody();
+//        LOGGER.log(Level.INFO, objects + "");
         return new ResponseEntity<List<Warehouse>>(dbh.getAllWarehouses(), HttpStatus.OK);
     }
 
@@ -66,7 +65,7 @@ public class WarehouseService {
         }
     }
 
-    @RequestMapping(value = "/product/{id}/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/{warehouseplaceProductId}/count", method = RequestMethod.GET)
     public ResponseEntity<Integer> getAmountOfAProductInAllWarehouses(
             @PathVariable Integer warehouseplaceProductId) {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct count by warehouseplaceProductId " + warehouseplaceProductId);
