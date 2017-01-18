@@ -2,57 +2,65 @@ package de.hska.uilab.product.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ProductsMock {
-	private Product p1 = new Product(1, 1, "Product1", "path/p1", "Informaton p1", 1000);
-	private Product p2 = new Product(2, 1, "Product2", "path/p2", "Informaton p2", 2000);
-	private Product p3 = new Product(3, 1, "Product3", "path/p3", "Informaton p3", 3000);
+    private Product p1 = new Product(1, 1, "Product1", "path/p1", "Informaton p1", 1000);
+    private Product p2 = new Product(2, 1, "Product2", "path/p2", "Informaton p2", 2000);
+    private Product p3 = new Product(3, 1, "Product3", "path/p3", "Informaton p3", 3000);
 
-	private List<Product> all = new ArrayList<>();
+    private static List<Product> ALL = new ArrayList<>();
+    private AtomicLong id = new AtomicLong(1);
 
-	public ProductsMock() {
-		all.add(p1);
-		all.add(p2);
-		all.add(p3);
-	}
+    public ProductsMock() {
 
-	public List<Product> getAllProducts() {
-		return all;
-	}
+        // mavogel: deactivate for api docu
+        //		ALL.add(p1);
+        //		ALL.add(p2);
+        //		ALL.add(p3);
+    }
 
-	public Product getProductById(int id) {
-		for (Product product : all) {
-			if (product.getId() == id) {
-				return product;
-			}
-		}
-		return null;
-	}
+    public List<Product> getAllProducts() {
+        return ALL;
+    }
 
-	public boolean createProduct(Product product) {
-		Product productById = getProductById(product.getId());
-		if (productById != null) {
-			return false;
-		}
-		return all.add(product);
-	}
+    public Product getProductById(int id) {
+        for (Product product : ALL) {
+            if (product.getId() == id) {
+                return product;
+            }
+        }
+        return null;
+    }
 
-	public boolean changeProduct(Product product) {
-		Product productById = getProductById(product.getId());
-		if (productById != null) {
-			all.remove(productById);
-			all.add(product);
-			return true;
-		}
-		return false;
-	}
+    public boolean createProduct(Product product) {
+        Product productById = getProductById(product.getId());
+        if (productById != null) {
+            return false;
+        }
+        return ALL.add(product);
+    }
 
-	public boolean deleteProductById(int productId) {
-		Product productById = getProductById(productId);
-		if (productById != null) {
-			return all.remove(productById);
-		}
-		return false;
-	}
+    public boolean changeProduct(Product product) {
+        Product productById = getProductById(product.getId());
+        if (productById != null) {
+            ALL.remove(productById);
+            ALL.add(product);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteProductById(int productId) {
+        Product productById = getProductById(productId);
+        if (productById != null) {
+            return ALL.remove(productById);
+        }
+        return false;
+    }
+
+    public void deleteAllProducts() {
+            ALL.clear();
+    }
 
 }

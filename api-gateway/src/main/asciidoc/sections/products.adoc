@@ -1,120 +1,61 @@
-[products]
-== Product-Service
+[[resources-product]]
+== Product
+The `product` resource is used to create, list, update and delete products.
 
 === GET
+==== Get all products
+include::{product-service-snippets}/get-all-products/response-fields.adoc[]
 
-==== List all products of a client
+===== Example request
+include::{product-service-snippets}/get-all-products/curl-request.adoc[]
+include::{product-service-snippets}/get-all-products/http-request.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/products/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example response
+include::{product-service-snippets}/get-all-products/http-response.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
 
-[
- {
-  "id":"",
-  "vendorId": "",
-  "tenantId": "",
-  "name":"",
-  "ean":"",
-  "image": "",
-  "description": "",
-  "price":""
- }
-]
-----
+==== Get a single product
+include::{product-service-snippets}/get-single-product/response-fields.adoc[]
 
-==== List a single product of a client
+===== Example request
+include::{product-service-snippets}/get-single-product/curl-request.adoc[]
+include::{product-service-snippets}/get-single-product/http-request.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/products/{tenantId}/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example response
+include::{product-service-snippets}/get-single-product/http-response.adoc[]
+or `404` if the prodcut was not found.
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
-
-{
- "id":"",
- "vendorId": "",
- "tenantId": "",
- "name":"",
- "ean":"",
- "image": "",
- "description": "",
- "price":""
-}
-----
 
 === POST
+==== Create a new product
+include::{product-service-snippets}/create-product/request-fields.adoc[]
 
-==== Create a new product for a client
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/products/{tenantId}' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorId": "","name":"","ean":"", "image": "","description": "","price":""}'
-----
+===== Example request
+include::{product-service-snippets}/create-product/curl-request.adoc[]
+include::{product-service-snippets}/create-product/http-request.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 201 Created
+===== Example response
+include::{product-service-snippets}/create-product/http-response.adoc[]
+or a `406` if the request was not successful.
 
-----
+=== PATCH
+==== Change/modify a new product
+include::{product-service-snippets}/change-product/request-fields.adoc[]
 
-=== PUT
+===== Example request
+include::{product-service-snippets}/change-product/curl-request.adoc[]
+include::{product-service-snippets}/change-product/http-request.adoc[]
 
-==== Modify a new product for a client
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/products/{tenantId}/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"vendorId": "","name":"","ean":"", "image": "","description": "","price":""}'
-----
-
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
-
-{
- "id":"",
- "vendorId": "",
- "tenantId": "",
- "name":"",
- "ean":"",
- "image": "",
- "description": "",
- "price":""
-}
-
-----
+===== Example response
+include::{product-service-snippets}/change-product/http-response.adoc[]
+or a `406` if the request was not successful.
 
 === DELETE
+==== Delete a new product
+===== Example request
+include::{product-service-snippets}/delete-product/curl-request.adoc[]
+include::{product-service-snippets}/delete-product/http-request.adoc[]
 
-==== Deletes a product of a client
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/products/{tenantId}/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 204 No Content
-
-----
+===== Example response
+include::{product-service-snippets}/delete-product/http-response.adoc[]
+or a `406` if the request was not successful.

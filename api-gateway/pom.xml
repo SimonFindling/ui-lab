@@ -21,6 +21,7 @@
         <!-- For the documentation -->
         <accountServiceSnippetsDirectory>${project.basedir}/../account-service/target/generated-snippets</accountServiceSnippetsDirectory>
         <warehouseServiceSnippetsDirectory>${project.basedir}/../warehouse-underscore-service/target/generated-snippets</warehouseServiceSnippetsDirectory>
+        <productServiceSnippetsDirectory>${project.basedir}/../product-microservice/target/generated-snippets</productServiceSnippetsDirectory>
     </properties>
 
 	<dependencies>
@@ -78,6 +79,7 @@
                             <attributes>
                                 <acc-service-snippets>${accountServiceSnippetsDirectory}</acc-service-snippets>
                                 <warehouse-service-snippets>${warehouseServiceSnippetsDirectory}</warehouse-service-snippets>
+                                <product-service-snippets>${productServiceSnippetsDirectory}</product-service-snippets>
                             </attributes>
                         </configuration>
                     </execution>
