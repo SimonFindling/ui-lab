@@ -151,21 +151,8 @@ public class WarehouseService {
         }
     }
 
-    @RequestMapping(value = "/{warehouseId}", method = RequestMethod.PUT)
-    public ResponseEntity<Warehouse> modifyWarehouse(@RequestBody Warehouse warehouse, @PathVariable long warehouseId) {
-        LOGGER.log(Level.INFO, "Modify warehouse " + warehouseId);
-        Warehouse updatedWarehouse = dbh.modifyWarehouse(warehouseId, warehouse);
-        if (updatedWarehouse != null) {
-            LOGGER.log(Level.INFO, "Modified warehouse.");
-            return new ResponseEntity<>(updatedWarehouse, HttpStatus.OK);
-        } else {
-            LOGGER.log(Level.INFO, "Couldn't modify warehouse.");
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
     @RequestMapping(value = "/place", method = RequestMethod.POST)
-    public ResponseEntity<Long> createWarehouse(@RequestBody WarehousePlace warehousePlace) {
+    public ResponseEntity<Long> createPlaceInWarehouse(@RequestBody WarehousePlace warehousePlace) {
         LOGGER.log(Level.INFO, "Create warehouseplace " + warehousePlace.getName() + " for warehouse "
                 + warehousePlace.getWarehouse().getId());
         long createdId = dbh.createWarehousePlace(warehousePlace);
@@ -194,6 +181,19 @@ public class WarehouseService {
     /////////////
     // PATCH
     /////////////
+    @RequestMapping(value = "/{warehouseId}", method = RequestMethod.PATCH)
+    public ResponseEntity<Warehouse> modifyWarehouse(@RequestBody Warehouse warehouse, @PathVariable long warehouseId) {
+        LOGGER.log(Level.INFO, "Modify warehouse " + warehouseId);
+        Warehouse updatedWarehouse = dbh.modifyWarehouse(warehouseId, warehouse);
+        if (updatedWarehouse != null) {
+            LOGGER.log(Level.INFO, "Modified warehouse.");
+            return new ResponseEntity<>(updatedWarehouse, HttpStatus.OK);
+        } else {
+            LOGGER.log(Level.INFO, "Couldn't modify warehouse.");
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
     @RequestMapping(value = "/product/{id}", method = RequestMethod.PATCH)
     public ResponseEntity<WarehousePlaceProduct> updateWarehousePlaceProduct(
             @PathVariable long warehousePlaceProductId,

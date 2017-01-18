@@ -62,6 +62,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -323,10 +324,85 @@ public class ApiDocumentation {
         assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
     }
 
+    @Test
+    public void createPlaceInWarehouse() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+
+        Map<String, Object> newWarehousePlace = new HashMap<>();
+        newWarehousePlace.put("name", "3C-10");
+        newWarehousePlace.put("description", "3C-10 - Description");
+        newWarehousePlace.put("warehouse", newWarehouse);
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(post("/warehouse/place")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newWarehousePlace)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the warehouse"),
+                                fieldWithPath("description").description("the description of the warehouse"),
+                                fieldWithPath("warehouse").description("the id of the warehouse the place is located")
+                        )
+                )).andReturn();
+
+        assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
+    }
+
+    @Test
+    public void createWarehousePlaceProduct() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+
+        Map<String, Object> newWarehousePlaceProduct = new HashMap<>();
+        newWarehousePlaceProduct.put("warehouseplaceid", warehousePlace.getId());
+        newWarehousePlaceProduct.put("productid", "123");
+        newWarehousePlaceProduct.put("quantity", "5");
+        newWarehousePlaceProduct.put("unit", WarehousePlaceProduct.Unit.PIECE);
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(post("/warehouse/product")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newWarehousePlaceProduct)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("warehouseplaceid").description("the id of the warehouse the place is located"),
+                                fieldWithPath("productid").description("the id of the product"),
+                                fieldWithPath("quantity").description("the quantity of the product located at this place"),
+                                fieldWithPath("unit").description("the unit of the product")
+                        )
+                )).andReturn();
+
+        assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
+    }
 
     /////////////
     // PATCH
     /////////////
+    @Test
+    public void modifyWarehouse() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+
+        Map<String, String> modifiedWarehouse = new HashMap<>();
+        modifiedWarehouse.put("name", "VR Goggles Warehouse Extension");
+        modifiedWarehouse.put("description", "The warehouse extension in San Jose (Downtown)");
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(patch("/warehouse/" + newWarehouse.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(modifiedWarehouse)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the warehouse"),
+                                fieldWithPath("description").description("the description of the warehouse")
+                        )
+                )).andReturn();
+        Warehouse storedModifiedWarehouse = this.warehouseRepository.findOne(newWarehouse.getId());
+        assertEquals("VR Goggles Warehouse Extension", storedModifiedWarehouse.getName());
+        assertEquals("The warehouse extension in San Jose (Downtown)", storedModifiedWarehouse.getDescription());
+    }
 
     /////////////
     // DELETE
