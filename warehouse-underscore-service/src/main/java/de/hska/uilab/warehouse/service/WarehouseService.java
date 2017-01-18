@@ -65,7 +65,7 @@ public class WarehouseService {
         }
     }
 
-    @RequestMapping(value = "/product/{warehouseplaceProductId}/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/{productId}/count", method = RequestMethod.GET)
     public ResponseEntity<Integer> getAmountOfAProductInAllWarehouses(
             @PathVariable Integer warehouseplaceProductId) {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct count by warehouseplaceProductId " + warehouseplaceProductId);
@@ -79,6 +79,8 @@ public class WarehouseService {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehouseplaceProductId " + productId);
         return new ResponseEntity<List<WarehousePlaceProduct>>(dbh.getWarehousePlaceProductForProductId(productId), HttpStatus.OK);
     }
+
+    // TODO
     // get all products with the matching whpProductId and resolved product data
     @RequestMapping(value = "/place/{productId}/full", method = RequestMethod.GET)
     public ResponseEntity<List<ResolvedWarehousePlaceProduct>> getResolvedWarehousePlaceProductForProductId(
@@ -115,18 +117,18 @@ public class WarehouseService {
 
     @RequestMapping(value = "/place", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlace>> getWarehousePlaces() {
-        LOGGER.log(Level.INFO, "get all warehouseplacess");
+        LOGGER.log(Level.INFO, "get all warehouseplaces");
         return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlaces(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/place/{warehouseId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{warehouseId}/place", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlace>> getWarehousePlacesForWarehouseId(@PathVariable long warehouseId) {
         LOGGER.log(Level.INFO, "get all warehouseplaces for warehouse with id " + warehouseId);
         return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlacesForWarehouseId(warehouseId),
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/place/{id}/product", method = RequestMethod.GET)
+    @RequestMapping(value = "/place/{warehousePlaceId}/product", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlaceProduct>> getAllProductsOfAPlace(
             @PathVariable long warehousePlaceId) {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehousePlaceId " + warehousePlaceId);

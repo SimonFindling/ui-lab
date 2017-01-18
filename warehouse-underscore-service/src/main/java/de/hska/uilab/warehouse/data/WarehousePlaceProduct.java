@@ -39,7 +39,7 @@ public class WarehousePlaceProduct {
         this.unit = unit;
     }
 
-    public Long getWarehouseplace() {
+    public Long getWarehouseplaceid() {
         return warehouseplaceid;
     }
 
