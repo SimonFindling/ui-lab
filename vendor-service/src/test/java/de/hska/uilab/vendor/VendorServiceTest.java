@@ -28,15 +28,6 @@ public class VendorServiceTest {
 	@Autowired
 	VendorRepository vendorRepository;
 	
-	@Test
-	public void contextLoads() {
-		
-	}
-	
-	@Before
-    public void setUp() {
-	}
-	
 	private void writeVendorWithAddressToDB(int vendorId, String vendorName, long tenantId, String city){
 		Vendor testV = new Vendor();
 		testV.setName(vendorName);

@@ -1,0 +1,46 @@
+= Getting Started Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[resources]]
+= Resources
+
+[[resources-vendor]]
+== Vendor
+The `vendor` resource is used to create, list, update and delete vendors of products.
+
+=== GET
+
+==== Get all warehouses
+include::{snippets}/get-warehouses/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouses/curl-request.adoc[]
+include::{snippets}/get-warehouses/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouses/http-response.adoc[]
+
+
+=== POST
+==== Create a new warehouse
+The name and description are needed for creating a new warehouse.
+
+include::{snippets}/create-new-warehouse/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/create-new-warehouse/curl-request.adoc[]
+include::{snippets}/create-new-warehouse/http-request.adoc[]
+
+===== Example response
+The `id` of the created warehouse.
+include::{snippets}/create-new-warehouse/http-response.adoc[]
+
+
+=== PATCH
+
+=== DELETE
