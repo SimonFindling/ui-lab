@@ -1,5 +1,4 @@
 = Getting Started Guide
-Manuel Vogel;
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -16,6 +15,18 @@ The `warehouse` resource is used to create, list, update and delete warehouse,
 its in places and the products stored in those places.
 
 === GET
+
+==== Get all warehouses
+include::{snippets}/get-warehouses/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouses/curl-request.adoc[]
+include::{snippets}/get-warehouses/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouses/http-response.adoc[]
+
+
 ==== Get warehouse by its unique id
 include::{snippets}/get-warehouse-by-id/response-fields.adoc[]
 
@@ -25,6 +36,60 @@ include::{snippets}/get-warehouse-by-id/http-request.adoc[]
 
 ===== Example response
 include::{snippets}/get-warehouse-by-id/http-response.adoc[]
+
+
+==== Get amount of a product in all warehouses
+===== Example request
+include::{snippets}/get-amount-of-a-product-in-all-warehouses/curl-request.adoc[]
+include::{snippets}/get-amount-of-a-product-in-all-warehouses/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-amount-of-a-product-in-all-warehouses/http-response.adoc[]
+
+
+==== Get Products for productId in all warehouses
+include::{snippets}/get-warehouse-place-products-for-product-id/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouse-place-products-for-product-id/curl-request.adoc[]
+include::{snippets}/get-warehouse-place-products-for-product-id/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouse-place-products-for-product-id/http-response.adoc[]
+
+
+==== Get all places with products in all warehouses
+include::{snippets}/get-warehouse-places/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouse-places/curl-request.adoc[]
+include::{snippets}/get-warehouse-places/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouse-places/http-response.adoc[]
+
+
+==== Get all places with products in a single warehouse
+include::{snippets}/get-warehouse-places-for-warehouse-id/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-warehouse-places-for-warehouse-id/curl-request.adoc[]
+include::{snippets}/get-warehouse-places-for-warehouse-id/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-warehouse-places-for-warehouse-id/http-response.adoc[]
+
+
+==== Get all products for a place
+include::{snippets}/get-all-products-of-a-place/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-all-products-of-a-place/curl-request.adoc[]
+include::{snippets}/get-all-products-of-a-place/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-all-products-of-a-place/http-response.adoc[]
+
 
 
 === POST
@@ -41,6 +106,62 @@ include::{snippets}/create-new-warehouse/http-request.adoc[]
 The `id` of the created warehouse.
 include::{snippets}/create-new-warehouse/http-response.adoc[]
 
+
+==== Create a place in a warehouse
+include::{snippets}/create-place-in-warehouse/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/create-place-in-warehouse/curl-request.adoc[]
+include::{snippets}/create-place-in-warehouse/http-request.adoc[]
+
+===== Example response
+The `id` of the created place.
+include::{snippets}/create-place-in-warehouse/http-response.adoc[]
+
+
+==== Create a product at a place in a warehouse
+include::{snippets}/create-warehouse-place-product/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/create-warehouse-place-product/curl-request.adoc[]
+include::{snippets}/create-warehouse-place-product/http-request.adoc[]
+
+===== Example response
+The `id` of the created product.
+include::{snippets}/create-warehouse-place-product/http-response.adoc[]
+
 === PATCH
+==== Update a warehouse
+include::{snippets}/update-warehouse/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/update-warehouse/curl-request.adoc[]
+include::{snippets}/update-warehouse/http-request.adoc[]
+
+===== Example response
+include::{snippets}/update-warehouse/http-response.adoc[]
+
+
+==== Update a place in a warehouse
+include::{snippets}/update-warehouse-place/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/update-warehouse-place/curl-request.adoc[]
+include::{snippets}/update-warehouse-place/http-request.adoc[]
+
+===== Example response
+include::{snippets}/update-warehouse-place/http-response.adoc[]
+
+
+==== Update a product
+include::{snippets}/update-warehouse-place-product/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/update-warehouse-place-product/curl-request.adoc[]
+include::{snippets}/update-warehouse-place-product/http-request.adoc[]
+
+===== Example response
+include::{snippets}/update-warehouse-place-product/http-response.adoc[]
 
 === DELETE
+`TODO`
