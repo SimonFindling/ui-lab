@@ -24,31 +24,6 @@ package de.hska.uilab.product;/*
  *  https://opensource.org/licenses/MIT
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hska.uilab.product.schema.Product;
-import de.hska.uilab.product.schema.ProductsMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import static org.junit.Assert.assertEquals;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -62,6 +37,32 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterators;
+
+import de.hska.uilab.product.model.Product;
+import de.hska.uilab.product.repositories.ProductRepository;
 
 /**
  * Created by mavogel on 1/18/17.
@@ -77,8 +78,9 @@ public class ApiDocumentation {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private ProductsMock productsMock;
+    
+    @Autowired
+    private ProductRepository products;
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
@@ -87,7 +89,6 @@ public class ApiDocumentation {
 
     @Before
     public void setUp() {
-        this.productsMock = new ProductsMock();
         this.documentationHandler = document("{method-name}",
                 preprocessResponse(prettyPrint()));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
@@ -100,7 +101,7 @@ public class ApiDocumentation {
 
     @After
     public void cleanUp() throws Exception {
-        this.productsMock.deleteAllProducts();
+        this.products.deleteAll();
     }
 
     /////////////
@@ -109,9 +110,9 @@ public class ApiDocumentation {
     @Test
     public void getAllProducts() throws Exception {
         // == prepare ==
-        productsMock.createProduct(new Product(1, 22, "Keyboard Cherry", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(2, 32, "Keyboard Blue", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(3, 366, "Keyboard Orange", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
+    	products.save(new Product("Keyboard Cherry", 22, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1534867563456567"));
+    	products.save(new Product("Keyboard Blue", 32.99, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1235683558"));
+    	products.save(new Product("Keyboard Orange", 366.12, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "23645324523532"));
 
         // == go/verify ==
         this.mockMvc.perform(get("/product").accept(MediaType.APPLICATION_JSON))
@@ -131,9 +132,9 @@ public class ApiDocumentation {
     @Test
     public void getSingleProduct() throws Exception {
         // == prepare ==
-        productsMock.createProduct(new Product(1, 22, "Keyboard Cherry", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(2, 32, "Keyboard Blue", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(3, 366, "Keyboard Orange", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
+    	products.save(new Product("Keyboard Cherry", 22, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1534867563456567"));
+    	products.save(new Product("Keyboard Blue", 32.99, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1235683558"));
+    	products.save(new Product("Keyboard Orange", 366.12, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "23645324523532"));
 
         // == go/verify ==
         this.mockMvc.perform(get("/product/2").accept(MediaType.APPLICATION_JSON))
@@ -185,9 +186,9 @@ public class ApiDocumentation {
     /////////////
     @Test
     public void changeProduct() throws Exception {
-        productsMock.createProduct(new Product(1, 22, "Keyboard Cherry", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(2, 32, "Keyboard Blue", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(3, 366, "Keyboard Orange", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
+    	products.save(new Product("Keyboard Cherry", 22, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1534867563456567"));
+    	products.save(new Product("Keyboard Blue", 32.99, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1235683558"));
+    	products.save(new Product("Keyboard Orange", 366.12, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "23645324523532"));
 
         Map<String, String> changedProduct = new HashMap<>();
         changedProduct.put("id", "1");
@@ -214,9 +215,9 @@ public class ApiDocumentation {
                 ));
 
         // == verify ==
-        Product changedAndPersistedProduct = productsMock.getProductById(1);
-        assertEquals("Keyboard Cherry - New New!!", changedAndPersistedProduct.getProductName());
-        assertEquals("super information pt2", changedAndPersistedProduct.getProductInformation());
+        Product changedAndPersistedProduct = products.findOne(1L);
+        assertEquals("Keyboard Cherry - New New!!", changedAndPersistedProduct.getName());
+        assertEquals("super information pt2", changedAndPersistedProduct.getDescription());
         assertEquals(15666, changedAndPersistedProduct.getPrice());
     }
 
@@ -227,16 +228,16 @@ public class ApiDocumentation {
     @Test
     public void deleteProduct() throws Exception {
         // == prepare ==
-        productsMock.createProduct(new Product(1, 22, "Keyboard Cherry", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(2, 32, "Keyboard Blue", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
-        productsMock.createProduct(new Product(3, 366, "Keyboard Orange", Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", 15));
+    	products.save(new Product("Keyboard Cherry", 22, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1534867563456567"));
+    	products.save(new Product("Keyboard Blue", 32.99, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "1235683558"));
+    	products.save(new Product("Keyboard Orange", 366.12, Base64.getEncoder().encodeToString(String.valueOf(new Random().nextInt()).getBytes()), "info", "23645324523532"));
 
         // == go ==
         this.mockMvc.perform(delete("/product/2"))
                 .andExpect(status().isNoContent());
 
         // == verify ==
-        assertEquals(2, productsMock.getAllProducts().size());
+        assertEquals(2, Iterators.size(products.findAll().iterator()));
     }
 
 }
