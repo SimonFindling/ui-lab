@@ -25,17 +25,26 @@ package de.hska.uilab.warehouse;/*
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hska.uilab.warehouse.client.ProductClient;
+import de.hska.uilab.warehouse.data.Product;
 import de.hska.uilab.warehouse.data.Warehouse;
+import de.hska.uilab.warehouse.data.WarehousePlace;
+import de.hska.uilab.warehouse.data.WarehousePlaceProduct;
 import de.hska.uilab.warehouse.repository.WarehousePlaceProductRepository;
 import de.hska.uilab.warehouse.repository.WarehousePlaceRepository;
 import de.hska.uilab.warehouse.repository.WarehouseRepository;
+import de.hska.uilab.warehouse.service.WarehouseService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,12 +54,15 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -88,12 +100,19 @@ public class ApiDocumentation {
 
     private RestDocumentationResultHandler documentationHandler;
 
+//    @Mock
+//    private ProductClient productClient;
+
+//    @InjectMocks
+//    private WarehouseService warehouseService;
+
     @Before
     public void setUp() {
         this.documentationHandler = document("{method-name}",
                 preprocessResponse(prettyPrint()));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(documentationConfiguration(this.restDocumentation).uris()
+                        .withHost("82.165.207.147")
                         .withPort(8081)) // for the api-gateway =)
                 .alwaysDo(this.documentationHandler)
                 .build();
@@ -103,11 +122,31 @@ public class ApiDocumentation {
     // GET
     /////////////
     @Test
+    public void getWarehouses() throws Exception {
+        // == prepare ==
+        this.createWarehouse("VR Goggles Warehouse");
+        this.createWarehouse("Bike Warehouse");
+        this.createWarehouse("Keyboard Warehouse");
+
+        // == train ==
+//        Mockito.when(productClient.getAllProducts())
+//                .thenReturn(ResponseEntity.ok(Arrays.asList(new Product())));
+
+        // == go/verify ==
+        this.mockMvc.perform(get("/warehouse").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("[].id").description("The warehouse ID"),
+                                fieldWithPath("[].name").description("the name of the warehouse"),
+                                fieldWithPath("[].description").description("the description of the warehouse")
+                        )
+                ));
+    }
+
+    @Test
     public void getWarehouseById() throws Exception {
-        final Warehouse warehouse = new Warehouse();
-        warehouse.setName("VR Goggles Warehouse");
-        warehouse.setDescription("The warehouse in San Jose");
-        Warehouse newWarehouse = this.warehouseRepository.save(warehouse);
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
 
         this.mockMvc.perform(get("/warehouse/" + newWarehouse.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -116,6 +155,147 @@ public class ApiDocumentation {
                                 fieldWithPath("id").description("The warehouse ID"),
                                 fieldWithPath("name").description("the name of the warehouse"),
                                 fieldWithPath("description").description("the description of the warehouse")
+                        )
+                ));
+    }
+
+    @Test
+    public void getAmountOfAProductInAllWarehouses() throws Exception {
+        // 1
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+        WarehousePlace warehousePlace2 = this.createWarehousePlace("4B-45", newWarehouse);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace2);
+
+        // 2
+        Warehouse newWarehouse2 = this.createWarehouse("VR Goggles Warehouse 2");
+        WarehousePlace warehousePlace21 = this.createWarehousePlace("3C-10", newWarehouse2);
+        WarehousePlace warehousePlace22 = this.createWarehousePlace("4B-45", newWarehouse2);
+        WarehousePlace warehousePlace23 = this.createWarehousePlace("4B-45", newWarehouse2);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace21);
+        this.createWarehousePlaceProduct(123, 5, WarehousePlaceProduct.Unit.BOX, warehousePlace22);
+        WarehousePlaceProduct warehousePlaceProduct = this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace23);
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/warehouse/product/" + warehousePlaceProduct.getProductid() + "/count").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals(5, Integer.valueOf(mvcResult.getResponse().getContentAsString()).intValue());
+    }
+
+    @Test
+    public void getWarehousePlaceProductsForProductId() throws Exception {
+        // 1
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+        WarehousePlace warehousePlace2 = this.createWarehousePlace("4B-45", newWarehouse);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace2);
+
+        // 2
+        Warehouse newWarehouse2 = this.createWarehouse("VR Goggles Warehouse 2");
+        WarehousePlace warehousePlace21 = this.createWarehousePlace("3C-10", newWarehouse2);
+        WarehousePlace warehousePlace22 = this.createWarehousePlace("4B-45", newWarehouse2);
+        WarehousePlace warehousePlace23 = this.createWarehousePlace("4B-45", newWarehouse2);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.PIECE, warehousePlace21);
+        this.createWarehousePlaceProduct(123, 5, WarehousePlaceProduct.Unit.PIECE, warehousePlace22);
+        WarehousePlaceProduct warehousePlaceProduct = this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.PIECE, warehousePlace23);
+
+        this.mockMvc.perform(get("/warehouse/place/" + warehousePlaceProduct.getProductid() + "/all").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("[].id").description("The primary key ID"),
+                                fieldWithPath("[].warehouseplaceid").description("The ID of the warehouse place where the product is located"),
+                                fieldWithPath("[].productid").description("The id of the product"),
+                                fieldWithPath("[].quantity").description("The quantity of the product at the given place"),
+                                fieldWithPath("[].unit").description("The unit of the product")
+                        )
+                ));
+    }
+
+    @Test
+    public void getWarehousePlaces() throws Exception {
+        // 1
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+        WarehousePlace warehousePlace2 = this.createWarehousePlace("4B-45", newWarehouse);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace2);
+
+        // 2
+        Warehouse newWarehouse2 = this.createWarehouse("VR Goggles Warehouse 2");
+        WarehousePlace warehousePlace21 = this.createWarehousePlace("3C-10", newWarehouse2);
+        WarehousePlace warehousePlace22 = this.createWarehousePlace("4B-45", newWarehouse2);
+        WarehousePlace warehousePlace23 = this.createWarehousePlace("4B-45", newWarehouse2);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.PIECE, warehousePlace21);
+        this.createWarehousePlaceProduct(123, 5, WarehousePlaceProduct.Unit.PIECE, warehousePlace22);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.PIECE, warehousePlace23);
+
+        this.mockMvc.perform(get("/warehouse/place").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("[].id").description("The primary key ID"),
+                                fieldWithPath("[].name").description("The name of the place in the warehouse"),
+                                fieldWithPath("[].description").description("The description of the place in the warehouse"),
+                                fieldWithPath("[].warehouse.id").description("The id of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehouse.name").description("The name of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehouse.description").description("The description of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehousePlaceProduct.[].id").description("The primary key ID"),
+                                fieldWithPath("[].warehousePlaceProduct.[].warehouseplaceid").description("The ID of the warehouse place where the product is located"),
+                                fieldWithPath("[].warehousePlaceProduct.[].productid").description("The id of the product"),
+                                fieldWithPath("[].warehousePlaceProduct.[].quantity").description("The quantity of the product at the given place"),
+                                fieldWithPath("[].warehousePlaceProduct.[].unit").description("The unit of the product")
+                        )
+                ));
+    }
+
+    @Test
+    public void getWarehousePlacesForWarehouseId() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+        WarehousePlace warehousePlace2 = this.createWarehousePlace("4B-45", newWarehouse);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace2);
+
+        this.mockMvc.perform(get("/warehouse/"+ newWarehouse.getId() + "/place").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("[].id").description("The primary key ID"),
+                                fieldWithPath("[].name").description("The name of the place in the warehouse"),
+                                fieldWithPath("[].description").description("The description of the place in the warehouse"),
+                                fieldWithPath("[].warehouse.id").description("The id of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehouse.name").description("The name of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehouse.description").description("The description of the warehouse the place is associated to"),
+                                fieldWithPath("[].warehousePlaceProduct.[].id").description("The primary key ID"),
+                                fieldWithPath("[].warehousePlaceProduct.[].warehouseplaceid").description("The ID of the warehouse place where the product is located"),
+                                fieldWithPath("[].warehousePlaceProduct.[].productid").description("The id of the product"),
+                                fieldWithPath("[].warehousePlaceProduct.[].quantity").description("The quantity of the product at the given place"),
+                                fieldWithPath("[].warehousePlaceProduct.[].unit").description("The unit of the product")
+                        )
+                ));
+    }
+
+    @Test
+    public void getAllProductsOfAPlace() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+        WarehousePlace warehousePlace2 = this.createWarehousePlace("4B-45", newWarehouse);
+        this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        this.createWarehousePlaceProduct(1231244, 2, WarehousePlaceProduct.Unit.BOX, warehousePlace2);
+        this.createWarehousePlaceProduct(12356, 4, WarehousePlaceProduct.Unit.PIECE, warehousePlace2);
+
+        this.mockMvc.perform(get("/warehouse/place/"+ warehousePlace2.getId() + "/product").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("[].id").description("The primary key ID"),
+                                fieldWithPath("[].warehouseplaceid").description("The ID of the warehouse place where the product is located"),
+                                fieldWithPath("[].productid").description("The id of the product"),
+                                fieldWithPath("[].quantity").description("The quantity of the product at the given place"),
+                                fieldWithPath("[].unit").description("The unit of the product")
                         )
                 ));
     }
@@ -144,12 +324,169 @@ public class ApiDocumentation {
         assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
     }
 
+    @Test
+    public void createPlaceInWarehouse() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+
+        Map<String, Object> newWarehousePlace = new HashMap<>();
+        newWarehousePlace.put("name", "3C-10");
+        newWarehousePlace.put("description", "3C-10 - Description");
+        newWarehousePlace.put("warehouse", newWarehouse);
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(post("/warehouse/place")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newWarehousePlace)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the warehouse"),
+                                fieldWithPath("description").description("the description of the warehouse"),
+                                fieldWithPath("warehouse").description("the id of the warehouse the place is located")
+                        )
+                )).andReturn();
+
+        assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
+    }
+
+    @Test
+    public void createWarehousePlaceProduct() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", newWarehouse);
+
+        Map<String, Object> newWarehousePlaceProduct = new HashMap<>();
+        newWarehousePlaceProduct.put("warehouseplaceid", warehousePlace.getId());
+        newWarehousePlaceProduct.put("productid", "123");
+        newWarehousePlaceProduct.put("quantity", "5");
+        newWarehousePlaceProduct.put("unit", WarehousePlaceProduct.Unit.PIECE);
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(post("/warehouse/product")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newWarehousePlaceProduct)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("warehouseplaceid").description("the id of the warehouse the place is located"),
+                                fieldWithPath("productid").description("the id of the product"),
+                                fieldWithPath("quantity").description("the quantity of the product located at this place"),
+                                fieldWithPath("unit").description("the unit of the product")
+                        )
+                )).andReturn();
+
+        assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
+    }
 
     /////////////
     // PATCH
     /////////////
+    @Test
+    public void updateWarehouse() throws Exception {
+        Warehouse newWarehouse = this.createWarehouse("VR Goggles Warehouse");
+
+        Map<String, String> modifiedWarehouse = new HashMap<>();
+        modifiedWarehouse.put("name", "VR Goggles Warehouse Extension");
+        modifiedWarehouse.put("description", "The warehouse extension in San Jose (Downtown)");
+
+        // == go / verify ==
+        MvcResult mvcResult = this.mockMvc.perform(patch("/warehouse/" + newWarehouse.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(modifiedWarehouse)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the warehouse"),
+                                fieldWithPath("description").description("the description of the warehouse")
+                        )
+                )).andReturn();
+        Warehouse storedModifiedWarehouse = this.warehouseRepository.findOne(newWarehouse.getId());
+        assertEquals("VR Goggles Warehouse Extension", storedModifiedWarehouse.getName());
+        assertEquals("The warehouse extension in San Jose (Downtown)", storedModifiedWarehouse.getDescription());
+    }
+
+    @Test
+    public void updateWarehousePlace() throws Exception {
+        Warehouse warehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", warehouse);
+        WarehousePlaceProduct warehousePlaceProduct = this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        WarehousePlaceProduct warehousePlaceProduct2 = this.createWarehousePlaceProduct(12345, 33, WarehousePlaceProduct.Unit.PIECE, warehousePlace);
+
+        Map<String, Object> modifiedWarehousePlace = new HashMap<>();
+        modifiedWarehousePlace.put("name", warehousePlace.getName() + "-B");
+        modifiedWarehousePlace.put("description", "New Description");
+        modifiedWarehousePlace.put("warehouse", warehouse);
+        modifiedWarehousePlace.put("warehousePlaceProduct", Arrays.asList(warehousePlaceProduct, warehousePlaceProduct2));
+
+        // == go / verify ==
+        this.mockMvc.perform(patch("/warehouse/place/" + warehousePlace.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(modifiedWarehousePlace)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the place in the warehouse"),
+                                fieldWithPath("description").description("the description of the place in the warehouse"),
+                                fieldWithPath("warehouse").description("the warehouse the place is located"),
+                                fieldWithPath("warehousePlaceProduct.[].id").description("The primary key ID"),
+                                fieldWithPath("warehousePlaceProduct.[].warehouseplaceid").description("The ID of the warehouse place where the product is located"),
+                                fieldWithPath("warehousePlaceProduct.[].productid").description("The id of the product"),
+                                fieldWithPath("warehousePlaceProduct.[].quantity").description("The quantity of the product at the given place"),
+                                fieldWithPath("warehousePlaceProduct.[].unit").description("The unit of the product")
+                        )
+                ));
+        WarehousePlace updatedWarehousePlace = this.warehousePlaceRepository.findOne(warehousePlace.getId());
+        assertEquals("3C-10-B", updatedWarehousePlace.getName());
+        assertEquals("New Description", updatedWarehousePlace.getDescription());
+    }
+
+    @Test
+    public void updateWarehousePlaceProduct() throws Exception {
+        Warehouse warehouse = this.createWarehouse("VR Goggles Warehouse");
+        WarehousePlace warehousePlace = this.createWarehousePlace("3C-10", warehouse);
+        WarehousePlaceProduct warehousePlaceProduct = this.createWarehousePlaceProduct(123, 3, WarehousePlaceProduct.Unit.BOX, warehousePlace);
+        WarehousePlaceProduct warehousePlaceProduct2 = this.createWarehousePlaceProduct(12345, 33, WarehousePlaceProduct.Unit.PIECE, warehousePlace);
+
+        Map<String, Object> modifiedWarehousePlaceProduct = new HashMap<>();
+        modifiedWarehousePlaceProduct.put("warehouseplaceid", warehousePlaceProduct2.getWarehouseplaceid());
+        modifiedWarehousePlaceProduct.put("productid", warehousePlaceProduct2.getProductid());
+        modifiedWarehousePlaceProduct.put("quantity", warehousePlaceProduct2.getQuantity() + 5);
+        modifiedWarehousePlaceProduct.put("unit", warehousePlaceProduct2.getUnit());
+
+        // == go / verify ==
+        this.mockMvc.perform(patch("/warehouse/product/" + warehousePlaceProduct2.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(modifiedWarehousePlaceProduct)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("warehouseplaceid").description("the id of the warehouse the place is located"),
+                                fieldWithPath("productid").description("the id of the product"),
+                                fieldWithPath("quantity").description("the quantity of the product located at this place"),
+                                fieldWithPath("unit").description("the unit of the product")
+                        )
+                ));
+        WarehousePlaceProduct updatedProduct = this.warehousePlaceProductRepository.findOne(warehousePlaceProduct2.getId());
+        assertEquals(38, updatedProduct.getQuantity());
+    }
 
     /////////////
     // DELETE
     /////////////
+
+
+    // HELPERS
+    private Warehouse createWarehouse(String name) {
+        final Warehouse warehouse = new Warehouse();
+        warehouse.setName(name);
+        warehouse.setDescription(name + " - Description");
+        return this.warehouseRepository.save(warehouse);
+    }
+
+    private WarehousePlace createWarehousePlace(String name, Warehouse warehouse) {
+        return this.warehousePlaceRepository.save(new WarehousePlace(name, name + " - Desc", warehouse));
+    }
+
+    private WarehousePlaceProduct createWarehousePlaceProduct(int productId, int quantity, final WarehousePlaceProduct.Unit unit, final WarehousePlace warehousePlace) {
+        return this.warehousePlaceProductRepository.save(new WarehousePlaceProduct(warehousePlace.getId(), productId, quantity, unit));
+    }
 }

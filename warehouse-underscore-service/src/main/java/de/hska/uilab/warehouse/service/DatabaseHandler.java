@@ -135,7 +135,7 @@ public class DatabaseHandler {
 			dbWhpProduct.setProductid(warehousePlaceProduct.getProductid());
 			dbWhpProduct.setQuantity(warehousePlaceProduct.getQuantity());
 			dbWhpProduct.setUnit(warehousePlaceProduct.getUnit());
-			dbWhpProduct.setWarehouseplaceid(warehousePlaceProduct.getWarehouseplace());
+			dbWhpProduct.setWarehouseplaceid(warehousePlaceProduct.getWarehouseplaceid());
 			warehousePlaceProductRepository.save(dbWhpProduct);
 			return dbWhpProduct;
 		}

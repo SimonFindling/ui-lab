@@ -11,65 +11,75 @@ import javax.persistence.Id;
 @Entity(name = "warehouseplaceproduct")
 public class WarehousePlaceProduct {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
 
-	@Column(name = "warehouseplace_id")
-	private Long warehouseplaceid;
+    @Column(name = "warehouseplace_id")
+    private Long warehouseplaceid;
 
-	@Column(name = "product_id")
-	private Integer productid;
+    @Column(name = "product_id")
+    private Integer productid;
 
-	@Column(name = "quantity")
-	private int quantity;
+    @Column(name = "quantity")
+    private int quantity;
 
-	@Column(name = "unit")
-	@Enumerated(EnumType.STRING)
-	private Unit unit;
+    @Column(name = "unit")
+    @Enumerated(EnumType.STRING)
+    private Unit unit;
 
-	public Long getWarehouseplace() {
-		return warehouseplaceid;
-	}
+    protected WarehousePlaceProduct() {
+    }
 
-	public void setWarehouseplaceid(Long warehouseplaceid) {
-		this.warehouseplaceid = warehouseplaceid;
-	}
+    public WarehousePlaceProduct(final Long warehouseplaceid, final Integer productid, final int quantity, final Unit unit) {
+        this.warehouseplaceid = warehouseplaceid;
+        this.productid = productid;
+        this.quantity = quantity;
+        this.unit = unit;
+    }
 
-	public Integer getProductid() {
-		return productid;
-	}
+    public Long getWarehouseplaceid() {
+        return warehouseplaceid;
+    }
 
-	public void setProductid(Integer productid) {
-		this.productid = productid;
-	}
+    public void setWarehouseplaceid(Long warehouseplaceid) {
+        this.warehouseplaceid = warehouseplaceid;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
+    public Integer getProductid() {
+        return productid;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    public void setProductid(Integer productid) {
+        this.productid = productid;
+    }
 
-	public Unit getUnit() {
-		return unit;
-	}
+    public int getQuantity() {
+        return quantity;
+    }
 
-	public void setUnit(Unit unit) {
-		this.unit = unit;
-	}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id){
-		this.id = id;
-	}
+    public Unit getUnit() {
+        return unit;
+    }
 
-	public enum Unit {
-		PIECE, BOX
-	}
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public enum Unit {
+        PIECE, BOX
+    }
 }

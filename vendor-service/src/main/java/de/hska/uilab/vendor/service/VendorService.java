@@ -55,7 +55,7 @@ public class VendorService {
         }
     }
 
-    @RequestMapping(value = "/{tenantId}/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{tenantId}/{id}", method = RequestMethod.PATCH)
     public ResponseEntity<Vendor> modifyVendorForTenant(@RequestBody Vendor vendor, @PathVariable long tenantId,
                                                         @PathVariable long id) {
         LOGGER.log(Level.INFO, "Modify vendor " + id + " for tenant " + tenantId);

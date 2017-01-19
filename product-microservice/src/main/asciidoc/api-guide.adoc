@@ -1,0 +1,72 @@
+= Getting Started Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[resources]]
+= Resources
+
+[[resources-product]]
+== Product
+The `product` resource is used to create, list, update and delete products.
+
+=== GET
+==== Get all products
+include::{snippets}/get-all-products/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-all-products/curl-request.adoc[]
+include::{snippets}/get-all-products/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-all-products/http-response.adoc[]
+
+
+==== Get a single product
+include::{snippets}/get-single-product/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-single-product/curl-request.adoc[]
+include::{snippets}/get-single-product/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-single-product/http-response.adoc[]
+or `404` if the prodcut was not found.
+
+
+=== POST
+==== Create a new product
+include::{snippets}/create-product/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/create-product/curl-request.adoc[]
+include::{snippets}/create-product/http-request.adoc[]
+
+===== Example response
+include::{snippets}/create-product/http-response.adoc[]
+or a `406` if the request was not successful.
+
+=== PATCH
+==== Change/modify a new product
+include::{snippets}/change-product/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/change-product/curl-request.adoc[]
+include::{snippets}/change-product/http-request.adoc[]
+
+===== Example response
+include::{snippets}/change-product/http-response.adoc[]
+or a `406` if the request was not successful.
+
+=== DELETE
+==== Delete a new product
+===== Example request
+include::{snippets}/delete-product/curl-request.adoc[]
+include::{snippets}/delete-product/http-request.adoc[]
+
+===== Example response
+include::{snippets}/delete-product/http-response.adoc[]
+or a `406` if the request was not successful.

@@ -50,7 +50,7 @@ public class ProductController {
 		return new ResponseEntity<Product>(productById, HttpStatus.NOT_FOUND);
 	}
 	
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "", method = RequestMethod.PATCH)
 	public ResponseEntity changeProduct(@RequestBody Map<String, String> body) {
 		ObjectMapper mapper = new ObjectMapper();
 		Product retrievedProduct = mapper.convertValue(body, Product.class);

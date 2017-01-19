@@ -1,127 +1,62 @@
-[vendors]
-== Vendor-Service
+[[resources-vendor]]
+== Vendor
+The `vendor` resource is used to create, list, update and delete vendors of products.
 
 === GET
 
-==== List all vendors of a tenant
+==== Get vendors by tenantId
+include::{vendor-service-snippets}/get-vendors-by-tenant-id/response-fields.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example request
+include::{vendor-service-snippets}/get-vendors-by-tenant-id/curl-request.adoc[]
+include::{vendor-service-snippets}/get-vendors-by-tenant-id/http-request.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
+===== Example response
+include::{vendor-service-snippets}/get-vendors-by-tenant-id/http-response.adoc[]
 
-[
- {
-  "id":"",
-  "name":"",
-  "email":"",
-  "address": {
-    "street":"",
-    "number":"",
-    "postal":"",
-    "city":"",
-    "country":"",
-  }
- }
-]
-----
 
-==== List a single vendor of a tenant
+==== Get vendors by tenantId and vendorId
+include::{vendor-service-snippets}/get-vendor-by-tenant-id-and-vendor-id/response-fields.adoc[]
 
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
+===== Example request
+include::{vendor-service-snippets}/get-vendor-by-tenant-id-and-vendor-id/curl-request.adoc[]
+include::{vendor-service-snippets}/get-vendor-by-tenant-id-and-vendor-id/http-request.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
+===== Example response
+include::{vendor-service-snippets}/get-vendor-by-tenant-id-and-vendor-id/http-response.adoc[]
 
-{
- "id":"",
- "name":"",
- "email":"",
- "address": {
-   "street":"",
-   "number":"",
-   "postal":"",
-   "city":"",
-   "country":"",
- }
-}
-----
 
 === POST
+==== Create a vendor for a tenant
+include::{vendor-service-snippets}/create-new-vendor-for-tenant/request-fields.adoc[]
 
-==== Create a new vendor for a tenant
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}' -i -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"name":"", "email":"", "address": {"street":"","number":"","postal":"","city":"","country":""}}'
-----
+===== Example request
+include::{vendor-service-snippets}/create-new-vendor-for-tenant/curl-request.adoc[]
+include::{vendor-service-snippets}/create-new-vendor-for-tenant/http-request.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 201 Created
+===== Example response
+include::{vendor-service-snippets}/create-new-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.
 
-----
 
-=== PUT
+=== PATCH
+==== Modify a vendor for a tenant
+include::{vendor-service-snippets}/modify-vendor-for-tenant/request-fields.adoc[]
 
-==== Modify a new product for a tenant
-===== Example Request
-The images have to be base64 encoded!
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42' -d '{"name":"", "email":"", "address": {"street":"","number":"","postal":"","city":"","country":""}}'
-----
+===== Example request
+include::{vendor-service-snippets}/modify-vendor-for-tenant/curl-request.adoc[]
+include::{vendor-service-snippets}/modify-vendor-for-tenant/http-request.adoc[]
 
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length:
-
-{
- "id":"",
- "name":"",
- "email":"",
- "address": {
-   "street":"",
-   "number":"",
-   "postal":"",
-   "city":"",
-   "country":"",
- }
-}
-
-----
+===== Example response
+include::{vendor-service-snippets}/modify-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.
 
 === DELETE
+==== Delete a vendor for a tenant
+===== Example request
+include::{vendor-service-snippets}/delete-vendor-for-tenant/curl-request.adoc[]
+include::{vendor-service-snippets}/delete-vendor-for-tenant/http-request.adoc[]
 
-==== Deletes a vendor of a tenant
-===== Example Request
-[source,bash,options="nowrap"]
-----
-$ curl 'http://DOCKER-HOST:8080/vendors/{tenantId}/{id}' -i -X DELETE -H 'Accept: application/json' -H 'Authorization: Bearer: 0b79bab50daca910b000d4f1a2b675d604257e42'
-----
-===== Example Response
-[source,http,options="nowrap"]
-----
-HTTP/1.1 204 No Content
-
-----
+===== Example response
+include::{vendor-service-snippets}/delete-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.

@@ -66,7 +66,9 @@ public class ApiDocumentation extends AbstractTestBase {
         this.documentationHandler = document("{method-name}",
                 preprocessResponse(prettyPrint()));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-                .apply(documentationConfiguration(this.restDocumentation).uris().withPort(8081))
+                .apply(documentationConfiguration(this.restDocumentation).uris()
+                        .withHost("82.165.207.147")
+                        .withPort(8081)) // for the api-gateway =)
                 .alwaysDo(this.documentationHandler)
                 .build();
     }

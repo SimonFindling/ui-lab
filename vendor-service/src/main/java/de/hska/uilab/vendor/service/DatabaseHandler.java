@@ -13,7 +13,7 @@ import de.hska.uilab.vendor.repository.VendorRepository;
 public class DatabaseHandler {
 	@Autowired
 	VendorRepository vendorRepository;
-	
+
 	@Autowired
 	AddressRepository addressRepositoty;
 
@@ -24,7 +24,7 @@ public class DatabaseHandler {
 	/**
 	 * returns vendor specified with given tenantid and vendorid. if no object
 	 * is found, null will be returned.
-	 * 
+	 *
 	 * @param tenantId
 	 * @param vendorId
 	 * @return
@@ -38,9 +38,17 @@ public class DatabaseHandler {
 		return null;
 	}
 
+    public Vendor getVendorById(long vendorId) {
+        Vendor vendor = vendorRepository.findOne(vendorId);
+        if (vendor != null) {
+            return vendor;
+        }
+        return null;
+    }
+
 	/**
 	 * creates new vendor object in db. the given tenantid will be set.
-	 * 
+	 *
 	 * @param vendor
 	 * @param tenantId
 	 * @return
@@ -54,7 +62,7 @@ public class DatabaseHandler {
 	/**
 	 * modify the vendor in db, defined by the id in the vendor-object. If there
 	 * is no vendor in db with that db, null will be returned.
-	 * 
+	 *
 	 * @param vendor
 	 * @param tenantId
 	 * @return
@@ -74,9 +82,9 @@ public class DatabaseHandler {
 	/**
 	 * deletes vendor specified by tenantid and vendorid. returns false if
 	 * object couldn't be deleted.
-	 * 
+	 *
 	 * @param tenantId
-	 * @param id
+	 * @param vendorId
 	 */
 	public boolean deleteVendorForTenant(long tenantId, long vendorId) {
 		Vendor v = getVendorByTenantIdAndId(tenantId, vendorId);

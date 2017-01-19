@@ -49,9 +49,8 @@ public class WarehouseService {
     public ResponseEntity<List<Warehouse>> getWarehouses() {
         LOGGER.log(Level.INFO, "get all warehouses");
 
-        List<Product> objects = this.productClient.getAllProducts().getBody();
-
-        LOGGER.log(Level.INFO, objects + "");
+//        List<Product> objects = this.productClient.getAllProducts().getBody();
+//        LOGGER.log(Level.INFO, objects + "");
         return new ResponseEntity<List<Warehouse>>(dbh.getAllWarehouses(), HttpStatus.OK);
     }
 
@@ -66,11 +65,11 @@ public class WarehouseService {
         }
     }
 
-    @RequestMapping(value = "/product/{id}/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/{productId}/count", method = RequestMethod.GET)
     public ResponseEntity<Integer> getAmountOfAProductInAllWarehouses(
-            @PathVariable Integer warehouseplaceProductId) {
-        LOGGER.log(Level.INFO, "get warehouseplaceProduct count by warehouseplaceProductId " + warehouseplaceProductId);
-        return new ResponseEntity<Integer>(dbh.getWarehousePlaceProductForProductId(warehouseplaceProductId).size(), HttpStatus.OK);
+            @PathVariable Integer productId) {
+        LOGGER.log(Level.INFO, "get warehouseplaceProduct count by warehouseplaceProductId " + productId);
+        return new ResponseEntity<Integer>(dbh.getWarehousePlaceProductForProductId(productId).size(), HttpStatus.OK);
     }
 
     // get all products with the matching whpProductId
@@ -80,6 +79,8 @@ public class WarehouseService {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehouseplaceProductId " + productId);
         return new ResponseEntity<List<WarehousePlaceProduct>>(dbh.getWarehousePlaceProductForProductId(productId), HttpStatus.OK);
     }
+
+    // TODO
     // get all products with the matching whpProductId and resolved product data
     @RequestMapping(value = "/place/{productId}/full", method = RequestMethod.GET)
     public ResponseEntity<List<ResolvedWarehousePlaceProduct>> getResolvedWarehousePlaceProductForProductId(
@@ -116,18 +117,18 @@ public class WarehouseService {
 
     @RequestMapping(value = "/place", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlace>> getWarehousePlaces() {
-        LOGGER.log(Level.INFO, "get all warehouseplacess");
+        LOGGER.log(Level.INFO, "get all warehouseplaces");
         return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlaces(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/place/{warehouseId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{warehouseId}/place", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlace>> getWarehousePlacesForWarehouseId(@PathVariable long warehouseId) {
         LOGGER.log(Level.INFO, "get all warehouseplaces for warehouse with id " + warehouseId);
         return new ResponseEntity<List<WarehousePlace>>(dbh.getAllWarehousePlacesForWarehouseId(warehouseId),
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/place/{id}/product", method = RequestMethod.GET)
+    @RequestMapping(value = "/place/{warehousePlaceId}/product", method = RequestMethod.GET)
     public ResponseEntity<List<WarehousePlaceProduct>> getAllProductsOfAPlace(
             @PathVariable long warehousePlaceId) {
         LOGGER.log(Level.INFO, "get warehouseplaceProduct by warehousePlaceId " + warehousePlaceId);
@@ -150,21 +151,8 @@ public class WarehouseService {
         }
     }
 
-    @RequestMapping(value = "/{warehouseId}", method = RequestMethod.PUT)
-    public ResponseEntity<Warehouse> modifyWarehouse(@RequestBody Warehouse warehouse, @PathVariable long warehouseId) {
-        LOGGER.log(Level.INFO, "Modify warehouse " + warehouseId);
-        Warehouse updatedWarehouse = dbh.modifyWarehouse(warehouseId, warehouse);
-        if (updatedWarehouse != null) {
-            LOGGER.log(Level.INFO, "Modified warehouse.");
-            return new ResponseEntity<>(updatedWarehouse, HttpStatus.OK);
-        } else {
-            LOGGER.log(Level.INFO, "Couldn't modify warehouse.");
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
     @RequestMapping(value = "/place", method = RequestMethod.POST)
-    public ResponseEntity<Long> createWarehouse(@RequestBody WarehousePlace warehousePlace) {
+    public ResponseEntity<Long> createPlaceInWarehouse(@RequestBody WarehousePlace warehousePlace) {
         LOGGER.log(Level.INFO, "Create warehouseplace " + warehousePlace.getName() + " for warehouse "
                 + warehousePlace.getWarehouse().getId());
         long createdId = dbh.createWarehousePlace(warehousePlace);
@@ -193,7 +181,33 @@ public class WarehouseService {
     /////////////
     // PATCH
     /////////////
-    @RequestMapping(value = "/product/{id}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/{warehouseId}", method = RequestMethod.PATCH)
+    public ResponseEntity<Warehouse> updateWarehouse(@RequestBody Warehouse warehouse, @PathVariable long warehouseId) {
+        LOGGER.log(Level.INFO, "Modify warehouse " + warehouseId);
+        Warehouse updatedWarehouse = dbh.modifyWarehouse(warehouseId, warehouse);
+        if (updatedWarehouse != null) {
+            LOGGER.log(Level.INFO, "Modified warehouse.");
+            return new ResponseEntity<>(updatedWarehouse, HttpStatus.OK);
+        } else {
+            LOGGER.log(Level.INFO, "Couldn't modify warehouse.");
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @RequestMapping(value = "/place/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<WarehousePlace> updateWarehousePlace(@RequestBody WarehousePlace warehousePlace, @PathVariable long id) {
+        LOGGER.log(Level.INFO, "Modify warehouseplace " + id);
+        WarehousePlace updatedWarehousePlace = dbh.modifyWarehousePlace(id, warehousePlace);
+        if (updatedWarehousePlace != null) {
+            LOGGER.log(Level.INFO, "Modified warehouseplace.");
+            return new ResponseEntity<>(updatedWarehousePlace, HttpStatus.OK);
+        } else {
+            LOGGER.log(Level.INFO, "Couldn't modify warehouseplace.");
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @RequestMapping(value = "/product/{warehousePlaceProductId}", method = RequestMethod.PATCH)
     public ResponseEntity<WarehousePlaceProduct> updateWarehousePlaceProduct(
             @PathVariable long warehousePlaceProductId,
             @RequestBody WarehousePlaceProduct warehousePlaceProduct) {
@@ -204,19 +218,6 @@ public class WarehouseService {
             return new ResponseEntity<>(updatedWarehousePlaceProduct, HttpStatus.OK);
         } else {
             LOGGER.log(Level.INFO, "Couldn't modify warehouseplace product.");
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
-    @RequestMapping(value = "/places/{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<WarehousePlace> modifyWarehousePlace(@RequestBody WarehousePlace warehousePlace, @PathVariable long id) {
-        LOGGER.log(Level.INFO, "Modify warehouseplace " + id);
-        WarehousePlace updatedWarehousePlace = dbh.modifyWarehousePlace(id, warehousePlace);
-        if (updatedWarehousePlace != null) {
-            LOGGER.log(Level.INFO, "Modified warehouseplace.");
-            return new ResponseEntity<>(updatedWarehousePlace, HttpStatus.OK);
-        } else {
-            LOGGER.log(Level.INFO, "Couldn't modify warehouseplace.");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
