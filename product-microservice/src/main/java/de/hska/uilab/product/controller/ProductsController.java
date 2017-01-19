@@ -15,6 +15,11 @@ public class ProductsController {
     @Autowired
     private ProductRepository productRepository;
 
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public ResponseEntity<String> info() {
+        return new ResponseEntity<String>("Hello! This is product-microservice", HttpStatus.OK);
+    }
+
     @GetMapping(value = "")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Product> allProducts() {
@@ -34,7 +39,27 @@ public class ProductsController {
     @PostMapping(value = "")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         productRepository.save(product);
-        return new ResponseEntity<Product>(product, HttpStatus.OK);
+        return new ResponseEntity<Product>(product, HttpStatus.CREATED);
+    }
+
+    @PatchMapping(value = "")
+    public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+        Product foundProduct = productRepository.findOne(product.getId());
+        if (null == product) {
+            return new ResponseEntity("No Product found for ID " + product.getId(), HttpStatus.NOT_FOUND);
+        }
+
+        foundProduct.setName(product.getName());
+        foundProduct.setDescription(product.getDescription());
+        foundProduct.setImage(product.getImage());
+        foundProduct.setPrice(product.getPrice());
+        foundProduct.setEan(product.getEan());
+
+        try {
+            return new ResponseEntity<Product>(productRepository.save(foundProduct), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -44,21 +69,6 @@ public class ProductsController {
             return new ResponseEntity("No Product found for ID " + id, HttpStatus.NOT_FOUND);
         }
         productRepository.delete(product);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id) {
-        Product product = productRepository.findOne(id);
-        product = productRepository.save(product);
-        if (null == product) {
-            return new ResponseEntity("No Product found for ID " + id, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Product>(product, HttpStatus.OK);
-    }
-
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ResponseEntity<String> info() {
-		return new ResponseEntity<String>("Hello! This is product-microservice", HttpStatus.OK);
-	}
 }
