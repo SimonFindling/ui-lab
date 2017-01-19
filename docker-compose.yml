@@ -10,7 +10,7 @@ services:
     restart: always
     ports:
       - "8761:8761"
-    depends_on: 
+    depends_on:
       - config-service
   gateway:
     image: uilab/api-gateway
@@ -27,11 +27,22 @@ services:
 #      - "9005:9005"
 #    depends_on:
 #      - config-service
+  product-db-image:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uilab
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
   product:
     image: uilab/product-microservice
     restart: always
     ports:
       - "7654:7654"
+    links:
+      - product-db-image
 
   account-db-image:
     image: mysql:5.7.9

@@ -1,2 +1,14 @@
 server:
   port: 7654
+spring:
+  profiles: container
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://product-db-image:3306/uilab?useSSL=false
+    username: root
+    password: root
