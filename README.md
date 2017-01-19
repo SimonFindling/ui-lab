@@ -1,3 +1,5 @@
+[![Travis Build Status](https://travis-ci.org/SimonFindling/ui-lab.svg?branch=master)](https://travis-ci.org/SimonFindling/ui-lab)
+
 # ui-lab
 This is a template for creating a prototype of a cloud and sass solution with Spring Cloud and Docker. 
 This project is part of the masters course Graphical user interfaces.
