@@ -15,32 +15,59 @@ The `vendor` resource is used to create, list, update and delete vendors of prod
 
 === GET
 
-==== Get all warehouses
-include::{snippets}/get-warehouses/response-fields.adoc[]
+==== Get vendors by tenantId
+include::{snippets}/get-vendors-by-tenant-id/response-fields.adoc[]
 
 ===== Example request
-include::{snippets}/get-warehouses/curl-request.adoc[]
-include::{snippets}/get-warehouses/http-request.adoc[]
+include::{snippets}/get-vendors-by-tenant-id/curl-request.adoc[]
+include::{snippets}/get-vendors-by-tenant-id/http-request.adoc[]
 
 ===== Example response
-include::{snippets}/get-warehouses/http-response.adoc[]
+include::{snippets}/get-vendors-by-tenant-id/http-response.adoc[]
+
+
+==== Get vendors by tenantId and vendorId
+include::{snippets}/get-vendor-by-tenant-id-and-vendor-id/response-fields.adoc[]
+
+===== Example request
+include::{snippets}/get-vendor-by-tenant-id-and-vendor-id/curl-request.adoc[]
+include::{snippets}/get-vendor-by-tenant-id-and-vendor-id/http-request.adoc[]
+
+===== Example response
+include::{snippets}/get-vendor-by-tenant-id-and-vendor-id/http-response.adoc[]
 
 
 === POST
-==== Create a new warehouse
-The name and description are needed for creating a new warehouse.
-
-include::{snippets}/create-new-warehouse/request-fields.adoc[]
+==== Create a vendor for a tenant
+include::{snippets}/create-new-vendor-for-tenant/request-fields.adoc[]
 
 ===== Example request
-include::{snippets}/create-new-warehouse/curl-request.adoc[]
-include::{snippets}/create-new-warehouse/http-request.adoc[]
+include::{snippets}/create-new-vendor-for-tenant/curl-request.adoc[]
+include::{snippets}/create-new-vendor-for-tenant/http-request.adoc[]
 
 ===== Example response
-The `id` of the created warehouse.
-include::{snippets}/create-new-warehouse/http-response.adoc[]
+include::{snippets}/create-new-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.
 
 
 === PATCH
+==== Modify a vendor for a tenant
+include::{snippets}/modify-vendor-for-tenant/request-fields.adoc[]
+
+===== Example request
+include::{snippets}/modify-vendor-for-tenant/curl-request.adoc[]
+include::{snippets}/modify-vendor-for-tenant/http-request.adoc[]
+
+===== Example response
+include::{snippets}/modify-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.
 
 === DELETE
+==== Delete a vendor for a tenant
+===== Example request
+include::{snippets}/delete-vendor-for-tenant/curl-request.adoc[]
+include::{snippets}/delete-vendor-for-tenant/http-request.adoc[]
+
+===== Example response
+include::{snippets}/delete-vendor-for-tenant/http-response.adoc[]
+or a `406` if the request failed.

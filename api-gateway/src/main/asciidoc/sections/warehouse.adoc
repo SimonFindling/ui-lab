@@ -1,16 +1,4 @@
 [[resources-warehouse]]
-= Getting Started Guide
-:doctype: book
-:icons: font
-:source-highlighter: highlightjs
-:toc: left
-:toclevels: 4
-:sectlinks:
-
-[[resources]]
-= Resources
-
-[[resources-warehouse]]
 == Warehouse
 The `warehouse` resource is used to create, list, update and delete warehouse,
 its in places and the products stored in those places.

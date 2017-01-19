@@ -25,10 +25,11 @@ package de.hska.uilab.vendor;/*
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hska.uilab.vendor.data.Address;
+import de.hska.uilab.vendor.data.Vendor;
 import de.hska.uilab.vendor.repository.AddressRepository;
 import de.hska.uilab.vendor.repository.VendorRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,12 +44,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +67,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) // clear the db before each test
-@Ignore
 public class ApiDocumentation {
 
     private MockMvc mockMvc;
@@ -96,21 +104,57 @@ public class ApiDocumentation {
     // GET
     /////////////
     @Test
-    public void getWarehouses() throws Exception {
+    public void getVendorsByTenantId() throws Exception {
         // == prepare ==
-
-        // == train ==
-//        Mockito.when(productClient.getAllProducts())
-//                .thenReturn(ResponseEntity.ok(Arrays.asList(new Product())));
+        createVendor("Oculus", 2244L);
+        createVendor("Cherry", 434222L);
+        createVendor("Dell", 34266L);
+        createVendor("Lenovo", 2244L);
+        createVendor("HP", 2244L);
 
         // == go/verify ==
-        this.mockMvc.perform(get("/warehouse").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get("/vendor/" + 2244).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(this.documentationHandler.document(
                         responseFields(
-                                fieldWithPath("[].id").description("The warehouse ID"),
-                                fieldWithPath("[].name").description("the name of the warehouse"),
-                                fieldWithPath("[].description").description("the description of the warehouse")
+                                fieldWithPath("[].vendorId").description("The vendor ID"),
+                                fieldWithPath("[].name").description("the name of the vendor"),
+                                fieldWithPath("[].email").description("the email-address of the vendor"),
+                                fieldWithPath("[].address.id").description("the id of the address"),
+                                fieldWithPath("[].address.street").description("the street where the vendor is located"),
+                                fieldWithPath("[].address.number").description("the housenumber"),
+                                fieldWithPath("[].address.postal").description("the postal code"),
+                                fieldWithPath("[].address.city").description("the city"),
+                                fieldWithPath("[].address.country").description("the country"),
+                                fieldWithPath("[].tenantId").description("the id of the tenant the vendor sell products to")
+                        )
+                ));
+    }
+
+    @Test
+    public void getVendorByTenantIdAndVendorId() throws Exception {
+        // == prepare ==
+        createVendor("Oculus", 2244L);
+        createVendor("Cherry", 434222L);
+        createVendor("Dell", 34266L);
+        createVendor("Lenovo", 2244L);
+        Vendor hp = createVendor("HP", 2244L);
+
+        // == go/verify ==
+        this.mockMvc.perform(get("/vendor/" + 2244 + "/" + hp.getVendorId()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        responseFields(
+                                fieldWithPath("vendorId").description("The vendor ID"),
+                                fieldWithPath("name").description("the name of the vendor"),
+                                fieldWithPath("email").description("the email-address of the vendor"),
+                                fieldWithPath("address.id").description("the id of the address"),
+                                fieldWithPath("address.street").description("the street where the vendor is located"),
+                                fieldWithPath("address.number").description("the housenumber"),
+                                fieldWithPath("address.postal").description("the postal code"),
+                                fieldWithPath("address.city").description("the city"),
+                                fieldWithPath("address.country").description("the country"),
+                                fieldWithPath("tenantId").description("the id of the tenant the vendor sell products to")
                         )
                 ));
     }
@@ -118,33 +162,86 @@ public class ApiDocumentation {
     /////////////
     // POST
     /////////////
-//    @Test
-//    public void createNewWarehouse() throws Exception {
-//        Map<String, String> newWarehouse = new HashMap<>();
-//        newWarehouse.put("name", "VR Goggles Warehouse");
-//        newWarehouse.put("description", "The warehouse in San Jose");
-//
-//        // == go / verify ==
-//        MvcResult mvcResult = this.mockMvc.perform(post("/warehouse")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.objectMapper.writeValueAsString(newWarehouse)))
-//                .andExpect(status().isCreated())
-//                .andDo(this.documentationHandler.document(
-//                        requestFields(
-//                                fieldWithPath("name").description("the name of the warehouse"),
-//                                fieldWithPath("description").description("the description of the warehouse")
-//                        )
-//                )).andReturn();
-//
-//        assertEquals(1L, Long.valueOf(mvcResult.getResponse().getContentAsString()).longValue());
-//    }
+    @Test
+    public void createNewVendorForTenant() throws Exception {
+        Map<String, Object> newVendor = new HashMap<>();
+        newVendor.put("name", "Cherry");
+        newVendor.put("email", "mail@cherry.com");
+        newVendor.put("address", createAddress());
+        newVendor.put("tenantId", "5");
+
+        // == go / verify ==
+        this.mockMvc.perform(post("/vendor/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newVendor)))
+                .andExpect(status().isCreated())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the vendor"),
+                                fieldWithPath("email").description("the email-address of the vendor"),
+                                fieldWithPath("address").description("the address of the vendor"),
+                                fieldWithPath("tenantId").description("the tenantId of the vendor")
+                        )
+                ));
+    }
 
     /////////////
     // PATCH
     /////////////
+    @Test
+    public void modifyVendorForTenant() throws Exception {
+        long tenantId = 5L;
+        Vendor vendor = createVendor("Cherry", tenantId);
+
+        Map<String, Object> newVendor = new HashMap<>();
+        newVendor.put("name", "Cherry Inc.");
+        newVendor.put("email", "mail@aws.cherry.com");
+        newVendor.put("address", createAddress());
+        newVendor.put("tenantId", tenantId);
+
+        // == go / verify ==
+        this.mockMvc.perform(patch("/vendor/" + tenantId + "/" + vendor.getVendorId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(newVendor)))
+                .andExpect(status().isOk())
+                .andDo(this.documentationHandler.document(
+                        requestFields(
+                                fieldWithPath("name").description("the name of the vendor"),
+                                fieldWithPath("email").description("the email-address of the vendor"),
+                                fieldWithPath("address").description("the address of the vendor"),
+                                fieldWithPath("tenantId").description("the tenantId of the vendor")
+                        )
+                ));
+
+        Vendor modifiedVendor = this.vendorRepository.findOne(vendor.getVendorId());
+        assertEquals("Cherry Inc.", modifiedVendor.getName());
+        assertEquals("mail@aws.cherry.com", modifiedVendor.getEmail());
+    }
 
     /////////////
     // DELETE
     /////////////
+    @Test
+    public void deleteVendorForTenant() throws Exception {
+        long tenantId = 5L;
+        Vendor vendor = createVendor("Cherry", tenantId);
+
+        // == go / verify ==
+        this.mockMvc.perform(delete("/vendor/" + tenantId + "/" + vendor.getVendorId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertNull(this.vendorRepository.findOne(vendor.getVendorId()));
+    }
+
+    // HELPERS
+    private Vendor createVendor(final String name, final Long tenantId) {
+        return this.vendorRepository.save(new Vendor(name, "mail@"+ name.toLowerCase() + ".com",
+                createAddress(), tenantId));
+    }
+
+    private Address createAddress() {
+        return new Address("street", String.valueOf(new Random().nextInt(40)), String.valueOf(new Random().nextInt(99999)), "city", "country");
+    }
 
 }
